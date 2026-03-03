@@ -21,6 +21,7 @@ chroma_data/
 *.pptx
 /assets/
 references/
+outsrc/
 !frontend/public/assets/
 
 # Environment
