@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-cream-50: #FAF8F3;
+  --color-cream-100: #F5F0E8;
+  --color-cream-200: #EDE6D8;
+  --color-cream-300: #E0D5C1;
+
+  --color-sage-300: #97A888;
+  --color-sage-400: #7A8B6A;
+  --color-sage-500: #5B6B4A;
+  --color-sage-600: #4A5A3C;
+  --color-sage-700: #3A4830;
+
+  --color-charcoal-600: #4A4A4A;
+  --color-charcoal-700: #3D3D3D;
+  --color-charcoal-800: #2A2A2A;
+  --color-charcoal-900: #1A1A1A;
+
+  --color-warmgray-200: #D4CCC0;
+  --color-warmgray-300: #C4BCB0;
+  --color-warmgray-400: #A89E92;
+  --color-warmgray-500: #8C8278;
+
+  --color-gold-400: #B8A88A;
+  --color-gold-500: #9C8E6E;
+
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Base styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--color-cream-50);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-charcoal-800);
+  background-color: var(--color-cream-50);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ========================================
+   PAPER TEXTURE — Rich, Visible Paper Feel
+   ======================================== */
+
+/* Main paper background — used on the full-page body */
+.paper-bg {
+  position: relative;
+  background-color: var(--color-cream-100);
+  background-image:
+    /* Subtle grain noise */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
+    /* Faint fiber lines */
+    url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='180' x2='400' y2='182' stroke='%23d4c9b8' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='0' y1='280' x2='400' y2='278' stroke='%23c4b9a8' stroke-width='0.2' opacity='0.15'/%3E%3Cline x1='0' y1='60' x2='400' y2='62' stroke='%23d4c9b8' stroke-width='0.2' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+/* Lighter paper texture for cards */
+.paper-texture {
+  position: relative;
+  background-color: var(--color-cream-50);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* Warm paper — slightly tinted for sections */
+.paper-warm {
+  background-color: var(--color-cream-200);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* ========================================
+   DECORATIVE BORDERS & ORNAMENTS
+   ======================================== */
+
+/* Simple double-line decorative border */
+.decorative-border {
+  border: 1.5px solid var(--color-warmgray-300);
+  position: relative;
+}
+
+.decorative-border::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--color-warmgray-200);
+  pointer-events: none;
+}
+
+/* Corner flourish decorative border */
+.decorative-corners {
+  position: relative;
+  border: 1px solid var(--color-warmgray-300);
+}
+
+.decorative-corners::before,
+.decorative-corners::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: var(--color-sage-400);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.decorative-corners::before {
+  top: 6px;
+  left: 6px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.decorative-corners::after {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Dot-pattern border (inspired by ref image 1) */
+.dot-border {
+  position: relative;
+  border: 1px solid var(--color-warmgray-200);
+}
+
+.dot-border::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dotted var(--color-warmgray-300);
+  pointer-events: none;
+}
+
+/* ========================================
+   ORNAMENTAL DIVIDERS
+   ======================================== */
+
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--color-warmgray-400);
+}
+
+.ornament-divider::before,
+.ornament-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to var(--direction, right),
+    transparent,
+    var(--color-warmgray-300),
+    transparent
+  );
+}
+
+.ornament-diamond {
+  width: 6px;
+  height: 6px;
+  background: var(--color-warmgray-400);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ========================================
+   TYPOGRAPHY ENHANCEMENTS
+   ======================================== */
+
+/* Large display headings */
+.heading-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+/* Small caps label style */
+.label-caps {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-warmgray-500);
+}
+
+/* Italic accent text */
+.text-accent {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-sage-500);
+}
+
+/* ========================================
+   CARD & SURFACE STYLES
+   ======================================== */
+
+/* Elevated card with warm paper feel */
+.card-paper {
+  background-color: var(--color-cream-50);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  border: 1px solid var(--color-warmgray-200);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(139, 119, 90, 0.05);
+}
+
+/* Sidebar warm panel */
+.sidebar-panel {
+  background: linear-gradient(180deg, var(--color-cream-200) 0%, var(--color-cream-300) 100%);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  border-right: 1px solid var(--color-warmgray-300);
+}
+
+/* ========================================
+   BUTTON REFINEMENTS
+   ======================================== */
+
+/* Outlined scholarly button */
+.btn-scholarly {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border: 1.5px solid var(--color-sage-500);
+  color: var(--color-sage-500);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-scholarly:hover {
+  background: var(--color-sage-500);
+  color: var(--color-cream-50);
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-warmgray-300);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-warmgray-400);
+}
+
+/* ========================================
+   SELECTION STYLING
+   ======================================== */
+
+::selection {
+  background: var(--color-sage-300);
+  color: var(--color-charcoal-900);
+}
+
+/* ========================================
+   ANIMATION UTILITIES
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
