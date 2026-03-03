@@ -19,8 +19,9 @@ chroma_data/
 *.pdf
 *.docx
 *.pptx
-assets/
+/assets/
 references/
+!frontend/public/assets/
 
 # Environment
 .env
