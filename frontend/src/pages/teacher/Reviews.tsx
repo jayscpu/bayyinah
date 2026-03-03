@@ -44,7 +44,12 @@ export default function Reviews() {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-2">
+      {/* Diamond ornament */}
+      <div className="flex justify-center mb-8">
+        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
+      </div>
+
+      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">
         Reviews
       </h1>
 

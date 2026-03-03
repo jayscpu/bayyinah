@@ -54,14 +54,12 @@ export default function StudentCourses() {
         <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
       </div>
 
-      <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
+      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">
         Courses
       </h1>
 
-      <hr className="dotted-divider my-6" />
-
       {/* Enroll bar */}
-      <div className="flex items-center gap-4 mb-12">
+      <div className="flex items-center gap-4 mb-1">
         <span className="label-caps shrink-0">Enroll</span>
         <div className="flex-1 flex items-stretch gap-3">
           <div className="flex-1 flex items-center bg-cream-200 border border-warmgray-200 px-6 py-4">
@@ -83,28 +81,31 @@ export default function StudentCourses() {
         </div>
       </div>
 
-      {/* Course list */}
       <hr className="dotted-divider" />
-      <p className="label-caps mb-8">My Courses</p>
+
       {courses.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-warmgray-400 font-display italic text-xl">No courses yet</p>
+        <div className="text-center py-12">
+          <p className="text-warmgray-400 font-display italic text-lg">No courses yet</p>
           <p className="text-warmgray-400 text-xs mt-3">Enter a course ID above to enroll</p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="timeline">
           {courses.map((course) => (
-            <div key={course.id} className="py-4">
-              <div className="flex items-center gap-3 mb-3">
-                <img src="/assets/diamond.png" alt="" className="h-6 w-6 shrink-0" />
-                <p className="course-card-title">{course.title}</p>
+            <div key={course.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
               </div>
-              {course.description && (
-                <p className="course-card-desc mt-2 ml-9">{course.description}</p>
-              )}
-              <p className="text-[0.6rem] text-warmgray-400 mt-3 ml-9">
-                {(exams[course.id] || []).length} exam{(exams[course.id] || []).length !== 1 ? 's' : ''}
-              </p>
+              <div className="timeline-bar">
+                <div className="flex-1">
+                  <p className="font-serif text-sm text-charcoal-800">{course.title}</p>
+                  <p className="text-xs text-warmgray-400 mt-0.5">
+                    {course.description || 'No description'}
+                  </p>
+                </div>
+                <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                  {(exams[course.id] || []).length} exam{(exams[course.id] || []).length !== 1 ? 's' : ''}
+                </span>
+              </div>
             </div>
           ))}
         </div>
