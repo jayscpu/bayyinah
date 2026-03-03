@@ -16,7 +16,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Bayyina API",
+    title="Bayyinah API",
     description="AI-powered educational assessment platform with Socratic dialogue",
     version="1.0.0",
     lifespan=lifespan,
@@ -35,4 +35,4 @@ app.include_router(api_router)
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "ok", "service": "bayyina-api"}
+    return {"status": "ok", "service": "bayyinah-api"}

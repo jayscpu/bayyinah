@@ -2,10 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Course, Material } from '../../types';
@@ -17,6 +13,7 @@ export default function CourseManage() {
   const [newTitle, setNewTitle] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [creating, setCreating] = useState(false);
+  const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
 
   useEffect(() => {
     loadCourses();
@@ -40,8 +37,7 @@ export default function CourseManage() {
     }
   };
 
-  const handleCreateCourse = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateCourse = async () => {
     if (!newTitle.trim()) return;
     setCreating(true);
     try {
@@ -73,88 +69,135 @@ export default function CourseManage() {
     await loadCourses();
   };
 
+  const handleDeleteMaterial = async (courseId: string, materialId: string) => {
+    if (!confirm('Delete this material?')) return;
+    try {
+      await api.delete(`/courses/${courseId}/materials/${materialId}`);
+      toast.success('Material deleted');
+      await loadCourses();
+    } catch (err: any) {
+      toast.error(err.response?.data?.detail || 'Failed to delete material');
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="label-caps mb-2">Courses</p>
-        <h1 className="heading-display text-4xl text-charcoal-800">Course Management</h1>
-      </div>
+    <div className="animate-fade-in">
+      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-2">
+        Courses
+      </h1>
 
-      {/* Create course */}
-      <Card>
-        <h2 className="font-serif text-lg text-charcoal-800 mb-4">Create New Course</h2>
-        <form onSubmit={handleCreateCourse} className="space-y-4">
-          <Input
-            label="Course Title"
+      <hr className="dotted-divider" />
+
+      {/* Create course bar */}
+      <div className="mb-8">
+        <p className="label-caps mb-3">Create a Course</p>
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="e.g. Information Security"
-            required
+            placeholder="Course Title"
+            className="flex-1 px-4 py-2 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
           />
-          <Input
-            label="Description (optional)"
+          <input
+            type="text"
             value={newDesc}
             onChange={(e) => setNewDesc(e.target.value)}
-            placeholder="Brief course description"
+            placeholder="Description (optional)"
+            className="flex-1 px-4 py-2 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
           />
-          <Button type="submit" disabled={creating}>
-            {creating ? 'Creating...' : 'Create Course'}
-          </Button>
-        </form>
-      </Card>
+          <button
+            onClick={handleCreateCourse}
+            disabled={creating}
+            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+          >
+            {creating ? '...' : 'Create'}
+          </button>
+        </div>
+      </div>
 
-      {/* Course list */}
-      {courses.map((course) => (
-        <Card key={course.id} decorative>
-          <div className="flex justify-between items-start mb-5">
-            <div>
-              <Link to={`/teacher/courses/${course.id}`} className="hover:text-sage-600 transition-colors">
-                <h2 className="font-serif text-xl text-charcoal-800">{course.title}</h2>
-              </Link>
-              {course.description && <p className="text-warmgray-400 text-sm mt-1">{course.description}</p>}
-              <p className="text-xs text-warmgray-400 mt-1">
-                <code className="bg-cream-200 px-1.5 py-0.5 rounded text-xs">{course.id}</code>
+      {/* Course grid — 3 columns, scrollable */}
+      {courses.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-warmgray-400 font-display italic text-lg">No courses yet</p>
+          <p className="text-warmgray-400 text-xs mt-2">Create your first course above</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-0 relative overflow-y-auto max-h-[60vh]">
+          {courses.map((course) => (
+            <div key={course.id} className="course-card px-4 py-5">
+              <div className="flex items-center gap-2 mb-1">
+                <img src="/assets/diamond.png" alt="" className="h-6 w-6 shrink-0" />
+                <p className="course-card-title">{course.title}</p>
+              </div>
+              {course.description && (
+                <p className="course-card-desc">{course.description}</p>
+              )}
+              <p className="text-[0.6rem] text-warmgray-400 mt-2">
+                ID: <code className="text-warmgray-500">{course.id.substring(0, 8)}</code>
                 {course.student_count !== undefined && (
-                  <span className="ml-2">{course.student_count} students enrolled</span>
+                  <span> &middot; {course.student_count} students</span>
                 )}
               </p>
-            </div>
-            <Link to={`/teacher/exams/create?courseId=${course.id}`}>
-              <Button size="sm">Create Exam</Button>
-            </Link>
-          </div>
 
-          {/* Material upload */}
-          <DropZone courseId={course.id} onUpload={handleUpload} />
+              {/* Actions */}
+              <div className="flex gap-3 mt-2">
+                <Link
+                  to={`/teacher/courses/${course.id}`}
+                  className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                >
+                  Details
+                </Link>
+                <button
+                  onClick={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
+                  className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors cursor-pointer"
+                >
+                  Materials
+                </button>
+              </div>
 
-          {/* Material list */}
-          {(materials[course.id] || []).length > 0 && (
-            <div className="mt-4 space-y-2">
-              {(materials[course.id] || []).map((mat) => (
-                <div key={mat.id} className="flex items-center justify-between p-3 paper-warm rounded-sm border border-warmgray-200">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-charcoal-700">{mat.original_name}</span>
-                    <Badge variant={
-                      mat.processing_status === 'completed' ? 'success' :
-                      mat.processing_status === 'processing' ? 'warning' :
-                      mat.processing_status === 'failed' ? 'error' : 'default'
-                    }>
-                      {mat.processing_status}
-                    </Badge>
-                    {mat.chunk_count > 0 && (
-                      <span className="text-xs text-warmgray-400">{mat.chunk_count} chunks</span>
-                    )}
-                  </div>
+              {/* Expanded: materials + upload */}
+              {expandedCourse === course.id && (
+                <div className="mt-4 text-left">
+                  <DropZone courseId={course.id} onUpload={handleUpload} />
+                  {(materials[course.id] || []).length > 0 && (
+                    <div className="mt-3 space-y-1">
+                      {(materials[course.id] || []).map((mat) => (
+                        <div
+                          key={mat.id}
+                          className="flex items-center justify-between px-3 py-2 bg-cream-200 border border-warmgray-200"
+                        >
+                          <span className="text-xs text-charcoal-700">{mat.original_name}</span>
+                          <div className="flex items-center gap-3">
+                            <span className={`text-[0.6rem] uppercase tracking-wider ${
+                              mat.processing_status === 'completed' ? 'text-sage-500' :
+                              mat.processing_status === 'failed' ? 'text-red-400' :
+                              'text-warmgray-400'
+                            }`}>
+                              {mat.processing_status}
+                              {mat.chunk_count > 0 && ` · ${mat.chunk_count} chunks`}
+                            </span>
+                            <button
+                              onClick={() => handleDeleteMaterial(course.id, mat.id)}
+                              className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 transition-colors cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))}
+              )}
             </div>
-          )}
-        </Card>
-      ))}
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -175,14 +218,14 @@ function DropZone({ courseId, onUpload }: { courseId: string; onUpload: (id: str
   return (
     <div
       {...getRootProps()}
-      className={`border border-dashed rounded-sm p-6 text-center cursor-pointer transition-colors
-        ${isDragActive ? 'border-sage-500 bg-sage-500/5' : 'border-warmgray-300 hover:border-sage-400'}`}
+      className={`border border-dashed p-4 text-center cursor-pointer transition-colors ${
+        isDragActive ? 'border-charcoal-600 bg-cream-300' : 'border-warmgray-300 hover:border-warmgray-400'
+      }`}
     >
       <input {...getInputProps()} />
-      <p className="text-warmgray-500 text-sm">
-        {isDragActive ? 'Drop files here...' : 'Drag & drop PDF or PPTX files, or click to select'}
+      <p className="text-warmgray-400 text-xs">
+        {isDragActive ? 'Drop files here...' : 'Drop PDF/PPTX or click to upload'}
       </p>
-      <p className="text-xs text-warmgray-400 mt-1">Supports PDF and PPTX files up to 50MB</p>
     </div>
   );
 }

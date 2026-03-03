@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import type { Exam, ExamSession } from '../../types';
 
@@ -37,67 +34,69 @@ export default function ExamReview() {
   }
 
   if (!exam) {
-    return <div className="text-center py-20 text-warmgray-500 font-display italic text-lg">Exam not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">Exam not found</div>;
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="label-caps mb-2">Exam Review</p>
-        <h1 className="heading-display text-4xl text-charcoal-800">{exam.title}</h1>
-        <p className="text-warmgray-400 text-sm mt-2">Review student submissions</p>
-      </div>
+    <div className="animate-fade-in max-w-3xl">
+      <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase mb-1">
+        {exam.title}
+      </h1>
+      <p className="text-xs text-warmgray-400 mb-4">Review student submissions</p>
+
+      <hr className="dotted-divider" />
 
       {sessions.length === 0 ? (
-        <Card className="text-center py-12">
+        <div className="text-center py-12">
           <p className="text-warmgray-400 font-display italic text-lg">No submissions yet</p>
-        </Card>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="timeline">
           {sessions.map((session) => (
-            <Card key={session.id}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-serif text-charcoal-800">
-                    Student: {session.student_id.substring(0, 8)}...
-                  </p>
-                  <p className="text-xs text-warmgray-400 mt-0.5">
-                    Started: {new Date(session.started_at).toLocaleDateString()}
-                    {session.completed_at && ` — Completed: ${new Date(session.completed_at).toLocaleDateString()}`}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {session.ai_score !== null && (
-                    <span className="font-display text-lg text-sage-500">
-                      AI: {session.ai_score.toFixed(0)}/100
-                    </span>
-                  )}
-                  <Badge variant={
-                    session.status === 'validated' ? 'success' :
-                    session.status === 'scored' ? 'warning' :
-                    session.status === 'completed' ? 'info' : 'default'
-                  }>
-                    {session.status}
-                  </Badge>
-                  <Link to={`/teacher/sessions/${session.id}/review`}>
-                    <Button size="sm">
-                      {session.status === 'validated' ? 'View' : 'Grade'}
-                    </Button>
-                  </Link>
-                </div>
+            <div key={session.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
               </div>
+              <Link to={`/teacher/sessions/${session.id}/review`} className="block">
+                <div className="timeline-bar hover:bg-cream-300 transition-colors cursor-pointer">
+                  <div className="flex-1">
+                    <p className="font-serif text-sm text-charcoal-800">
+                      Student: {session.student_id.substring(0, 8)}...
+                    </p>
+                    <p className="text-xs text-warmgray-400 mt-0.5">
+                      {session.completed_at
+                        ? `Submitted: ${new Date(session.completed_at).toLocaleDateString()}`
+                        : `Started: ${new Date(session.started_at).toLocaleDateString()}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {session.ai_score !== null && (
+                      <div className="text-right">
+                        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Agent Grade</p>
+                        <p className="font-display text-xl text-charcoal-800">{session.ai_score.toFixed(0)}%</p>
+                      </div>
+                    )}
+                    <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                      {session.status === 'validated' ? 'Graded' :
+                       session.status === 'scored' ? 'Review' :
+                       session.status === 'completed' ? 'Pending' : session.status}
+                    </span>
+                  </div>
+                </div>
+              </Link>
 
+              {/* AI criterion scores inline */}
               {session.ai_criterion_scores && (
-                <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+                <div className="ml-0 mt-1 grid grid-cols-4 gap-1">
                   {Object.entries(session.ai_criterion_scores).filter(([k]) => k !== 'summary').map(([key, val]: [string, any]) => (
-                    <div key={key} className="p-2 paper-warm rounded-sm border border-warmgray-200">
-                      <p className="label-caps text-[0.6rem]">{key}</p>
-                      <p className="font-display text-lg text-charcoal-800 mt-0.5">{val?.score ?? '—'}</p>
+                    <div key={key} className="px-2 py-1 bg-cream-50 border border-warmgray-200 text-center">
+                      <p className="text-[0.55rem] text-warmgray-400 uppercase tracking-wider">{key}</p>
+                      <p className="font-display text-sm text-charcoal-800">{val?.score ?? '—'}</p>
                     </div>
                   ))}
                 </div>
               )}
-            </Card>
+            </div>
           ))}
         </div>
       )}

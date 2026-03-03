@@ -72,7 +72,7 @@ async def evaluate_session(session_id: str, db: AsyncSession):
         transcript=transcript,
     )
 
-    response = chat_completion(
+    response = await chat_completion(
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
         max_tokens=2000,

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam, ExamSession, TeacherGrade } from '../../types';
 
@@ -66,69 +64,97 @@ export default function Results() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="label-caps mb-2">Academic Record</p>
-        <h1 className="heading-display text-4xl text-charcoal-800">My Results</h1>
-        <p className="text-warmgray-400 text-sm mt-2">Grades are visible after teacher validation</p>
+    <div className="animate-fade-in">
+      {/* Diamond ornament */}
+      <div className="flex justify-center mb-8">
+        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
       </div>
 
+      <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
+        Results
+      </h1>
+      <p className="text-xs text-warmgray-400 text-center mt-2">Grades visible after teacher validation</p>
+
+      <hr className="dotted-divider my-6" />
+
       {results.length === 0 ? (
-        <Card className="text-center py-12">
-          <p className="font-display italic text-lg text-warmgray-400">No results yet</p>
-          <p className="text-warmgray-400 text-xs mt-2">Complete an exam to see your results here</p>
-        </Card>
+        <div className="text-center py-16">
+          <p className="font-display italic text-xl text-warmgray-400">No results yet</p>
+          <p className="text-warmgray-400 text-xs mt-3">Complete an exam to see your results here</p>
+        </div>
       ) : (
-        results.map((item) => (
-          <Card key={item.session.id} decorative>
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="font-serif text-xl text-charcoal-800">{item.exam.title}</h2>
-                <p className="text-xs text-warmgray-400 mt-1">{item.course.title}</p>
+        <div className="timeline">
+          {results.map((item) => (
+            <div key={item.session.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
               </div>
-              <Badge variant={
-                item.session.status === 'validated' ? 'success' :
-                item.session.status === 'scored' ? 'warning' :
-                item.session.status === 'completed' ? 'info' : 'default'
-              }>
-                {item.session.status === 'validated' ? 'Graded' :
-                 item.session.status === 'scored' ? 'Under Review' :
-                 item.session.status === 'completed' ? 'Submitted' : 'In Progress'}
-              </Badge>
-            </div>
 
-            {item.grade ? (
-              <div className="mt-6">
-                <div className="text-center py-6">
-                  <div className="heading-display text-7xl text-sage-500">
-                    {item.grade.final_grade}
-                    <span className="text-3xl text-warmgray-300">/5</span>
-                  </div>
-                  <p className="text-warmgray-400 mt-2 font-display italic text-lg">
-                    {gradeLabels[item.grade.final_grade]}
-                  </p>
-                </div>
-
-                {item.grade.feedback && (
-                  <div className="mt-4 p-5 paper-warm rounded-sm border border-warmgray-200">
-                    <p className="label-caps text-[0.6rem] mb-2">Teacher Feedback</p>
-                    <p className="text-charcoal-800 text-sm leading-relaxed">{item.grade.feedback}</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="mt-6 text-center py-6">
-                <div className="ornament-divider mb-4">
-                  <div className="ornament-diamond" />
-                </div>
-                <p className="text-warmgray-400 font-display italic">
-                  Awaiting teacher review
+              {/* Date above bar */}
+              {item.session.completed_at && (
+                <p className="text-[0.65rem] text-charcoal-600 text-right mb-1">
+                  {new Date(item.session.completed_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' })}
                 </p>
+              )}
+
+              <div className="timeline-bar">
+                {/* Left: info */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-serif text-sm text-charcoal-800">
+                    {item.exam.title} – {item.course.title}
+                  </p>
+                  {item.session.completed_at && (
+                    <p className="text-xs text-warmgray-400 mt-0.5">
+                      Submitted: {new Date(item.session.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </p>
+                  )}
+                  {item.grade?.feedback && (
+                    <p className="text-xs text-warmgray-500 mt-1 italic">
+                      Instructor Note: {item.grade.feedback}
+                    </p>
+                  )}
+                </div>
+
+                {/* Right: Agent Grade | Final Grade */}
+                <div className="flex items-center gap-0 shrink-0">
+                  {item.session.ai_score !== null && (
+                    <div className="text-center px-4">
+                      <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Agent Grade</p>
+                      <p className="font-display text-2xl text-charcoal-800">{item.session.ai_score.toFixed(0)}%</p>
+                    </div>
+                  )}
+
+                  {/* Vertical separator */}
+                  {item.session.ai_score !== null && (item.grade || item.session.status !== 'in_progress') && (
+                    <div className="w-px h-10 bg-warmgray-400 mx-2" />
+                  )}
+
+                  {item.grade ? (
+                    <div className="text-center px-4">
+                      <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Final Grade</p>
+                      <p className="font-display text-2xl text-charcoal-800">
+                        {item.grade.final_grade}/5
+                      </p>
+                      <p className="text-[0.55rem] text-warmgray-400 italic">
+                        {gradeLabels[item.grade.final_grade]}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="text-center px-4">
+                      <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Status</p>
+                      <p className="text-xs text-warmgray-400 italic mt-1">
+                        {item.session.status === 'scored' ? 'Under Review' :
+                         item.session.status === 'completed' ? 'Submitted' : 'In Progress'}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-          </Card>
-        ))
+            </div>
+          ))}
+        </div>
       )}
+
     </div>
   );
 }

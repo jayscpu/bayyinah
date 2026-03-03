@@ -2,34 +2,32 @@ import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 
 const studentLinks = [
-  { to: '/student', label: 'Dashboard', end: true },
-  { to: '/student/results', label: 'My Results' },
+  { to: '/student', label: 'Home', end: true },
+  { to: '/student/courses', label: 'Courses' },
+  { to: '/student/results', label: 'Results' },
 ];
 
 const teacherLinks = [
-  { to: '/teacher', label: 'Dashboard', end: true },
+  { to: '/teacher', label: 'Home', end: true },
   { to: '/teacher/courses', label: 'Courses' },
   { to: '/teacher/exams', label: 'Exams' },
+  { to: '/teacher/reviews', label: 'Reviews' },
 ];
 
 export default function Sidebar() {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const links = user?.role === 'teacher' ? teacherLinks : studentLinks;
 
   return (
-    <aside className="w-52 sidebar-panel min-h-[calc(100vh-3.5rem)] px-3 py-6">
-      <nav className="space-y-1">
+    <aside className="sidebar-simple">
+      <nav className="sidebar-nav">
         {links.map((link) => (
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.end}
+            end={'end' in link ? true : undefined}
             className={({ isActive }) =>
-              `block px-4 py-2 rounded-sm text-sm transition-colors duration-150
-              ${isActive
-                ? 'bg-sage-500/15 text-sage-700 font-medium border-l-2 border-sage-500'
-                : 'text-charcoal-600 hover:bg-cream-300/50 hover:text-charcoal-800 font-normal'
-              }`
+              `sidebar-tab ${isActive ? 'active' : ''}`
             }
           >
             {link.label}
@@ -37,12 +35,14 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Decorative bottom element */}
-      <div className="mt-auto pt-8">
-        <div className="ornament-divider px-4">
-          <div className="ornament-diamond" />
-        </div>
-      </div>
+      {user && (
+        <button
+          onClick={logout}
+          className="sidebar-signout"
+        >
+          Sign Out
+        </button>
+      )}
     </aside>
   );
 }

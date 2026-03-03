@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
 import { useAuthStore } from '../../stores/authStore';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam } from '../../types';
 
@@ -13,8 +10,6 @@ export default function StudentDashboard() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Record<string, Exam[]>>({});
   const [loading, setLoading] = useState(true);
-  const [enrollCode, setEnrollCode] = useState('');
-
   useEffect(() => {
     loadData();
   }, []);
@@ -37,83 +32,66 @@ export default function StudentDashboard() {
     }
   };
 
-  const handleEnroll = async () => {
-    if (!enrollCode.trim()) return;
-    try {
-      await api.post(`/courses/${enrollCode.trim()}/enroll`);
-      await loadData();
-      setEnrollCode('');
-    } catch (err: any) {
-      alert(err.response?.data?.detail || 'Enrollment failed');
-    }
-  };
-
   if (loading) {
     return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
   }
 
+  // Build stream items
+  const streamItems: { id: string; text: string; course: string; questions: number; link: string; date: string }[] = [];
+  for (const course of courses) {
+    for (const exam of (exams[course.id] || [])) {
+      streamItems.push({
+        id: exam.id,
+        text: `New exam titled ${exam.title} – ${course.title} has been published.`,
+        course: course.title,
+        questions: exam.question_count,
+        link: `/student/exam/${exam.id}`,
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }),
+      });
+    }
+  }
+
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="label-caps mb-2">Student Dashboard</p>
-        <h1 className="heading-display text-4xl text-charcoal-800">
-          Welcome, {user?.full_name}
-        </h1>
-        <p className="text-warmgray-400 text-sm mt-2">Your enrolled courses and available exams</p>
+    <div className="animate-fade-in">
+      {/* Diamond ornament — centered */}
+      <div className="flex justify-center mb-8">
+        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
       </div>
 
-      {/* Enroll in course */}
-      <Card>
-        <h2 className="font-serif text-lg text-charcoal-800 mb-3">Enroll in a Course</h2>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={enrollCode}
-            onChange={(e) => setEnrollCode(e.target.value)}
-            placeholder="Enter course ID"
-            className="flex-1 px-4 py-2 bg-cream-50 border border-warmgray-200 rounded-sm text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-sage-500"
-          />
-          <Button onClick={handleEnroll} size="sm">Enroll</Button>
+      {/* Welcome */}
+      <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
+        Welcome, {user?.full_name}
+      </h1>
+
+      {/* Colored dotted divider */}
+      <hr className="dotted-divider my-6" />
+
+      {/* STREAM label */}
+      <p className="label-caps mb-5">Stream</p>
+
+      {/* Timeline */}
+      {streamItems.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-warmgray-400 font-display italic text-xl">No notifications yet</p>
         </div>
-      </Card>
-
-      {courses.length === 0 ? (
-        <Card className="text-center py-12">
-          <p className="font-display italic text-lg text-warmgray-400">No courses yet</p>
-          <p className="text-warmgray-400 text-xs mt-2">
-            Ask your teacher for a course ID to enroll
-          </p>
-        </Card>
       ) : (
-        courses.map((course) => (
-          <Card key={course.id} decorative>
-            <h2 className="font-serif text-xl text-charcoal-800">{course.title}</h2>
-            {course.description && (
-              <p className="text-warmgray-400 text-sm mt-1">{course.description}</p>
-            )}
-
-            <div className="mt-5 space-y-3">
-              {(exams[course.id] || []).length === 0 ? (
-                <p className="text-warmgray-400 text-sm font-display italic">No exams available yet</p>
-              ) : (
-                (exams[course.id] || []).map((exam) => (
-                  <div key={exam.id} className="flex items-center justify-between p-4 paper-warm rounded-sm border border-warmgray-200">
-                    <div>
-                      <p className="font-serif text-charcoal-800">{exam.title}</p>
-                      <p className="text-xs text-warmgray-400 mt-0.5">{exam.question_count} questions</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant="success">{exam.status}</Badge>
-                      <Link to={`/student/exam/${exam.id}`}>
-                        <Button size="sm">Start Exam</Button>
-                      </Link>
-                    </div>
-                  </div>
-                ))
-              )}
+        <div className="timeline">
+          {streamItems.map((item) => (
+            <div key={item.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
+              </div>
+              <Link to={item.link} className="block">
+                <div className="timeline-bar hover:bg-warmgray-300 transition-colors cursor-pointer">
+                  <p className="font-serif text-sm text-charcoal-800 flex-1 leading-relaxed">
+                    {item.text}
+                  </p>
+                  <span className="text-xs text-charcoal-600 shrink-0 ml-4">{item.date}</span>
+                </div>
+              </Link>
             </div>
-          </Card>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
 import { useAuthStore } from '../../stores/authStore';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam } from '../../types';
 
@@ -40,76 +37,61 @@ export default function TeacherDashboard() {
     return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
   }
 
+  // Build stream items
+  const streamItems: { id: string; text: string; link: string; date: string }[] = [];
+  for (const course of courses) {
+    for (const exam of exams.filter((e) => e.course_id === course.id)) {
+      streamItems.push({
+        id: exam.id,
+        text: `Exam "${exam.title}" – ${course.title} · ${exam.question_count} questions · ${exam.status}`,
+        link: `/teacher/exams/${exam.id}/manage`,
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }),
+      });
+    }
+  }
+
   return (
-    <div className="space-y-8">
+    <div className="animate-fade-in">
+      {/* Diamond ornament — centered */}
+      <div className="flex justify-center mb-8">
+        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
+      </div>
+
       {/* Welcome */}
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="label-caps mb-2">Teacher Dashboard</p>
-          <h1 className="heading-display text-4xl text-charcoal-800">
-            Welcome, {user?.full_name}
-          </h1>
-          <p className="text-warmgray-400 text-sm mt-2">Manage your courses and exams</p>
+      <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
+        Welcome, Dr. {user?.full_name}
+      </h1>
+
+      {/* Colored dotted divider */}
+      <hr className="dotted-divider my-6" />
+
+      {/* Stream label */}
+      <p className="label-caps mb-5">Stream</p>
+
+      {/* Timeline */}
+      {streamItems.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-warmgray-400 font-display italic text-xl">No notifications yet</p>
         </div>
-        <Link to="/teacher/courses">
-          <Button variant="secondary">Manage Courses</Button>
-        </Link>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-5">
-        <Card className="text-center py-8">
-          <p className="heading-display text-5xl text-sage-500">{courses.length}</p>
-          <p className="label-caps mt-2">Courses</p>
-        </Card>
-        <Card className="text-center py-8">
-          <p className="heading-display text-5xl text-sage-500">{exams.length}</p>
-          <p className="label-caps mt-2">Exams</p>
-        </Card>
-        <Card className="text-center py-8">
-          <p className="heading-display text-5xl text-gold-500">
-            {exams.filter((e) => e.status === 'published').length}
-          </p>
-          <p className="label-caps mt-2">Active Exams</p>
-        </Card>
-      </div>
-
-      {/* Divider */}
-      <div className="ornament-divider">
-        <div className="ornament-diamond" />
-      </div>
-
-      {/* Exams */}
-      <Card decorative>
-        <h2 className="font-serif text-xl text-charcoal-800 mb-5">Your Exams</h2>
-        {exams.length === 0 ? (
-          <p className="text-warmgray-400 text-center py-6 font-display italic text-lg">
-            No exams yet. Create a course and exam to get started.
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {exams.map((exam) => (
-              <div key={exam.id} className="flex items-center justify-between p-4 paper-warm rounded-sm border border-warmgray-200">
-                <div>
-                  <p className="font-serif text-charcoal-800">{exam.title}</p>
-                  <p className="text-xs text-warmgray-400 mt-0.5">{exam.question_count} questions</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Badge variant={
-                    exam.status === 'published' ? 'success' :
-                    exam.status === 'draft' ? 'warning' : 'default'
-                  }>
-                    {exam.status}
-                  </Badge>
-                  <Link to={`/teacher/exams/${exam.id}/review`}>
-                    <Button size="sm" variant="secondary">Review</Button>
-                  </Link>
-                </div>
+      ) : (
+        <div className="timeline">
+          {streamItems.map((item) => (
+            <div key={item.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
               </div>
-            ))}
-          </div>
-        )}
-      </Card>
+              <Link to={item.link} className="block">
+                <div className="timeline-bar hover:bg-warmgray-300 transition-colors cursor-pointer">
+                  <p className="font-serif text-sm text-charcoal-800 flex-1 leading-relaxed">
+                    {item.text}
+                  </p>
+                  <span className="text-xs text-charcoal-600 shrink-0 ml-4">{item.date}</span>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

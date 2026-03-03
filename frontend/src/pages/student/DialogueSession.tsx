@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import type { DialogueMessage } from '../../types';
 
@@ -12,7 +10,9 @@ export default function DialogueSession() {
   const [messages, setMessages] = useState<DialogueMessage[]>([]);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(true);
+  const [starting, setStarting] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
   const [dialogueComplete, setDialogueComplete] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -26,28 +26,41 @@ export default function DialogueSession() {
 
   const loadDialogue = async () => {
     try {
-      // Get existing messages
+      setError('');
       const res = await api.get(`/answers/${answerId}/dialogue`);
       const msgs = res.data;
 
       if (msgs.length === 0) {
-        // Start dialogue — get first Socratic question
-        const startRes = await api.post(`/answers/${answerId}/dialogue/start`);
-        setMessages([startRes.data]);
+        setLoading(false);
+        await startDialogue();
       } else {
         setMessages(msgs);
-        // Check if complete (3 agent + 3 student = 6 messages, or last student message at turn 3)
         const studentMsgsAtTurn3 = msgs.filter(
           (m: DialogueMessage) => m.role === 'student' && m.turn_number >= 3
         );
         if (studentMsgsAtTurn3.length > 0) {
           setDialogueComplete(true);
         }
+        setLoading(false);
       }
     } catch (err) {
       console.error('Failed to load dialogue', err);
-    } finally {
+      setError('Failed to load dialogue');
       setLoading(false);
+    }
+  };
+
+  const startDialogue = async () => {
+    setStarting(true);
+    setError('');
+    try {
+      const startRes = await api.post(`/answers/${answerId}/dialogue/start`);
+      setMessages([startRes.data]);
+    } catch (err: any) {
+      console.error('Failed to start dialogue', err);
+      setError(err.response?.data?.detail || 'Failed to start dialogue. The AI may be temporarily unavailable.');
+    } finally {
+      setStarting(false);
     }
   };
 
@@ -60,24 +73,20 @@ export default function DialogueSession() {
         student_response: response,
       });
 
-      // The response is either a student message (if dialogue complete) or next agent question
       const newMsg = res.data;
 
-      // Add student message first
       const studentMsg: DialogueMessage = {
         id: 'temp-' + Date.now(),
         role: 'student',
         content: response,
-        turn_number: newMsg.turn_number,
+        turn_number: newMsg.role === 'agent' ? newMsg.turn_number - 1 : newMsg.turn_number,
         created_at: new Date().toISOString(),
       };
 
       if (newMsg.role === 'student') {
-        // Dialogue is complete — this was the last student response
         setMessages((prev) => [...prev, newMsg]);
         setDialogueComplete(true);
       } else {
-        // Got next agent question
         setMessages((prev) => [...prev, studentMsg, newMsg]);
       }
       setResponse('');
@@ -93,107 +102,120 @@ export default function DialogueSession() {
   }
 
   const agentMessages = messages.filter((m) => m.role === 'agent');
-  const currentTurn = agentMessages.length;
+  const currentTurn = Math.max(agentMessages.length, 1);
   const lastMessage = messages[messages.length - 1];
   const waitingForStudent = lastMessage?.role === 'agent' && !dialogueComplete;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="label-caps mb-2">Socratic Examination</p>
-          <h1 className="heading-display text-3xl text-charcoal-800">Dialogue</h1>
-          <p className="text-warmgray-400 text-sm mt-1">
-            Turn {currentTurn} of 3
-          </p>
-        </div>
+    <div className="max-w-3xl animate-fade-in">
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase">Dialogue</h1>
         {dialogueComplete && (
-          <Button onClick={() => navigate(-1)}>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors"
+          >
             Return to Exam
-          </Button>
+          </button>
         )}
       </div>
+      <p className="text-xs text-warmgray-400 mb-6">Turn {currentTurn} of 3</p>
 
-      {/* Progress dots */}
-      <div className="flex gap-3">
+      {/* Progress bar */}
+      <div className="flex gap-2 mb-10">
         {[1, 2, 3].map((turn) => (
-          <div key={turn} className="flex-1 flex flex-col items-center gap-1">
-            <div
-              className={`h-1.5 w-full rounded-full transition-colors ${
-                turn <= currentTurn ? 'bg-sage-500' : 'bg-warmgray-200'
-              }`}
-            />
-            <span className={`text-xs ${turn <= currentTurn ? 'text-sage-500' : 'text-warmgray-300'}`}>
-              {turn}
-            </span>
+          <div key={turn} className="flex-1">
+            <div className={`h-[2px] ${turn <= currentTurn ? 'bg-charcoal-800' : 'bg-warmgray-200'}`} />
           </div>
         ))}
       </div>
 
+      {/* Starting state */}
+      {starting && (
+        <div className="flex flex-col items-center py-16">
+          <Spinner size="lg" />
+          <p className="text-warmgray-400 text-xs mt-4 uppercase tracking-wider">Generating first question...</p>
+        </div>
+      )}
+
+      {/* Error state with retry */}
+      {error && !starting && (
+        <div className="text-center py-16">
+          <p className="text-warmgray-400 font-display italic text-lg">{error}</p>
+          <button
+            onClick={startDialogue}
+            className="mt-4 px-6 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
       {/* Chat messages */}
-      <Card decorative className="min-h-[400px] flex flex-col">
-        <div className="flex-1 space-y-4 mb-4 overflow-y-auto max-h-[500px] pr-2">
+      {!starting && !error && (
+        <div className="space-y-10 mb-12 max-h-[600px] overflow-y-auto pr-2">
           {messages.map((msg, i) => (
             <div
               key={msg.id || i}
               className={`flex ${msg.role === 'student' ? 'justify-end' : 'justify-start'} animate-fade-in`}
             >
-              <div
-                className={`max-w-[80%] rounded-sm px-5 py-4 ${
-                  msg.role === 'agent'
-                    ? 'bg-sage-500/5 text-charcoal-800 border border-sage-300/50'
-                    : 'paper-warm text-charcoal-800 border border-warmgray-200'
-                }`}
-              >
-                <p className="label-caps text-[0.6rem] mb-2">
+              <div className={`max-w-[80%] px-6 py-5 ${
+                msg.role === 'agent'
+                  ? 'bg-cream-200 border border-warmgray-200'
+                  : 'bg-cream-50 border border-warmgray-200'
+              }`}>
+                <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mb-3">
                   {msg.role === 'agent' ? 'Examiner' : 'You'} — Turn {msg.turn_number}
                 </p>
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
+                <p className="text-sm text-charcoal-800 whitespace-pre-wrap leading-[1.8]">{msg.content}</p>
               </div>
             </div>
           ))}
           <div ref={chatEndRef} />
         </div>
+      )}
 
-        {/* Input area */}
-        {waitingForStudent && !dialogueComplete && (
-          <div className="border-t border-warmgray-200 pt-4">
-            <div className="flex gap-3">
-              <textarea
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
-                placeholder="Type your response..."
-                className="flex-1 px-4 py-2.5 bg-cream-50 border border-warmgray-200 rounded-sm text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-sage-500 resize-none"
-                rows={3}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendResponse();
-                  }
-                }}
-              />
-              <Button onClick={handleSendResponse} disabled={sending || !response.trim()}>
-                {sending ? '...' : 'Send'}
-              </Button>
-            </div>
-            <p className="text-xs text-warmgray-400 mt-2">
-              Press Enter to send, Shift+Enter for new line
-            </p>
+      {/* Input area */}
+      {waitingForStudent && !dialogueComplete && (
+        <div className="pt-8">
+          <div className="flex gap-3">
+            <textarea
+              value={response}
+              onChange={(e) => setResponse(e.target.value)}
+              placeholder="Type your response..."
+              className="flex-1 px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-none"
+              rows={3}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendResponse();
+                }
+              }}
+            />
+            <button
+              onClick={handleSendResponse}
+              disabled={sending || !response.trim()}
+              className="px-4 self-end py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
+              {sending ? '...' : 'Send'}
+            </button>
           </div>
-        )}
+          <p className="text-[0.6rem] text-warmgray-400 mt-2">Enter to send, Shift+Enter for new line</p>
+        </div>
+      )}
 
-        {dialogueComplete && (
-          <div className="border-t border-warmgray-200 pt-6 text-center">
-            <div className="ornament-divider mb-4">
-              <div className="ornament-diamond" />
-            </div>
-            <p className="text-sage-600 font-display italic text-lg">Dialogue complete for this question</p>
-            <Button className="mt-4" onClick={() => navigate(-1)}>
-              Return to Exam
-            </Button>
-          </div>
-        )}
-      </Card>
+      {dialogueComplete && (
+        <div className="pt-10 text-center">
+          <img src="/assets/diamond.png" alt="" className="ornament-img h-8 mx-auto mb-3" />
+          <p className="font-display italic text-lg text-charcoal-600">Dialogue complete</p>
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-4 px-6 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+          >
+            Return to Exam
+          </button>
+        </div>
+      )}
     </div>
   );
 }

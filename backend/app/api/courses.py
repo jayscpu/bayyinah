@@ -215,22 +215,27 @@ async def enroll_in_course(
     current_user: User = Depends(require_role("student")),
     db: AsyncSession = Depends(get_db),
 ):
-    # Check course exists
+    # Check course exists — support both full UUID and short ID prefix
     result = await db.execute(select(Course).where(Course.id == course_id))
-    if not result.scalar_one_or_none():
+    course = result.scalar_one_or_none()
+    if not course:
+        # Try matching by ID prefix (short code)
+        result = await db.execute(select(Course).where(Course.id.startswith(course_id)))
+        course = result.scalar_one_or_none()
+    if not course:
         raise NotFoundError("Course not found")
 
     # Check not already enrolled
     result = await db.execute(
         select(CourseEnrollment).where(
-            CourseEnrollment.course_id == course_id,
+            CourseEnrollment.course_id == course.id,
             CourseEnrollment.student_id == current_user.id,
         )
     )
     if result.scalar_one_or_none():
         raise ConflictError("Already enrolled in this course")
 
-    enrollment = CourseEnrollment(course_id=course_id, student_id=current_user.id)
+    enrollment = CourseEnrollment(course_id=course.id, student_id=current_user.id)
     db.add(enrollment)
     await db.flush()
     return enrollment

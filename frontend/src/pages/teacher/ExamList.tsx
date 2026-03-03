@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Course, Exam } from '../../types';
@@ -75,73 +72,95 @@ export default function ExamList() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="label-caps mb-2">All Exams</p>
-          <h1 className="heading-display text-4xl text-charcoal-800">Exams</h1>
-        </div>
-        <Link to="/teacher/exams/create">
-          <Button>Create Exam</Button>
+    <div className="animate-fade-in">
+      {/* Diamond ornament */}
+      <div className="flex justify-center mb-8">
+        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
+      </div>
+
+      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">Exams</h1>
+      <div className="flex justify-end mb-1">
+        <Link
+          to="/teacher/exams/create"
+          className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+        >
+          + Create Exam
         </Link>
       </div>
 
+      <hr className="dotted-divider" />
+
       {exams.length === 0 ? (
-        <Card className="text-center py-12">
+        <div className="text-center py-12">
           <p className="text-warmgray-400 font-display italic text-lg">No exams yet</p>
-          <Link to="/teacher/exams/create" className="inline-block mt-4">
-            <Button size="sm">Create Your First Exam</Button>
+          <Link
+            to="/teacher/exams/create"
+            className="inline-block mt-3 text-xs text-warmgray-400 hover:text-charcoal-800 transition-colors"
+          >
+            Create your first exam
           </Link>
-        </Card>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="timeline">
           {exams.map((exam) => (
-            <Card key={exam.id}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-serif text-charcoal-800">{exam.title}</p>
+            <div key={exam.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
+              </div>
+              <div className="timeline-bar">
+                <div className="flex-1">
+                  <p className="font-serif text-sm text-charcoal-800">{exam.title}</p>
                   <p className="text-xs text-warmgray-400 mt-0.5">
                     {getCourseName(exam.course_id)} &middot; {exam.question_count} questions
                   </p>
-                  {exam.description && (
-                    <p className="text-xs text-warmgray-400 mt-1">{exam.description}</p>
-                  )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={
-                    exam.status === 'published' ? 'success' :
-                    exam.status === 'draft' ? 'warning' : 'default'
-                  }>
+                <div className="flex items-center gap-3">
+                  <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
                     {exam.status}
-                  </Badge>
+                  </span>
 
-                  <Link to={`/teacher/exams/${exam.id}/manage`}>
-                    <Button size="sm" variant="secondary">Edit</Button>
+                  <Link
+                    to={`/teacher/exams/${exam.id}/manage`}
+                    className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                  >
+                    Edit
                   </Link>
 
                   {exam.status === 'draft' && (
-                    <Button size="sm" onClick={() => handlePublish(exam.id)}>
+                    <button
+                      onClick={() => handlePublish(exam.id)}
+                      className="text-[0.65rem] text-charcoal-600 uppercase tracking-wider hover:text-charcoal-900 transition-colors cursor-pointer"
+                    >
                       Publish
-                    </Button>
+                    </button>
                   )}
 
                   {exam.status === 'published' && (
                     <>
-                      <Link to={`/teacher/exams/${exam.id}/review`}>
-                        <Button size="sm" variant="secondary">Review</Button>
+                      <Link
+                        to={`/teacher/exams/${exam.id}/review`}
+                        className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                      >
+                        Review
                       </Link>
-                      <Button size="sm" variant="ghost" onClick={() => handleClose(exam.id)}>
+                      <button
+                        onClick={() => handleClose(exam.id)}
+                        className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors cursor-pointer"
+                      >
                         Close
-                      </Button>
+                      </button>
                     </>
                   )}
 
-                  <Button size="sm" variant="danger" onClick={() => handleDelete(exam.id)}>
+                  <button
+                    onClick={() => handleDelete(exam.id)}
+                    className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 transition-colors cursor-pointer"
+                  >
                     Delete
-                  </Button>
+                  </button>
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}

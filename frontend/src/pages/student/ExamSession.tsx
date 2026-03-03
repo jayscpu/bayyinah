@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
-import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
-import TextArea from '../../components/ui/TextArea';
 import type { Exam, ExamQuestion, ExamSession as Session, StudentAnswer } from '../../types';
 
 export default function ExamSession() {
@@ -34,11 +30,9 @@ export default function ExamSession() {
       setExam(examRes.data);
       setQuestions(questionsRes.data);
 
-      // Start or resume session
       const sessionRes = await api.post(`/exams/${examId}/sessions`);
       setSession(sessionRes.data);
 
-      // Load existing answers
       const answersRes = await api.get(`/sessions/${sessionRes.data.id}/answers`);
       setAnswers(answersRes.data);
     } catch (err) {
@@ -63,8 +57,6 @@ export default function ExamSession() {
 
       const res = await api.post(`/sessions/${session.id}/answers`, payload);
       setAnswers([...answers, res.data]);
-
-      // Start Socratic dialogue
       navigate(`/student/dialogue/${res.data.id}`);
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to submit answer');
@@ -84,161 +76,164 @@ export default function ExamSession() {
   }
 
   if (!exam || !session) {
-    return <div className="text-center py-20 text-warmgray-500 font-display italic text-lg">Exam not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">Exam not found</div>;
   }
 
-  // If session is completed, redirect to results
   if (session.status !== 'in_progress') {
     return (
-      <Card className="text-center py-12 max-w-lg mx-auto" decorative>
-        <h2 className="heading-display text-3xl text-charcoal-800 mb-4">Exam Completed</h2>
+      <div className="text-center py-16 animate-fade-in">
+        <img src="/assets/diamond.png" alt="" className="ornament-img h-10 mx-auto mb-6" />
+        <h2 className="font-display text-3xl text-charcoal-800 mb-4">Exam Completed</h2>
         <p className="text-warmgray-400 text-sm mb-6">Your exam has been submitted for review.</p>
-        <Button onClick={() => navigate('/student/results')}>View Results</Button>
-      </Card>
+        <button
+          onClick={() => navigate('/student/results')}
+          className="px-6 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+        >
+          View Results
+        </button>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="label-caps mb-2">Exam in Progress</p>
-        <h1 className="heading-display text-3xl text-charcoal-800">{exam.title}</h1>
-        <p className="text-warmgray-400 text-sm mt-2">
-          {answers.filter((a) => a.dialogue_turns_completed >= 3).length} of {questions.length} questions completed
-        </p>
-      </div>
+    <div className="animate-fade-in">
+      {/* Header */}
+      <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase mb-1">{exam.title}</h1>
+      <p className="text-xs text-warmgray-400 mb-8">
+        {answers.filter((a) => a.dialogue_turns_completed >= 3).length} of {questions.length} completed
+      </p>
 
-      {/* Progress */}
-      <div className="flex gap-2">
-        {questions.map((q) => (
-          <div
-            key={q.id}
-            className={`h-1.5 flex-1 rounded-full transition-colors ${
-              isQuestionDialogueComplete(q.id) ? 'bg-sage-500' :
-              isQuestionAnswered(q.id) ? 'bg-gold-400' : 'bg-warmgray-200'
-            }`}
-          />
-        ))}
-      </div>
+      <hr className="dotted-divider" />
 
-      {/* Question overview */}
+      {/* Question list */}
       {!activeQuestion ? (
-        <div className="grid gap-4">
+        <div className="timeline mt-4">
           {questions.map((q) => {
             const answered = isQuestionAnswered(q.id);
             const complete = isQuestionDialogueComplete(q.id);
             const answer = answers.find((a) => a.question_id === q.id);
 
             return (
-              <Card key={q.id} className={`transition-all ${!complete ? 'cursor-pointer hover:border-sage-400' : ''}`}
-                onClick={() => {
-                  if (complete) return;
-                  if (answered && answer && answer.dialogue_turns_completed < 3) {
-                    navigate(`/student/dialogue/${answer.id}`);
-                  } else if (!answered) {
-                    setActiveQuestion(q);
-                    setAnswerText('');
-                    setMcqSelections({});
-                  }
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="font-display text-lg text-sage-500">Question {q.display_order}</span>
-                      <Badge variant={q.question_type === 'essay' ? 'info' : 'warning'}>
-                        {q.question_type.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <p className="text-charcoal-700 text-sm leading-relaxed">{q.question_text}</p>
-                  </div>
-                  <div className="ml-4">
-                    {complete ? (
-                      <Badge variant="success">Complete</Badge>
-                    ) : answered ? (
-                      <Badge variant="warning">In Dialogue</Badge>
-                    ) : (
-                      <Badge>Not Started</Badge>
-                    )}
-                  </div>
+              <div key={q.id} className="timeline-item">
+                <div className="timeline-bullet">
+                  <img src="/assets/diamond.png" alt="" />
                 </div>
-              </Card>
+                <div
+                  className={`timeline-bar ${!complete ? 'cursor-pointer hover:bg-cream-300' : ''} transition-colors`}
+                  onClick={() => {
+                    if (complete) return;
+                    if (answered && answer && answer.dialogue_turns_completed < 3) {
+                      navigate(`/student/dialogue/${answer.id}`);
+                    } else if (!answered) {
+                      setActiveQuestion(q);
+                      setAnswerText('');
+                      setMcqSelections({});
+                    }
+                  }}
+                >
+                  <div className="flex-1">
+                    <p className="font-serif text-sm text-charcoal-800 leading-relaxed">
+                      Q{q.display_order}. {q.question_text}
+                    </p>
+                    <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mt-2">
+                      {q.question_type}
+                    </p>
+                  </div>
+                  <span className="text-xs text-warmgray-400 uppercase tracking-wider ml-4">
+                    {complete ? 'Done' : answered ? 'Continue' : 'Answer'}
+                  </span>
+                </div>
+              </div>
             );
           })}
         </div>
       ) : (
-        /* Active question answering */
-        <Card decorative>
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2">
-              <span className="font-display text-lg text-sage-500">Question {activeQuestion.display_order}</span>
-              <Badge variant={activeQuestion.question_type === 'essay' ? 'info' : 'warning'}>
-                {activeQuestion.question_type.toUpperCase()}
-              </Badge>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => setActiveQuestion(null)}>
-              Back to Questions
-            </Button>
+        /* Active question */
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-6">
+            <p className="label-caps">Question {activeQuestion.display_order}</p>
+            <button
+              onClick={() => setActiveQuestion(null)}
+              className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors"
+            >
+              Back
+            </button>
           </div>
 
-          <p className="text-charcoal-800 font-serif text-lg mb-6 leading-relaxed">{activeQuestion.question_text}</p>
+          <p className="font-serif text-charcoal-800 text-lg mb-10 leading-[1.8]">
+            {activeQuestion.question_text}
+          </p>
 
-          <div className="ornament-divider mb-6">
-            <div className="ornament-diamond" />
-          </div>
+          <hr className="dotted-divider" />
 
           {activeQuestion.question_type === 'essay' ? (
-            <TextArea
-              label="Your Answer"
-              value={answerText}
-              onChange={(e) => setAnswerText(e.target.value)}
-              placeholder="Write your answer here..."
-              rows={6}
-            />
+            <div className="mt-8">
+              <p className="label-caps mb-4">Your Answer</p>
+              <textarea
+                value={answerText}
+                onChange={(e) => setAnswerText(e.target.value)}
+                placeholder="Write your answer here..."
+                className="w-full px-5 py-4 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y min-h-[180px] leading-[1.8]"
+                rows={6}
+              />
+            </div>
           ) : (
-            <div className="space-y-4">
-              <p className="text-xs text-warmgray-400">Select one or more options and provide justification for each selection.</p>
-              {activeQuestion.mcq_options?.map((opt) => (
-                <div key={opt.key} className="border border-warmgray-200 rounded-sm p-4">
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!!mcqSelections[opt.key]}
-                      onChange={(e) => {
-                        setMcqSelections((prev) => {
-                          if (e.target.checked) return { ...prev, [opt.key]: '' };
+            <div className="mt-8">
+              <p className="label-caps mb-6">Select and justify</p>
+              <div className="space-y-5">
+                {activeQuestion.mcq_options?.map((opt) => (
+                  <div
+                    key={opt.key}
+                    className={`bg-cream-200 border px-5 py-5 cursor-pointer transition-colors ${
+                      opt.key in mcqSelections ? 'border-charcoal-600' : 'border-warmgray-200'
+                    }`}
+                    onClick={() => {
+                      setMcqSelections((prev) => {
+                        if (opt.key in prev) {
                           const { [opt.key]: _, ...rest } = prev;
                           return rest;
-                        });
-                      }}
-                      className="mt-1 accent-sage-500"
-                    />
-                    <div className="flex-1">
-                      <span className="font-serif text-charcoal-800">
-                        <span className="text-sage-500">{opt.key}.</span> {opt.text}
+                        }
+                        return { ...prev, [opt.key]: '' };
+                      });
+                    }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <input
+                        type="checkbox"
+                        checked={opt.key in mcqSelections}
+                        readOnly
+                        className="mt-1 accent-charcoal-800 pointer-events-none"
+                      />
+                      <span className="font-serif text-sm text-charcoal-800 leading-relaxed">
+                        {opt.key}. {opt.text}
                       </span>
-                      {mcqSelections[opt.key] !== undefined && (
-                        <textarea
-                          className="w-full mt-2 px-3 py-2 bg-cream-50 border border-warmgray-200 rounded-sm text-sm text-charcoal-800 placeholder-warmgray-400 focus:outline-none focus:border-sage-500 resize-none"
-                          placeholder="Justify your selection..."
-                          value={mcqSelections[opt.key]}
-                          onChange={(e) => setMcqSelections((prev) => ({ ...prev, [opt.key]: e.target.value }))}
-                          rows={2}
-                        />
-                      )}
                     </div>
-                  </label>
-                </div>
-              ))}
+                    {opt.key in mcqSelections && (
+                      <textarea
+                        className="w-full mt-4 px-4 py-3 bg-cream-50 border border-warmgray-200 text-sm text-charcoal-800 placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-none leading-[1.8]"
+                        placeholder="Justify your selection..."
+                        value={mcqSelections[opt.key]}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setMcqSelections((prev) => ({ ...prev, [opt.key]: e.target.value }))}
+                        rows={2}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
-          <div className="mt-6 flex justify-end">
-            <Button onClick={handleSubmitAnswer} disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Submit Answer & Begin Dialogue'}
-            </Button>
+          <div className="mt-10 flex justify-end">
+            <button
+              onClick={handleSubmitAnswer}
+              disabled={submitting}
+              className="px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
+              {submitting ? 'Submitting...' : 'Submit & Begin Dialogue'}
+            </button>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

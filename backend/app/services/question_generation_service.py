@@ -30,7 +30,7 @@ async def generate_exam_questions(exam_id: str, course_id: str, db: AsyncSession
         course_material=context,
     )
 
-    response = chat_completion(
+    response = await chat_completion(
         messages=[
             {"role": "system", "content": "You are an exam question generator. Always respond with valid JSON arrays only."},
             {"role": "user", "content": prompt},

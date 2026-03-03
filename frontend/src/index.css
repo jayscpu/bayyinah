@@ -1,17 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-cream-50: #FAF8F3;
-  --color-cream-100: #F5F0E8;
-  --color-cream-200: #EDE6D8;
-  --color-cream-300: #E0D5C1;
+  --color-cream-100: #F0EBE1;
+  --color-cream-200: #E6E0D4;
+  --color-cream-300: #DDD6C8;
 
   --color-sage-300: #97A888;
   --color-sage-400: #7A8B6A;
   --color-sage-500: #5B6B4A;
   --color-sage-600: #4A5A3C;
-  --color-sage-700: #3A4830;
 
   --color-charcoal-600: #4A4A4A;
   --color-charcoal-700: #3D3D3D;
@@ -26,161 +25,233 @@
   --color-gold-400: #B8A88A;
   --color-gold-500: #9C8E6E;
 
+  --color-accent-400: #9EAFC0;
+  --color-accent-500: #7B90A8;
+
   --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-display: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Base styles */
+/* ========================================
+   BASE
+   ======================================== */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html {
-  background-color: var(--color-cream-50);
-}
-
-body {
+html, body {
+  background-color: var(--color-cream-100);
   font-family: var(--font-sans);
   color: var(--color-charcoal-800);
-  background-color: var(--color-cream-50);
   min-height: 100vh;
   line-height: 1.6;
 }
 
 /* ========================================
-   PAPER TEXTURE — Rich, Visible Paper Feel
+   ILLUSTRATION BLEND — removes white bg
    ======================================== */
+.illustration {
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  user-select: none;
+}
 
-/* Main paper background — used on the full-page body */
+/* ========================================
+   PAPER BACKGROUND
+   ======================================== */
 .paper-bg {
-  position: relative;
   background-color: var(--color-cream-100);
-  background-image:
-    /* Subtle grain noise */
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
-    /* Faint fiber lines */
-    url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='180' x2='400' y2='182' stroke='%23d4c9b8' stroke-width='0.3' opacity='0.2'/%3E%3Cline x1='0' y1='280' x2='400' y2='278' stroke='%23c4b9a8' stroke-width='0.2' opacity='0.15'/%3E%3Cline x1='0' y1='60' x2='400' y2='62' stroke='%23d4c9b8' stroke-width='0.2' opacity='0.1'/%3E%3C/svg%3E");
-}
-
-/* Lighter paper texture for cards */
-.paper-texture {
-  position: relative;
-  background-color: var(--color-cream-50);
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-}
-
-/* Warm paper — slightly tinted for sections */
-.paper-warm {
-  background-color: var(--color-cream-200);
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
 
 /* ========================================
-   DECORATIVE BORDERS & ORNAMENTS
+   SIDEBAR — simple vertical tabs
    ======================================== */
-
-/* Simple double-line decorative border */
-.decorative-border {
-  border: 1.5px solid var(--color-warmgray-300);
+.sidebar-simple {
   position: relative;
+  width: 90px;
+  flex-shrink: 0;
+  background: var(--color-warmgray-300);
+  display: flex;
+  flex-direction: column;
 }
 
-.decorative-border::after {
-  content: '';
-  position: absolute;
-  inset: 5px;
-  border: 1px solid var(--color-warmgray-200);
-  pointer-events: none;
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 16px;
 }
 
-/* Corner flourish decorative border */
-.decorative-corners {
-  position: relative;
-  border: 1px solid var(--color-warmgray-300);
+.sidebar-tab {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  padding: 16px 8px;
+  color: var(--color-charcoal-600);
+  text-decoration: none;
+  transition: color 0.2s, background-color 0.2s;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
 }
 
-.decorative-corners::before,
-.decorative-corners::after {
-  content: '';
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  border-color: var(--color-sage-400);
-  pointer-events: none;
-  opacity: 0.6;
+.sidebar-tab:hover {
+  color: var(--color-charcoal-900);
 }
 
-.decorative-corners::before {
-  top: 6px;
-  left: 6px;
-  border-top: 2px solid;
-  border-left: 2px solid;
+.sidebar-tab.active {
+  color: var(--color-charcoal-900);
+  font-weight: 600;
+  background-color: var(--color-warmgray-200);
 }
 
-.decorative-corners::after {
-  bottom: 6px;
-  right: 6px;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
+.sidebar-signout {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-warmgray-500);
+  padding: 16px 0;
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  align-self: center;
 }
 
-/* Dot-pattern border (inspired by ref image 1) */
-.dot-border {
-  position: relative;
-  border: 1px solid var(--color-warmgray-200);
-}
-
-.dot-border::before {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1px dotted var(--color-warmgray-300);
-  pointer-events: none;
+.sidebar-signout:hover {
+  color: var(--color-charcoal-800);
 }
 
 /* ========================================
-   ORNAMENTAL DIVIDERS
+   FOOTER
    ======================================== */
+.page-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 1.5rem 0 1.25rem;
+  margin-top: auto;
+}
 
-.ornament-divider {
+.page-footer::before {
+  content: '';
+  width: 100%;
+  height: 1px;
+  background: var(--color-charcoal-800);
+}
+
+.footer-quote {
+  font-family: 'Amiri', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-charcoal-800);
+  direction: rtl;
+}
+
+/* ========================================
+   BRAND TEXT (بيّنة)
+   ======================================== */
+.brand-text {
+  font-family: 'Aref Ruqaa', serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--color-charcoal-800);
+  line-height: 1.8;
+  direction: rtl;
+  display: inline-block;
+  padding: 0.5rem 0.25rem;
+}
+
+/* ========================================
+   ORNAMENT (diamond.png)
+   ======================================== */
+.ornament-img {
+  opacity: 0.85;
+}
+
+/* ========================================
+   TIMELINE / STREAM
+   ======================================== */
+.timeline {
+  position: relative;
+  padding-left: 44px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--color-warmgray-400);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.timeline-bullet {
+  position: absolute;
+  left: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  color: var(--color-warmgray-400);
 }
 
-.ornament-divider::before,
-.ornament-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(
-    to var(--direction, right),
-    transparent,
-    var(--color-warmgray-300),
-    transparent
-  );
+.timeline-bullet img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-.ornament-diamond {
-  width: 6px;
-  height: 6px;
-  background: var(--color-warmgray-400);
-  transform: rotate(45deg);
-  flex-shrink: 0;
+.timeline-bar {
+  background-color: #C5BFB4;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 /* ========================================
-   TYPOGRAPHY ENHANCEMENTS
+   DOTTED DIVIDER — colored accent
    ======================================== */
+.dotted-divider {
+  border: none;
+  border-top: 1px dotted var(--color-charcoal-800);
+  margin: 1.5rem auto;
+  max-width: 80%;
+}
 
-/* Large display headings */
+/* ========================================
+   LABEL CAPS
+   ======================================== */
+.label-caps {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-charcoal-600);
+}
+
+/* ========================================
+   HEADING DISPLAY
+   ======================================== */
 .heading-display {
   font-family: var(--font-display);
   font-weight: 400;
@@ -188,119 +259,72 @@ body {
   line-height: 1.2;
 }
 
-/* Small caps label style */
-.label-caps {
-  font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+/* ========================================
+   COURSE CARD (grid)
+   ======================================== */
+.course-card {
+  padding: 1.5rem 2rem;
+}
+
+.course-card-title {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--color-charcoal-800);
+}
+
+.course-card-desc {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
   color: var(--color-warmgray-500);
-}
-
-/* Italic accent text */
-.text-accent {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--color-sage-500);
+  margin-top: 0.5rem;
+  line-height: 1.6;
+  text-align: justify;
 }
 
 /* ========================================
-   CARD & SURFACE STYLES
+   LANDING NAV
    ======================================== */
-
-/* Elevated card with warm paper feel */
-.card-paper {
-  background-color: var(--color-cream-50);
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  border: 1px solid var(--color-warmgray-200);
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.04),
-    0 4px 12px rgba(139, 119, 90, 0.05);
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2.5rem;
+  border-top: 1px solid var(--color-charcoal-800);
+  border-bottom: 1px solid var(--color-charcoal-800);
 }
 
-/* Sidebar warm panel */
-.sidebar-panel {
-  background: linear-gradient(180deg, var(--color-cream-200) 0%, var(--color-cream-300) 100%);
-  background-image:
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  border-right: 1px solid var(--color-warmgray-300);
-}
-
-/* ========================================
-   BUTTON REFINEMENTS
-   ======================================== */
-
-/* Outlined scholarly button */
-.btn-scholarly {
+.landing-nav a {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 10px 24px;
-  border: 1.5px solid var(--color-sage-500);
-  color: var(--color-sage-500);
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.25s ease;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--color-charcoal-700);
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.btn-scholarly:hover {
-  background: var(--color-sage-500);
-  color: var(--color-cream-50);
-}
-
-/* ========================================
-   SCROLLBAR STYLING
-   ======================================== */
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-cream-100);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-warmgray-300);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-warmgray-400);
-}
-
-/* ========================================
-   SELECTION STYLING
-   ======================================== */
-
-::selection {
-  background: var(--color-sage-300);
+.landing-nav a:hover {
   color: var(--color-charcoal-900);
 }
 
 /* ========================================
-   ANIMATION UTILITIES
+   SCROLLBAR
    ======================================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-cream-100); }
+::-webkit-scrollbar-thumb { background: var(--color-warmgray-300); border-radius: 3px; }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+::selection {
+  background: var(--color-accent-400);
+  color: white;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out;
-}
-
+/* ========================================
+   ANIMATIONS
+   ======================================== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -308,4 +332,25 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* ========================================
+   UTILITY (for pages still using old classes)
+   ======================================== */
+.card-paper {
+  background-color: var(--color-cream-50);
+  border: 1px solid var(--color-warmgray-200);
+}
+
+.paper-warm {
+  background-color: var(--color-cream-200);
 }

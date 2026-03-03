@@ -64,7 +64,8 @@ async def upload_material(
         processing_status="pending",
     )
     db.add(material)
-    await db.flush()
+    await db.commit()
+    await db.refresh(material)
 
     # Trigger background RAG ingestion
     background_tasks.add_task(_process_material, material.id, str(file_path), course_id, ext)
@@ -72,41 +73,41 @@ async def upload_material(
     return material
 
 
-def _process_material(material_id: str, file_path: str, course_id: str, file_type: str):
+async def _process_material(material_id: str, file_path: str, course_id: str, file_type: str):
     """Background task to process uploaded material through RAG pipeline."""
-    import asyncio
-    from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+    from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession as AS
     from app.config import settings
     from app.rag.ingestion import ingest_document
 
-    async def run():
-        engine = create_async_engine(settings.DATABASE_URL, echo=False)
-        session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-        async with session_factory() as db:
+    engine = create_async_engine(settings.DATABASE_URL, echo=False)
+    session_factory = async_sessionmaker(engine, class_=AS, expire_on_commit=False)
+    async with session_factory() as db:
+        try:
+            result = await db.execute(select(Material).where(Material.id == material_id))
+            material = result.scalar_one_or_none()
+            if not material:
+                await engine.dispose()
+                return
+
+            material.processing_status = "processing"
+            await db.commit()
+
+            chunk_count = await ingest_document(file_path, file_type, course_id, material_id)
+
+            material.processing_status = "completed"
+            material.chunk_count = chunk_count
+            await db.commit()
+            print(f"Material {material_id} processed: {chunk_count} chunks")
+        except Exception as e:
             try:
-                result = await db.execute(select(Material).where(Material.id == material_id))
-                material = result.scalar_one_or_none()
-                if not material:
-                    return
-
-                material.processing_status = "processing"
-                await db.commit()
-
-                chunk_count = await ingest_document(file_path, file_type, course_id, material_id)
-
-                material.processing_status = "completed"
-                material.chunk_count = chunk_count
-                await db.commit()
-                print(f"Material {material_id} processed: {chunk_count} chunks")
-            except Exception as e:
                 material.processing_status = "failed"
                 await db.commit()
-                import traceback
-                print(f"Material processing failed: {e}")
-                traceback.print_exc()
-        await engine.dispose()
-
-    asyncio.run(run())
+            except Exception:
+                pass
+            import traceback
+            print(f"Material processing failed: {e}")
+            traceback.print_exc()
+    await engine.dispose()
 
 
 @router.get("", response_model=list[MaterialResponse])

@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
-import TextArea from '../../components/ui/TextArea';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Exam, ExamQuestion } from '../../types';
@@ -175,188 +170,230 @@ export default function ExamManage() {
   }
 
   if (!exam) {
-    return <div className="text-center py-20 text-warmgray-500 font-display italic text-lg">Exam not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">Exam not found</div>;
   }
 
   return (
-    <div className="space-y-8 max-w-3xl mx-auto">
+    <div className="max-w-3xl animate-fade-in">
       {/* Header */}
-      <div>
-        <p className="label-caps mb-2">Exam Management</p>
-        <h1 className="heading-display text-4xl text-charcoal-800">{exam.title}</h1>
-        {exam.description && <p className="text-warmgray-400 text-sm mt-2">{exam.description}</p>}
-        <div className="flex items-center gap-3 mt-3">
-          <Badge variant={
-            exam.status === 'published' ? 'success' :
-            exam.status === 'draft' ? 'warning' : 'default'
-          }>
-            {exam.status}
-          </Badge>
-        </div>
-      </div>
+      <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase mb-1">
+        {exam.title}
+      </h1>
+      {exam.description && <p className="text-xs text-warmgray-400 mb-1">{exam.description}</p>}
+      <p className="text-xs text-warmgray-400 uppercase tracking-wider">{exam.status}</p>
+
+      <hr className="dotted-divider" />
 
       {/* Actions */}
-      <Card>
-        <div className="flex flex-wrap gap-2">
-          {exam.status === 'draft' && (
-            <Button onClick={handlePublish}>Publish Exam</Button>
-          )}
-          {exam.status === 'published' && (
-            <Button variant="secondary" onClick={handleClose}>Close Exam</Button>
-          )}
-          {exam.status === 'draft' && (
-            <Button variant="secondary" onClick={handleRegenerate} disabled={regenerating}>
-              {regenerating ? 'Generating...' : 'AI Generate Questions'}
-            </Button>
-          )}
-          {exam.status === 'draft' && (
-            <Button variant="secondary" onClick={() => setShowAddForm(!showAddForm)}>
-              {showAddForm ? 'Cancel' : 'Write Question'}
-            </Button>
-          )}
-          <Button variant="danger" onClick={handleDelete}>Delete Exam</Button>
-        </div>
-      </Card>
+      <div className="flex flex-wrap gap-3 mb-6">
+        {exam.status === 'draft' && (
+          <button
+            onClick={handlePublish}
+            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+          >
+            Publish Exam
+          </button>
+        )}
+        {exam.status === 'published' && (
+          <button
+            onClick={handleClose}
+            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+          >
+            Close Exam
+          </button>
+        )}
+        {exam.status === 'draft' && (
+          <button
+            onClick={handleRegenerate}
+            disabled={regenerating}
+            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+          >
+            {regenerating ? 'Generating...' : 'AI Generate Questions'}
+          </button>
+        )}
+        {exam.status === 'draft' && (
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+          >
+            {showAddForm ? 'Cancel' : 'Write Question'}
+          </button>
+        )}
+        <button
+          onClick={handleDelete}
+          className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-warmgray-400 hover:text-red-400 cursor-pointer transition-colors"
+        >
+          Delete Exam
+        </button>
+      </div>
 
       {/* Add Question Form */}
       {showAddForm && (
-        <Card decorative>
-          <h3 className="font-serif text-lg text-charcoal-800 mb-5">Add Question</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="label-caps mb-2 block">Question Type</label>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setNewType('essay')}
-                  className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors cursor-pointer ${
-                    newType === 'essay'
-                      ? 'bg-sage-500 text-white'
-                      : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-200'
-                  }`}
-                >
-                  Essay
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setNewType('mcq')}
-                  className={`px-4 py-2 rounded-sm text-sm font-medium transition-colors cursor-pointer ${
-                    newType === 'mcq'
-                      ? 'bg-sage-500 text-white'
-                      : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-200'
-                  }`}
-                >
-                  Multiple Choice
-                </button>
-              </div>
-            </div>
+        <div className="bg-cream-200 border border-warmgray-200 p-6 mb-6">
+          <p className="font-serif text-lg text-charcoal-800 mb-4">Add Question</p>
 
-            <TextArea
-              label="Question Text"
+          <div className="mb-4">
+            <p className="label-caps mb-2">Type</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setNewType('essay')}
+                className={`px-4 py-2 text-xs uppercase tracking-wider cursor-pointer transition-colors ${
+                  newType === 'essay'
+                    ? 'bg-charcoal-800 text-cream-100'
+                    : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
+                }`}
+              >
+                Essay
+              </button>
+              <button
+                type="button"
+                onClick={() => setNewType('mcq')}
+                className={`px-4 py-2 text-xs uppercase tracking-wider cursor-pointer transition-colors ${
+                  newType === 'mcq'
+                    ? 'bg-charcoal-800 text-cream-100'
+                    : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
+                }`}
+              >
+                Multiple Choice
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <p className="label-caps mb-2">Question Text</p>
+            <textarea
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
               placeholder="Enter your question..."
               rows={3}
+              className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
             />
-
-            {newType === 'mcq' && (
-              <div className="space-y-2">
-                <label className="label-caps block">Options</label>
-                {newOptions.map((opt, i) => (
-                  <div key={opt.key} className="flex items-center gap-2">
-                    <span className="font-serif text-sage-500 w-6">{opt.key}.</span>
-                    <Input
-                      value={opt.text}
-                      onChange={(e) => {
-                        const updated = [...newOptions];
-                        updated[i] = { ...updated[i], text: e.target.value };
-                        setNewOptions(updated);
-                      }}
-                      placeholder={`Option ${opt.key}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <Button onClick={handleAddQuestion} disabled={addingQuestion}>
-              {addingQuestion ? 'Adding...' : 'Add Question'}
-            </Button>
           </div>
-        </Card>
+
+          {newType === 'mcq' && (
+            <div className="mb-4 space-y-2">
+              <p className="label-caps">Options</p>
+              {newOptions.map((opt, i) => (
+                <div key={opt.key} className="flex items-center gap-2">
+                  <span className="font-serif text-charcoal-600 w-6">{opt.key}.</span>
+                  <input
+                    value={opt.text}
+                    onChange={(e) => {
+                      const updated = [...newOptions];
+                      updated[i] = { ...updated[i], text: e.target.value };
+                      setNewOptions(updated);
+                    }}
+                    placeholder={`Option ${opt.key}`}
+                    className="flex-1 px-3 py-2 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            onClick={handleAddQuestion}
+            disabled={addingQuestion}
+            className="px-6 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+          >
+            {addingQuestion ? 'Adding...' : 'Add Question'}
+          </button>
+        </div>
       )}
 
       {/* Questions */}
       {regenerating ? (
-        <Card className="text-center py-12">
+        <div className="text-center py-12">
           <Spinner />
           <p className="text-warmgray-400 mt-4 font-display italic">Generating questions from course materials...</p>
-        </Card>
+        </div>
       ) : (
-        <div className="space-y-4">
-          <div className="ornament-divider">
-            <div className="ornament-diamond" />
+        <>
+          <div className="flex items-center justify-between mb-4">
+            <p className="label-caps">Questions ({questions.length})</p>
           </div>
 
-          <h2 className="font-serif text-xl text-charcoal-800">Questions ({questions.length})</h2>
-
           {questions.length === 0 ? (
-            <Card className="text-center py-10">
+            <div className="text-center py-10">
               <p className="text-warmgray-400 font-display italic text-lg">No questions yet.</p>
               <p className="text-warmgray-400 text-xs mt-2">
-                Use "AI Generate Questions" from course materials or "Write Question" to add manually.
+                Use "AI Generate Questions" or "Write Question" above.
               </p>
-            </Card>
+            </div>
           ) : (
-            questions.map((q) => (
-              <Card key={q.id}>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="font-display text-sage-500 text-lg">Q{q.display_order}</span>
-                      <Badge variant={q.question_type === 'essay' ? 'info' : 'warning'}>
-                        {q.question_type.toUpperCase()}
-                      </Badge>
+            <div className="space-y-3">
+              {questions.map((q) => (
+                <div key={q.id} className="bg-cream-200 border border-warmgray-200 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-display text-charcoal-800 text-lg">Q{q.display_order}</span>
+                        <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                          {q.question_type}
+                        </span>
+                      </div>
+
+                      {editingId === q.id ? (
+                        <div className="space-y-2">
+                          <textarea
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            rows={3}
+                            className="w-full px-3 py-2 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600 resize-y"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => saveEdit(q.id)}
+                              className="px-3 py-1 bg-cream-50 border border-warmgray-200 text-[0.65rem] uppercase tracking-wider text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditingId(null)}
+                              className="px-3 py-1 text-[0.65rem] uppercase tracking-wider text-warmgray-400 hover:text-charcoal-800 cursor-pointer transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-charcoal-800 text-sm leading-relaxed">{q.question_text}</p>
+                      )}
+
+                      {q.mcq_options && editingId !== q.id && (
+                        <div className="mt-3 space-y-1">
+                          {q.mcq_options.map((opt) => (
+                            <p key={opt.key} className="text-sm text-charcoal-600">
+                              <span className="font-serif text-charcoal-800">{opt.key}.</span> {opt.text}
+                            </p>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
-                    {editingId === q.id ? (
-                      <div className="space-y-2">
-                        <TextArea
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          rows={3}
-                        />
-                        <div className="flex gap-2">
-                          <Button size="sm" onClick={() => saveEdit(q.id)}>Save</Button>
-                          <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>Cancel</Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <p className="text-charcoal-800 text-sm leading-relaxed">{q.question_text}</p>
-                    )}
-
-                    {q.mcq_options && editingId !== q.id && (
-                      <div className="mt-3 space-y-1">
-                        {q.mcq_options.map((opt) => (
-                          <p key={opt.key} className="text-sm text-charcoal-600">
-                            <span className="font-serif text-sage-500">{opt.key}.</span> {opt.text}
-                          </p>
-                        ))}
+                    {editingId !== q.id && exam.status === 'draft' && (
+                      <div className="flex gap-2 shrink-0">
+                        <button
+                          onClick={() => startEdit(q)}
+                          className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => deleteQuestion(q.id)}
+                          className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 cursor-pointer transition-colors"
+                        >
+                          Delete
+                        </button>
                       </div>
                     )}
                   </div>
-
-                  {editingId !== q.id && exam.status === 'draft' && (
-                    <div className="flex gap-1 shrink-0">
-                      <Button size="sm" variant="ghost" onClick={() => startEdit(q)}>Edit</Button>
-                      <Button size="sm" variant="danger" onClick={() => deleteQuestion(q.id)}>Delete</Button>
-                    </div>
-                  )}
                 </div>
-              </Card>
-            ))
+              ))}
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

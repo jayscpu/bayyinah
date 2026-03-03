@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 
 interface CourseStats {
@@ -48,147 +45,121 @@ export default function CourseDetail() {
   }
 
   if (!stats) {
-    return <div className="text-center py-20 text-warmgray-500 font-display italic text-lg">Course not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">Course not found</div>;
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="label-caps mb-2">Course Overview</p>
-          <h1 className="heading-display text-4xl text-charcoal-800">{stats.course.title}</h1>
-          {stats.course.description && (
-            <p className="text-warmgray-400 mt-2 text-sm">{stats.course.description}</p>
-          )}
-        </div>
-        <Link to={`/teacher/exams/create?courseId=${courseId}`}>
-          <Button>Create Exam</Button>
-        </Link>
-      </div>
+    <div className="animate-fade-in max-w-3xl">
+      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase mb-1">
+        {stats.course.title}
+      </h1>
+      {stats.course.description && (
+        <p className="text-xs text-warmgray-400 mb-2">{stats.course.description}</p>
+      )}
+      <p className="text-xs text-warmgray-400">
+        {stats.student_count} students &middot; {stats.exam_stats.length} exams
+      </p>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-4 gap-4">
-        <Card className="text-center py-6">
-          <p className="heading-display text-4xl text-sage-500">{stats.student_count}</p>
-          <p className="label-caps mt-2">Students</p>
-        </Card>
-        <Card className="text-center py-6">
-          <p className="heading-display text-4xl text-sage-500">{stats.exam_stats.length}</p>
-          <p className="label-caps mt-2">Exams</p>
-        </Card>
-        <Card className="text-center py-6">
-          <p className="heading-display text-4xl text-sage-500">
-            {stats.exam_stats.reduce((a, e) => a + e.total_sessions, 0)}
-          </p>
-          <p className="label-caps mt-2">Submissions</p>
-        </Card>
-        <Card className="text-center py-6">
-          <p className="heading-display text-4xl text-gold-500">
-            {stats.pending_reviews.length}
-          </p>
-          <p className="label-caps mt-2">Pending Review</p>
-        </Card>
-      </div>
+      <hr className="dotted-divider" />
 
       {/* Pending Reviews */}
       {stats.pending_reviews.length > 0 && (
         <>
-          <div className="ornament-divider">
-            <div className="ornament-diamond" />
-          </div>
-          <Card decorative>
-            <h2 className="font-serif text-xl text-charcoal-800 mb-5">Pending Reviews</h2>
-            <div className="space-y-3">
-              {stats.pending_reviews.map((review) => (
-                <div key={review.session_id} className="flex items-center justify-between p-4 paper-warm rounded-sm border border-warmgray-200">
-                  <div>
-                    <p className="font-serif text-charcoal-800">{review.student_name}</p>
-                    <p className="text-xs text-warmgray-400 mt-0.5">
-                      {review.exam_title}
-                      {review.completed_at && ` — ${new Date(review.completed_at).toLocaleDateString()}`}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {review.ai_score !== null && (
-                      <span className="font-display text-sage-500 text-lg">
-                        AI: {review.ai_score.toFixed(0)}/100
-                      </span>
-                    )}
-                    <Badge variant={review.status === 'scored' ? 'warning' : 'info'}>
-                      {review.status}
-                    </Badge>
-                    <Link to={`/teacher/sessions/${review.session_id}/review`}>
-                      <Button size="sm">Grade</Button>
-                    </Link>
-                  </div>
+          <p className="label-caps mb-4">Pending Reviews</p>
+          <div className="timeline mb-8">
+            {stats.pending_reviews.map((review) => (
+              <div key={review.session_id} className="timeline-item">
+                <div className="timeline-bullet">
+                  <img src="/assets/diamond.png" alt="" />
                 </div>
-              ))}
-            </div>
-          </Card>
+                <Link to={`/teacher/sessions/${review.session_id}/review`} className="block">
+                  <div className="timeline-bar hover:bg-cream-300 transition-colors cursor-pointer">
+                    <div className="flex-1">
+                      <p className="font-serif text-sm text-charcoal-800">{review.student_name}</p>
+                      <p className="text-xs text-warmgray-400 mt-0.5">
+                        {review.exam_title}
+                        {review.completed_at && ` — ${new Date(review.completed_at).toLocaleDateString()}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {review.ai_score !== null && (
+                        <div className="text-right">
+                          <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">AI</p>
+                          <p className="font-display text-lg text-charcoal-800">{review.ai_score.toFixed(0)}%</p>
+                        </div>
+                      )}
+                      <span className="text-xs text-warmgray-400 uppercase tracking-wider">Grade</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+          <hr className="dotted-divider" />
         </>
       )}
 
       {/* Exams */}
-      <Card>
-        <h2 className="font-serif text-xl text-charcoal-800 mb-5">Exams</h2>
-        {stats.exam_stats.length === 0 ? (
-          <p className="text-warmgray-400 font-display italic text-center py-6">No exams yet</p>
-        ) : (
-          <div className="space-y-3">
-            {stats.exam_stats.map((exam) => (
-              <div key={exam.id} className="flex items-center justify-between p-4 paper-warm rounded-sm border border-warmgray-200">
-                <div>
-                  <p className="font-serif text-charcoal-800">{exam.title}</p>
-                  <p className="text-xs text-warmgray-400 mt-0.5">
-                    {exam.total_sessions} submissions &middot; {exam.completed} completed &middot; {exam.validated} graded
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={
-                    exam.status === 'published' ? 'success' :
-                    exam.status === 'draft' ? 'warning' : 'default'
-                  }>
-                    {exam.status}
-                  </Badge>
-                  {exam.pending_review > 0 && (
-                    <Badge variant="error">{exam.pending_review} to review</Badge>
-                  )}
-                  <Link to={`/teacher/exams/${exam.id}/manage`}>
-                    <Button size="sm" variant="secondary">Manage</Button>
-                  </Link>
-                  {exam.total_sessions > 0 && (
-                    <Link to={`/teacher/exams/${exam.id}/review`}>
-                      <Button size="sm" variant="secondary">Review</Button>
-                    </Link>
-                  )}
-                </div>
+      <p className="label-caps mb-4">Exams</p>
+      {stats.exam_stats.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-warmgray-400 font-display italic text-lg">No exams yet</p>
+        </div>
+      ) : (
+        <div className="timeline mb-8">
+          {stats.exam_stats.map((exam) => (
+            <div key={exam.id} className="timeline-item">
+              <div className="timeline-bullet">
+                <img src="/assets/diamond.png" alt="" />
               </div>
-            ))}
-          </div>
-        )}
-      </Card>
+              <Link to={`/teacher/exams/${exam.id}/manage`} className="block">
+                <div className="timeline-bar hover:bg-cream-300 transition-colors cursor-pointer">
+                  <div className="flex-1">
+                    <p className="font-serif text-sm text-charcoal-800">{exam.title}</p>
+                    <p className="text-xs text-warmgray-400 mt-0.5">
+                      {exam.total_sessions} submissions &middot; {exam.completed} completed &middot; {exam.validated} graded
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                      {exam.status}
+                    </span>
+                    {exam.pending_review > 0 && (
+                      <span className="text-[0.6rem] text-charcoal-800 uppercase tracking-wider">
+                        {exam.pending_review} to review
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <hr className="dotted-divider" />
 
       {/* Enrolled Students */}
-      <Card>
-        <h2 className="font-serif text-xl text-charcoal-800 mb-5">
-          Enrolled Students ({stats.student_count})
-        </h2>
-        {stats.students.length === 0 ? (
-          <p className="text-warmgray-400 font-display italic text-center py-6">No students enrolled yet</p>
-        ) : (
-          <div className="space-y-2">
-            {stats.students.map((student) => (
-              <div key={student.id} className="flex items-center justify-between p-3 paper-warm rounded-sm border border-warmgray-200">
-                <div>
-                  <p className="font-serif text-charcoal-800 text-sm">{student.full_name}</p>
-                  <p className="text-xs text-warmgray-400">{student.email}</p>
-                </div>
+      <p className="label-caps mb-4">Students ({stats.student_count})</p>
+      {stats.students.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-warmgray-400 font-display italic">No students enrolled yet</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {stats.students.map((student) => (
+            <div
+              key={student.id}
+              className="flex items-center justify-between px-4 py-3 bg-cream-200 border border-warmgray-200"
+            >
+              <div>
+                <p className="font-serif text-sm text-charcoal-800">{student.full_name}</p>
+                <p className="text-xs text-warmgray-400">{student.email}</p>
               </div>
-            ))}
-          </div>
-        )}
-      </Card>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

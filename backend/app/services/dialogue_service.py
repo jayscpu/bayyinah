@@ -80,17 +80,27 @@ async def generate_socratic_question(
         messages.append({"role": "user", "content": SOCRATIC_FOLLOWUP_INSTRUCTION})
 
     # Generate Socratic question
-    response = chat_completion(
+    response = await chat_completion(
         messages=messages,
         temperature=0.7,
         max_tokens=200,
     )
 
+    content = response.strip()
+    if not content:
+        # Retry once if LLM returned empty
+        response = await chat_completion(
+            messages=messages,
+            temperature=0.9,
+            max_tokens=200,
+        )
+        content = response.strip() or "Can you elaborate on your reasoning for this answer?"
+
     # Store the agent's message
     agent_message = DialogueMessage(
         answer_id=answer.id,
         role="agent",
-        content=response.strip(),
+        content=content,
         turn_number=turn_number,
         rag_chunks_used=[c.get("id") for c in chunks],
     )

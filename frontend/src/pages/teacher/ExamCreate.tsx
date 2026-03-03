@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Course } from '../../types';
@@ -46,43 +43,67 @@ export default function ExamCreate() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <div>
-        <p className="label-caps mb-2">New Exam</p>
-        <h1 className="heading-display text-4xl text-charcoal-800">Create Exam</h1>
-      </div>
+    <div className="max-w-2xl animate-fade-in">
+      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase mb-1">
+        Create Exam
+      </h1>
+      <p className="text-xs text-warmgray-400 mb-4">Set up a new exam for your course</p>
 
-      <Card decorative>
-        <form onSubmit={handleCreate} className="space-y-5">
-          <div className="space-y-1.5">
-            <label className="label-caps">Course</label>
-            <select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(e.target.value)}
-              required
-              className="w-full px-4 py-2.5 bg-cream-50 border border-warmgray-200 rounded-sm text-charcoal-800 text-sm focus:outline-none focus:border-sage-500 transition-colors"
-            >
-              <option value="">Select a course</option>
-              {courses.map((c) => (
-                <option key={c.id} value={c.id}>{c.title}</option>
-              ))}
-            </select>
-          </div>
+      <hr className="dotted-divider" />
 
-          <Input label="Exam Title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Midterm Exam" required />
-          <Input label="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief description" />
+      <form onSubmit={handleCreate} className="space-y-5">
+        <div>
+          <p className="label-caps mb-2">Course</p>
+          <select
+            value={selectedCourse}
+            onChange={(e) => setSelectedCourse(e.target.value)}
+            required
+            className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+          >
+            <option value="">Select a course</option>
+            {courses.map((c) => (
+              <option key={c.id} value={c.id}>{c.title}</option>
+            ))}
+          </select>
+        </div>
 
-          {courses.length === 0 && (
-            <p className="text-sm text-warmgray-400 font-display italic">
-              Create a course first and upload materials before creating exams.
-            </p>
-          )}
+        <div>
+          <p className="label-caps mb-2">Exam Title</p>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Midterm Exam"
+            required
+            className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+          />
+        </div>
 
-          <Button type="submit" className="w-full" disabled={creating || !selectedCourse}>
-            {creating ? <Spinner size="sm" /> : 'Create Exam'}
-          </Button>
-        </form>
-      </Card>
+        <div>
+          <p className="label-caps mb-2">Description (optional)</p>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Brief description"
+            className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+          />
+        </div>
+
+        {courses.length === 0 && (
+          <p className="text-sm text-warmgray-400 font-display italic">
+            Create a course first and upload materials before creating exams.
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={creating || !selectedCourse}
+          className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+        >
+          {creating ? <Spinner size="sm" /> : 'Create Exam'}
+        </button>
+      </form>
     </div>
   );
 }

@@ -4,7 +4,7 @@ from pathlib import Path
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./bayyina.db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./bayyinah.db"
 
     # ChromaDB
     CHROMA_PERSIST_DIR: str = "./chroma_data"

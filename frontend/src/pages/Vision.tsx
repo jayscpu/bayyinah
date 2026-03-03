@@ -1,0 +1,56 @@
+import { Link } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+
+export default function Vision() {
+  const { user } = useAuthStore();
+  const dashboardPath = user?.role === 'teacher' ? '/teacher' : '/student';
+
+  return (
+    <div className="min-h-screen paper-bg flex flex-col">
+      {/* Nav bar */}
+      <nav className="landing-nav">
+        <div className="flex gap-8">
+          <Link to="/">Home</Link>
+        </div>
+        <div className="flex gap-8">
+          <Link to="/faq">FAQ</Link>
+          {user ? (
+            <Link to={dashboardPath}>Dashboard</Link>
+          ) : (
+            <Link to="/login">Sign In</Link>
+          )}
+        </div>
+      </nav>
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-8">
+        <div className="w-full max-w-[700px] animate-fade-in">
+          {/* Ornament */}
+          <div className="flex justify-center mb-16">
+            <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
+          </div>
+
+          <div style={{ direction: 'rtl' }}>
+            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] text-justify"
+               style={{ fontFamily: "'Amiri', serif" }}>
+              النظام يكافئ الحفظ لا الفهم، ويصوغ من الطلاب أوعية ذاكرة لا عقول فكر. من يستظهر النص كما ورد يحصد الدرجة، على عكس المتعمق بلغة لم تطابق نموذج الإجابة.
+            </p>
+            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] text-justify mt-6"
+               style={{ fontFamily: "'Amiri', serif" }}>
+              بيّنة: منصة يسلّم إليها الطلاب أعمالهم ويقابلون بسؤال لا درجة، نموذج ذكاء اصطناعي يستقرئ حلولهم، يتبين أمتن حججهم وأوهنها ويولّد أسئلة سقراطية تدفعهم للتبرير، يصل للأستاذ حوارًا منطقيًا لا إجابة منسوخة.
+            </p>
+            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] text-justify mt-6"
+               style={{ fontFamily: "'Amiri', serif" }}>
+              طالبين أحدهم حفظ والآخر فهم، والاختبار لا يواري ذلك
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="page-footer">
+        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
+      </div>
+    </div>
+  );
+}

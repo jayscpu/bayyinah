@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
-import TextArea from '../../components/ui/TextArea';
-import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { ExamSession, StudentAnswer, ExamQuestion, DialogueMessage } from '../../types';
@@ -84,72 +80,64 @@ export default function StudentReview() {
   }
 
   if (!session) {
-    return <div className="text-center py-20 text-warmgray-500 font-display italic text-lg">Session not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">Session not found</div>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="label-caps mb-2">Grading</p>
-          <h1 className="heading-display text-3xl text-charcoal-800">Student Review</h1>
-          {session.ai_score !== null && (
-            <p className="text-warmgray-400 text-sm mt-2">
-              AI Score: <span className="text-sage-500 font-display text-2xl">{session.ai_score.toFixed(1)}/100</span>
-            </p>
-          )}
-        </div>
-        <Badge variant={session.status === 'validated' ? 'success' : 'warning'}>
-          {session.status}
-        </Badge>
+    <div className="max-w-3xl animate-fade-in">
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase">Student Review</h1>
+        <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{session.status}</span>
       </div>
+      {session.ai_score !== null && (
+        <p className="text-xs text-warmgray-400">
+          AI Score: <span className="font-display text-2xl text-charcoal-800">{session.ai_score.toFixed(1)}</span>/100
+        </p>
+      )}
+
+      <hr className="dotted-divider" />
 
       {/* AI Criterion Scores */}
       {session.ai_criterion_scores && (
-        <Card>
-          <h3 className="font-serif text-lg text-charcoal-800 mb-4">AI Score Breakdown</h3>
-          <div className="grid grid-cols-2 gap-4">
+        <>
+          <p className="label-caps mb-3">AI Score Breakdown</p>
+          <div className="grid grid-cols-2 gap-3 mb-6">
             {Object.entries(session.ai_criterion_scores).filter(([k]) => k !== 'summary').map(([key, val]: [string, any]) => (
-              <div key={key} className="p-4 paper-warm rounded-sm border border-warmgray-200">
-                <p className="label-caps text-[0.6rem]">{key}</p>
-                <p className="heading-display text-3xl text-charcoal-800 mt-1">{val?.score ?? '—'}<span className="text-sm text-warmgray-400">/100</span></p>
+              <div key={key} className="bg-cream-200 border border-warmgray-200 p-4">
+                <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{key}</p>
+                <p className="font-display text-3xl text-charcoal-800 mt-1">{val?.score ?? '—'}<span className="text-sm text-warmgray-400">/100</span></p>
                 {val?.reasoning && <p className="text-xs text-warmgray-400 mt-2 leading-relaxed">{val.reasoning}</p>}
               </div>
             ))}
           </div>
           {session.ai_criterion_scores.summary && (
-            <p className="text-sm text-charcoal-600 mt-4 font-display italic">{session.ai_criterion_scores.summary}</p>
+            <p className="text-sm text-charcoal-600 font-display italic mb-6">{session.ai_criterion_scores.summary}</p>
           )}
-        </Card>
+          <hr className="dotted-divider" />
+        </>
       )}
 
       {/* Full Transcript */}
-      <div className="ornament-divider">
-        <div className="ornament-diamond" />
-      </div>
-
-      <h2 className="font-serif text-xl text-charcoal-800">Dialogue Transcript</h2>
+      <p className="label-caps mb-4">Dialogue Transcript</p>
       {fullAnswers.map((fa) => (
-        <Card key={fa.answer.id} decorative>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="font-display text-sage-500 text-lg">Question {fa.question.display_order}</span>
-            <Badge variant={fa.question.question_type === 'essay' ? 'info' : 'warning'}>
-              {fa.question.question_type.toUpperCase()}
-            </Badge>
+        <div key={fa.answer.id} className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="font-display text-charcoal-800 text-lg">Question {fa.question.display_order}</span>
+            <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{fa.question.question_type}</span>
           </div>
 
-          <p className="text-charcoal-800 font-medium mb-4 text-sm leading-relaxed">{fa.question.question_text}</p>
+          <p className="text-charcoal-800 font-medium mb-3 text-sm leading-relaxed">{fa.question.question_text}</p>
 
           {/* Initial answer */}
-          <div className="p-4 paper-warm rounded-sm border border-warmgray-200 mb-4">
-            <p className="label-caps text-[0.6rem] mb-2">Student's Initial Answer</p>
+          <div className="bg-cream-200 border border-warmgray-200 p-4 mb-3">
+            <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mb-2">Student's Initial Answer</p>
             {fa.answer.answer_text ? (
               <p className="text-charcoal-800 text-sm leading-relaxed">{fa.answer.answer_text}</p>
             ) : fa.answer.mcq_selections ? (
               <div className="space-y-1">
                 {fa.answer.mcq_selections.map((sel: any, i: number) => (
                   <p key={i} className="text-sm">
-                    <span className="font-serif text-sage-500">{sel.key}:</span> {sel.justification}
+                    <span className="font-serif text-charcoal-800">{sel.key}:</span> {sel.justification}
                   </p>
                 ))}
               </div>
@@ -157,27 +145,29 @@ export default function StudentReview() {
           </div>
 
           {/* Dialogue turns */}
-          <div className="space-y-3">
+          <div className="space-y-2">
             {fa.dialogue.map((msg) => (
-              <div key={msg.id} className={`p-4 rounded-sm border ${
+              <div key={msg.id} className={`p-4 border ${
                 msg.role === 'agent'
-                  ? 'bg-sage-500/5 border-sage-300/50'
-                  : 'paper-warm border-warmgray-200'
+                  ? 'bg-cream-50 border-warmgray-200'
+                  : 'bg-cream-200 border-warmgray-200'
               }`}>
-                <p className="label-caps text-[0.6rem] mb-1">
+                <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mb-1">
                   {msg.role === 'agent' ? 'Examiner' : 'Student'} — Turn {msg.turn_number}
                 </p>
                 <p className="text-charcoal-800 text-sm leading-relaxed">{msg.content}</p>
               </div>
             ))}
           </div>
-        </Card>
+
+          <hr className="dotted-divider" />
+        </div>
       ))}
 
       {/* Grading section */}
       {session.status !== 'validated' && (
-        <Card decorative>
-          <h2 className="font-serif text-xl text-charcoal-800 mb-5">Assign Grade</h2>
+        <div className="bg-cream-200 border border-warmgray-200 p-6">
+          <p className="font-serif text-xl text-charcoal-800 mb-5">Assign Grade</p>
 
           {/* Grade selector */}
           <div className="flex gap-3 mb-6">
@@ -185,47 +175,63 @@ export default function StudentReview() {
               <button
                 key={g}
                 onClick={() => setGrade(g)}
-                className={`flex-1 p-4 rounded-sm border text-center cursor-pointer transition-all
-                  ${grade === g
-                    ? 'border-sage-500 bg-sage-500/10 text-sage-600'
-                    : 'border-warmgray-200 text-charcoal-600 hover:border-warmgray-400'
-                  }`}
+                className={`flex-1 py-4 border text-center cursor-pointer transition-colors ${
+                  grade === g
+                    ? 'bg-charcoal-800 text-cream-100 border-charcoal-800'
+                    : 'bg-cream-50 border-warmgray-200 text-charcoal-600 hover:bg-cream-300'
+                }`}
               >
-                <div className="heading-display text-3xl">{g}</div>
+                <span className="font-display text-3xl">{g}</span>
               </button>
             ))}
           </div>
 
-          <TextArea
-            label="Feedback (visible to student)"
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Write feedback for the student..."
-            rows={3}
-          />
+          <div className="mb-4">
+            <p className="label-caps mb-2">Feedback (visible to student)</p>
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              placeholder="Write feedback for the student..."
+              rows={3}
+              className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
+            />
+          </div>
 
-          <div className="mt-4">
-            <TextArea
-              label="Internal Notes (teacher only)"
+          <div className="mb-6">
+            <p className="label-caps mb-2">Internal Notes (teacher only)</p>
+            <textarea
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
               placeholder="Your private notes..."
               rows={2}
+              className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
             />
           </div>
 
-          <div className="flex gap-3 mt-6 justify-end">
-            <Button variant="secondary" onClick={() => handleSubmitGrade('re_dialogue_requested')} disabled={submitting}>
-              Request Re-Dialogue
-            </Button>
-            <Button variant="secondary" onClick={() => handleSubmitGrade('overridden')} disabled={submitting}>
-              Override & Save
-            </Button>
-            <Button onClick={() => handleSubmitGrade('approved')} disabled={submitting}>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => handleSubmitGrade('re_dialogue_requested')}
+              disabled={submitting}
+              className="px-4 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-warmgray-400 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
+              Re-Dialogue
+            </button>
+            <button
+              onClick={() => handleSubmitGrade('overridden')}
+              disabled={submitting}
+              className="px-4 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
+              Override
+            </button>
+            <button
+              onClick={() => handleSubmitGrade('approved')}
+              disabled={submitting}
+              className="px-6 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
               {submitting ? 'Submitting...' : 'Approve Grade'}
-            </Button>
+            </button>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
 import toast from 'react-hot-toast';
 
 export default function Register() {
@@ -29,86 +27,108 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen paper-bg flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md animate-fade-in-up">
-        <div className="decorative-corners card-paper p-10">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <Link to="/" className="inline-block mb-6">
-              <span className="heading-display text-3xl text-sage-600">Bayyina</span>
-            </Link>
-            <h1 className="font-serif text-2xl text-charcoal-800">Create Account</h1>
-            <p className="text-warmgray-400 text-xs tracking-wider mt-2 uppercase">Join Bayyina</p>
+    <div className="min-h-screen paper-bg flex flex-col">
+      {/* Nav bar */}
+      <nav className="landing-nav">
+        <div className="flex gap-8">
+          <Link to="/">Home</Link>
+        </div>
+        <div className="flex gap-8">
+          <Link to="/login">Sign In</Link>
+        </div>
+      </nav>
+
+      {/* Form centered */}
+      <div className="flex-1 flex items-center justify-center px-6 py-8">
+        <div className="w-full max-w-sm animate-fade-in-up">
+          {/* Ornament */}
+          <div className="flex justify-center mb-6">
+            <img src="/assets/diamond.png" alt="" className="ornament-img h-10" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="Full Name"
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Your full name"
-              required
-            />
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min. 6 characters"
-              minLength={6}
-              required
-            />
+          <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">Create Account</h1>
+          <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">Join Bayyinah</p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <p className="label-caps mb-2">Full Name</p>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder=""
+                required
+                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+              />
+            </div>
+            <div>
+              <p className="label-caps mb-2">Email</p>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder=""
+                required
+                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+              />
+            </div>
+            <div>
+              <p className="label-caps mb-2">Password</p>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder=""
+                minLength={6}
+                required
+                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+              />
+            </div>
 
             {/* Role selector */}
-            <div className="space-y-2">
-              <label className="label-caps">I am a...</label>
+            <div>
+              <p className="label-caps mb-2">I am a...</p>
               <div className="grid grid-cols-2 gap-3">
-                {(['student', 'teacher'] as const).map((r) => (
+                {([{ value: 'student' as const, label: 'Student' }, { value: 'teacher' as const, label: 'Instructor' }]).map((r) => (
                   <button
-                    key={r}
+                    key={r.value}
                     type="button"
-                    onClick={() => setRole(r)}
-                    className={`p-4 rounded-sm border text-center transition-all duration-200 cursor-pointer
-                      ${role === r
-                        ? 'border-sage-500 bg-sage-500/10 text-sage-600'
-                        : 'border-warmgray-200 text-charcoal-600 hover:border-warmgray-400'
-                      }`}
+                    onClick={() => setRole(r.value)}
+                    className={`py-3 border text-center cursor-pointer transition-colors ${
+                      role === r.value
+                        ? 'bg-charcoal-800 text-cream-100 border-charcoal-800'
+                        : 'bg-cream-200 border-warmgray-200 text-charcoal-600 hover:bg-cream-300'
+                    }`}
                   >
-                    <div className="font-serif text-lg capitalize">{r}</div>
-                    <div className="text-xs text-warmgray-500 mt-1">
-                      {r === 'student' ? 'Take exams & learn' : 'Create exams & grade'}
-                    </div>
+                    <span className="font-serif text-sm">{r.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
               {loading ? 'Creating account...' : 'Create Account'}
-            </Button>
+            </button>
           </form>
 
-          {/* Divider */}
-          <div className="ornament-divider my-8">
-            <div className="ornament-diamond" />
-          </div>
+          <hr className="dotted-divider" />
 
           <p className="text-center text-xs text-charcoal-600">
             Already have an account?{' '}
-            <Link to="/login" className="text-sage-500 hover:text-sage-600 font-medium">
+            <Link to="/login" className="text-charcoal-800 font-medium hover:underline">
               Sign in
             </Link>
           </p>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="page-footer">
+        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
       </div>
     </div>
   );

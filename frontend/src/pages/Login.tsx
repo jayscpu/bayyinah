@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
 import toast from 'react-hot-toast';
 
 export default function Login() {
@@ -28,52 +26,74 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen paper-bg flex items-center justify-center px-4">
-      <div className="w-full max-w-md animate-fade-in-up">
-        <div className="decorative-corners card-paper p-10">
-          {/* Header */}
-          <div className="text-center mb-10">
-            <Link to="/" className="inline-block mb-6">
-              <span className="heading-display text-3xl text-sage-600">Bayyina</span>
-            </Link>
-            <h1 className="font-serif text-2xl text-charcoal-800">Sign In</h1>
-            <p className="text-warmgray-400 text-xs tracking-wider mt-2 uppercase">Welcome back</p>
+    <div className="min-h-screen paper-bg flex flex-col">
+      {/* Nav bar — matching landing page */}
+      <nav className="landing-nav">
+        <div className="flex gap-8">
+          <Link to="/">Home</Link>
+        </div>
+        <div className="flex gap-8">
+          <Link to="/register">Register</Link>
+        </div>
+      </nav>
+
+      {/* Form centered */}
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="w-full max-w-sm animate-fade-in-up">
+          {/* Ornament */}
+          <div className="flex justify-center mb-6">
+            <img src="/assets/diamond.png" alt="" className="ornament-img h-10" />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Your password"
-              required
-            />
-            <Button type="submit" className="w-full" disabled={loading}>
+          <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">Sign In</h1>
+          <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">Welcome back</p>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <p className="label-caps mb-2">Email</p>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder=""
+                required
+                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+              />
+            </div>
+            <div>
+              <p className="label-caps mb-2">Password</p>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder=""
+                required
+                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            >
               {loading ? 'Signing in...' : 'Sign In'}
-            </Button>
+            </button>
           </form>
 
-          {/* Divider */}
-          <div className="ornament-divider my-8">
-            <div className="ornament-diamond" />
-          </div>
+          <hr className="dotted-divider" />
 
           <p className="text-center text-xs text-charcoal-600">
             Don't have an account?{' '}
-            <Link to="/register" className="text-sage-500 hover:text-sage-600 font-medium">
+            <Link to="/register" className="text-charcoal-800 font-medium hover:underline">
               Create one
             </Link>
           </p>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="page-footer">
+        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import asyncio
+
 from openai import OpenAI
 
 from app.config import settings
@@ -11,16 +13,17 @@ def get_llm_client() -> OpenAI:
         _client = OpenAI(
             api_key=settings.OPENROUTER_API_KEY,
             base_url=settings.OPENROUTER_BASE_URL,
+            timeout=30.0,
         )
     return _client
 
 
-def chat_completion(
+def _sync_chat_completion(
     messages: list[dict],
     temperature: float = 0.7,
     max_tokens: int = 500,
 ) -> str:
-    """Send a chat completion request to OpenRouter and return the response text."""
+    """Synchronous chat completion call."""
     client = get_llm_client()
     response = client.chat.completions.create(
         model=settings.LLM_MODEL,
@@ -29,3 +32,14 @@ def chat_completion(
         max_tokens=max_tokens,
     )
     return response.choices[0].message.content or ""
+
+
+async def chat_completion(
+    messages: list[dict],
+    temperature: float = 0.7,
+    max_tokens: int = 500,
+) -> str:
+    """Send a chat completion request to OpenRouter without blocking the event loop."""
+    return await asyncio.to_thread(
+        _sync_chat_completion, messages, temperature, max_tokens
+    )
