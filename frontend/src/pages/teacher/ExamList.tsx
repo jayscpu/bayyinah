@@ -45,7 +45,7 @@ export default function ExamList() {
   const handleClose = async (examId: string) => {
     try {
       await api.post(`/exams/${examId}/close`);
-      toast.success('Exam closed');
+      toast.success('Exam ended');
       loadData();
     } catch (err: any) {
       toast.error(err.response?.data?.detail || 'Failed to close');
@@ -147,7 +147,7 @@ export default function ExamList() {
                         onClick={() => handleClose(exam.id)}
                         className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors cursor-pointer"
                       >
-                        Close
+                        End
                       </button>
                     </>
                   )}
