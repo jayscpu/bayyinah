@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import String, Text, Float, DateTime, ForeignKey, JSON, UniqueConstraint, func
@@ -15,15 +16,15 @@ class StudentAnswer(Base):
     question_id: Mapped[str] = mapped_column(String(36), ForeignKey("exam_questions.id", ondelete="CASCADE"), nullable=False)
 
     # Essay: the full text answer. MCQ: NULL (selections in mcq_selections)
-    answer_text: Mapped[str | None] = mapped_column(Text)
+    answer_text: Mapped[Optional[str]] = mapped_column(Text)
 
     # MCQ selections with justifications as JSON
     # e.g. [{"key": "A", "justification": "Because..."}, {"key": "C", "justification": "..."}]
-    mcq_selections: Mapped[dict | None] = mapped_column(JSON)
+    mcq_selections: Mapped[Optional[dict]] = mapped_column(JSON)
 
     # Per-question AI score
-    ai_question_score: Mapped[float | None] = mapped_column(Float)
-    ai_score_breakdown: Mapped[dict | None] = mapped_column(JSON)
+    ai_question_score: Mapped[Optional[float]] = mapped_column(Float)
+    ai_score_breakdown: Mapped[Optional[dict]] = mapped_column(JSON)
 
     # Dialogue status tracking
     dialogue_turns_completed: Mapped[int] = mapped_column(default=0)

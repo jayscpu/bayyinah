@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import String, Text, Integer, DateTime, ForeignKey, JSON, func
@@ -15,7 +16,7 @@ class DialogueMessage(Base):
     role: Mapped[str] = mapped_column(String(10), nullable=False)  # 'agent' or 'student'
     content: Mapped[str] = mapped_column(Text, nullable=False)
     turn_number: Mapped[int] = mapped_column(Integer, nullable=False)  # 1, 2, or 3
-    rag_chunks_used: Mapped[dict | None] = mapped_column(JSON)
+    rag_chunks_used: Mapped[Optional[dict]] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     # Relationships

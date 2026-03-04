@@ -85,6 +85,16 @@ export interface StudentAnswer {
   answered_at: string;
 }
 
+export interface AnswerWithQuestion {
+  id: string;
+  session_id: string;
+  question_id: string;
+  question_text: string;
+  answer_text: string | null;
+  mcq_selections: { key: string; justification: string }[] | null;
+  dialogue_turns_completed: number;
+}
+
 export interface DialogueMessage {
   id: string;
   role: 'agent' | 'student';

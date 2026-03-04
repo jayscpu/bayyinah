@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 import api from '../../config/api';
 import { useAuthStore } from '../../stores/authStore';
 import Spinner from '../../components/ui/Spinner';
-import type { Course, Exam } from '../../types';
+import type { Course, Exam, ExamSession } from '../../types';
 
 export default function StudentDashboard() {
   const { user } = useAuthStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Record<string, Exam[]>>({});
+  const [completedCount, setCompletedCount] = useState(0);
+  const [inProgressCount, setInProgressCount] = useState(0);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -20,11 +23,28 @@ export default function StudentDashboard() {
       setCourses(res.data);
 
       const examsMap: Record<string, Exam[]> = {};
+      let completed = 0;
+      let inProgress = 0;
+
       for (const course of res.data) {
         const examRes = await api.get(`/exams?course_id=${course.id}`);
         examsMap[course.id] = examRes.data;
+
+        for (const exam of examRes.data) {
+          try {
+            const sessionRes = await api.get(`/exams/${exam.id}/sessions/me`);
+            const session: ExamSession = sessionRes.data;
+            if (session.status === 'in_progress') inProgress++;
+            else if (['completed', 'scored', 'validated'].includes(session.status)) completed++;
+          } catch {
+            // no session for this exam yet
+          }
+        }
       }
+
       setExams(examsMap);
+      setCompletedCount(completed);
+      setInProgressCount(inProgress);
     } catch (err) {
       console.error('Failed to load dashboard data', err);
     } finally {
@@ -65,6 +85,22 @@ export default function StudentDashboard() {
 
       {/* Colored dotted divider */}
       <hr className="dotted-divider my-6" />
+
+      {/* Summary cards */}
+      <div className="dashboard-cards">
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{courses.length}</p>
+          <p className="dashboard-card-label">Courses</p>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{completedCount}</p>
+          <p className="dashboard-card-label">Completed</p>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{inProgressCount}</p>
+          <p className="dashboard-card-label">In Progress</p>
+        </div>
+      </div>
 
       {/* STREAM label */}
       <p className="label-caps mb-5">Stream</p>

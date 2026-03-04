@@ -41,6 +41,10 @@ class VectorStore:
 
     def query(self, course_id: str, query_embedding: list[float], n_results: int = 5) -> list[dict]:
         collection = self.get_collection(course_id)
+        count = collection.count()
+        if count == 0:
+            return []
+        n_results = min(n_results, count)
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=n_results,

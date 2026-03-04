@@ -10,9 +10,18 @@ interface ResultItem {
   grade: TeacherGrade | null;
 }
 
+const gradeLabels: Record<number, string> = {
+  1: 'Poor',
+  2: 'Below Average',
+  3: 'Average',
+  4: 'Good',
+  5: 'Excellent',
+};
+
 export default function Results() {
   const [results, setResults] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     loadResults();
@@ -44,6 +53,7 @@ export default function Results() {
       }
 
       setResults(items);
+      if (items.length > 0) setSelectedId(items[0].session.id);
     } catch (err) {
       console.error('Failed to load results', err);
     } finally {
@@ -55,106 +65,153 @@ export default function Results() {
     return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
   }
 
-  const gradeLabels: Record<number, string> = {
-    1: 'Poor',
-    2: 'Below Average',
-    3: 'Average',
-    4: 'Good',
-    5: 'Excellent',
-  };
+  const selected = results.find(r => r.session.id === selectedId) ?? null;
 
   return (
-    <div className="animate-fade-in">
-      {/* Diamond ornament */}
-      <div className="flex justify-center mb-8">
-        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
+    <div
+      className="animate-fade-in"
+      style={{
+        marginLeft: 'min(calc(570px - 50vw), 8px)',
+        width: 'calc(100vw - 240px)',
+      }}
+    >
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div>
+          <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">Results</h1>
+          <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginTop: '4px' }}>
+            Grades visible after teacher validation
+          </p>
+        </div>
       </div>
 
-      <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
-        Results
-      </h1>
-      <p className="text-xs text-warmgray-400 text-center mt-2">Grades visible after teacher validation</p>
-
-      <hr className="dotted-divider my-6" />
+      {/* Full-width divider */}
+      <div style={{ borderTop: '1px solid #2A2A2A', marginBottom: '0' }} />
 
       {results.length === 0 ? (
-        <div className="text-center py-16">
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
           <p className="font-display italic text-xl text-warmgray-400">No results yet</p>
-          <p className="text-warmgray-400 text-xs mt-3">Complete an exam to see your results here</p>
+          <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>Complete an exam to see your results here</p>
         </div>
       ) : (
-        <div className="timeline">
-          {results.map((item) => (
-            <div key={item.session.id} className="timeline-item">
-              <div className="timeline-bullet">
-                <img src="/assets/diamond.png" alt="" />
-              </div>
+        <div style={{ display: 'flex' }}>
 
-              {/* Date above bar */}
-              {item.session.completed_at && (
-                <p className="text-[0.65rem] text-charcoal-600 text-right mb-1">
-                  {new Date(item.session.completed_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' })}
+          {/* Left panel — result list */}
+          <div style={{ width: '35%', borderRight: '1px solid #D4CCC0', paddingTop: '28px', flexShrink: 0 }}>
+            <p style={{ padding: '0 24px 12px', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92' }}>
+              {results.length} exam{results.length !== 1 ? 's' : ''}
+            </p>
+            <div>
+              {results.map((item) => {
+                const isSelected = item.session.id === selectedId;
+                const statusColor = item.grade ? '#5B6B4A' : item.session.status === 'scored' ? '#9C8E6E' : '#A89E92';
+                return (
+                  <button
+                    key={item.session.id}
+                    onClick={() => setSelectedId(item.session.id)}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '14px 24px',
+                      background: isSelected ? '#DDD6C8' : 'transparent',
+                      border: 'none',
+                      borderLeft: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
+                      cursor: 'pointer',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = '#E6E0D4'; }}
+                    onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+                  >
+                    <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.875rem', color: '#2A2A2A', marginBottom: '3px' }}>
+                      {item.exam.title}
+                    </p>
+                    <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '3px' }}>
+                      {item.course.title}
+                    </p>
+                    <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: statusColor }}>
+                      {item.grade ? `${item.grade.final_grade}/5 · ${gradeLabels[item.grade.final_grade]}` :
+                       item.session.status === 'scored' ? 'Under Review' :
+                       item.session.status === 'completed' ? 'Submitted' : 'In Progress'}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right panel — selected result detail */}
+          <div style={{ flex: 1, paddingTop: '28px', paddingLeft: '48px', paddingRight: '0' }}>
+            {selected && (
+              <div className="animate-fade-in">
+                <h2 className="font-serif" style={{ fontSize: '1.5rem', color: '#2A2A2A', marginBottom: '4px', letterSpacing: '0.02em' }}>
+                  {selected.exam.title}
+                </h2>
+                <p style={{ fontSize: '0.75rem', color: '#A89E92', marginBottom: '20px' }}>
+                  {selected.course.title}
                 </p>
-              )}
 
-              <div className="timeline-bar">
-                {/* Left: info */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-serif text-sm text-charcoal-800">
-                    {item.exam.title} – {item.course.title}
+                {selected.session.completed_at && (
+                  <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '24px' }}>
+                    Submitted {new Date(selected.session.completed_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                   </p>
-                  {item.session.completed_at && (
-                    <p className="text-xs text-warmgray-400 mt-0.5">
-                      Submitted: {new Date(item.session.completed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </p>
-                  )}
-                  {item.grade?.feedback && (
-                    <p className="text-xs text-warmgray-500 mt-1 italic">
-                      Instructor Note: {item.grade.feedback}
-                    </p>
-                  )}
-                </div>
+                )}
 
-                {/* Right: Agent Grade | Final Grade */}
-                <div className="flex items-center gap-0 shrink-0">
-                  {item.session.ai_score !== null && (
-                    <div className="text-center px-4">
-                      <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Agent Grade</p>
-                      <p className="font-display text-2xl text-charcoal-800">{item.session.ai_score.toFixed(0)}%</p>
+                <div style={{ borderTop: '1px dotted #C4BCB0', paddingTop: '24px', display: 'flex', gap: '40px' }}>
+                  {/* AI Score */}
+                  {selected.session.ai_score !== null && (
+                    <div>
+                      <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
+                        Agent Score
+                      </p>
+                      <p style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: '#2A2A2A', lineHeight: 1 }}>
+                        {selected.session.ai_score.toFixed(0)}%
+                      </p>
                     </div>
                   )}
 
-                  {/* Vertical separator */}
-                  {item.session.ai_score !== null && (item.grade || item.session.status !== 'in_progress') && (
-                    <div className="w-px h-10 bg-warmgray-400 mx-2" />
-                  )}
-
-                  {item.grade ? (
-                    <div className="text-center px-4">
-                      <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Final Grade</p>
-                      <p className="font-display text-2xl text-charcoal-800">
-                        {item.grade.final_grade}/5
+                  {/* Final Grade */}
+                  {selected.grade ? (
+                    <div>
+                      <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
+                        Final Grade
                       </p>
-                      <p className="text-[0.55rem] text-warmgray-400 italic">
-                        {gradeLabels[item.grade.final_grade]}
+                      <p style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: '#2A2A2A', lineHeight: 1 }}>
+                        {selected.grade.final_grade}<span style={{ fontSize: '1.25rem', color: '#A89E92' }}>/5</span>
+                      </p>
+                      <p style={{ fontSize: '0.65rem', color: '#7A8B6A', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>
+                        {gradeLabels[selected.grade.final_grade]}
                       </p>
                     </div>
                   ) : (
-                    <div className="text-center px-4">
-                      <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Status</p>
-                      <p className="text-xs text-warmgray-400 italic mt-1">
-                        {item.session.status === 'scored' ? 'Under Review' :
-                         item.session.status === 'completed' ? 'Submitted' : 'In Progress'}
+                    <div>
+                      <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
+                        Status
+                      </p>
+                      <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', color: '#2A2A2A', fontStyle: 'italic' }}>
+                        {selected.session.status === 'scored' ? 'Under Review' :
+                         selected.session.status === 'completed' ? 'Submitted' : 'In Progress'}
                       </p>
                     </div>
                   )}
                 </div>
+
+                {/* Instructor feedback */}
+                {selected.grade?.feedback && (
+                  <div style={{ marginTop: '28px', padding: '16px 20px', background: '#E6E0D4', borderLeft: '2px solid #C4BCB0' }}>
+                    <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
+                      Instructor Note
+                    </p>
+                    <p style={{ fontSize: '0.875rem', color: '#3D3D3D', lineHeight: 1.7, fontStyle: 'italic' }}>
+                      {selected.grade.feedback}
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       )}
-
     </div>
   );
 }

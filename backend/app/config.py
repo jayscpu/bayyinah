@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     # OpenRouter AI
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
-    LLM_MODEL: str = "nvidia/nemotron-3-nano-30b-a3b:free"
+    LLM_MODEL: str = "google/gemma-3n-e4b-it"
+    LLM_FALLBACK_MODEL: str = "google/gemma-3n-e2b-it"
 
     # File Storage
     UPLOAD_DIR: str = "./uploads"

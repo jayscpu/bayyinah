@@ -71,7 +71,7 @@ html, body {
    ======================================== */
 .sidebar-simple {
   position: relative;
-  width: 90px;
+  width: 160px;
   flex-shrink: 0;
   background: var(--color-warmgray-300);
   display: flex;
@@ -82,8 +82,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex: 1;
+  justify-content: flex-start;
+  padding-top: 12px;
   gap: 16px;
 }
 
@@ -112,16 +112,19 @@ html, body {
 }
 
 .sidebar-signout {
-  font-size: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: var(--color-warmgray-500);
-  padding: 16px 0;
+  padding: 16px 8px;
   cursor: pointer;
   transition: color 0.2s;
   background: none;
   border: none;
   align-self: center;
+  width: 100%;
+  text-align: center;
 }
 
 .sidebar-signout:hover {
@@ -142,9 +145,9 @@ html, body {
 
 .page-footer::before {
   content: '';
-  width: 100%;
+  width: 60%;
   height: 1px;
-  background: var(--color-charcoal-800);
+  background: linear-gradient(to right, transparent, #C4BCB0, transparent);
 }
 
 .footer-quote {
@@ -231,11 +234,57 @@ html, body {
 }
 
 /* ========================================
+   DASHBOARD SUMMARY CARDS
+   ======================================== */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  background: transparent;
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-card {
+  background: var(--color-cream-200);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+.dashboard-card-icon {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--color-charcoal-700);
+}
+
+.dashboard-card-value {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 500;
+  color: var(--color-charcoal-800);
+  line-height: 1;
+}
+
+.dashboard-card-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-charcoal-600);
+  margin-top: 0.25rem;
+}
+
+/* ========================================
    DOTTED DIVIDER — colored accent
    ======================================== */
 .dotted-divider {
   border: none;
-  border-top: 1px dotted var(--color-charcoal-800);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #C4BCB0 30%, #C4BCB0 70%, transparent);
   margin: 1.5rem auto;
   max-width: 80%;
 }

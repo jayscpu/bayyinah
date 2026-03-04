@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 
 const studentLinks = [
@@ -20,6 +20,10 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar-simple">
+      <Link to="/" className="flex items-center justify-center px-3 pt-10 pb-4 hover:opacity-80 transition-opacity">
+        <span className="brand-text">بيّنة</span>
+      </Link>
+
       <nav className="sidebar-nav">
         {links.map((link) => (
           <NavLink
@@ -36,12 +40,15 @@ export default function Sidebar() {
       </nav>
 
       {user && (
-        <button
-          onClick={logout}
-          className="sidebar-signout"
-        >
-          Sign Out
-        </button>
+        <>
+          <button
+            onClick={logout}
+            className="sidebar-signout"
+            style={{ marginTop: 'auto', marginBottom: '1rem' }}
+          >
+            Sign Out
+          </button>
+        </>
       )}
     </aside>
   );

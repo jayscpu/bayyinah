@@ -65,6 +65,22 @@ export default function TeacherDashboard() {
       {/* Colored dotted divider */}
       <hr className="dotted-divider my-6" />
 
+      {/* Summary cards */}
+      <div className="dashboard-cards">
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{courses.length}</p>
+          <p className="dashboard-card-label">Courses</p>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{exams.length}</p>
+          <p className="dashboard-card-label">Exams</p>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{exams.reduce((s, e) => s + (e.question_count || 0), 0)}</p>
+          <p className="dashboard-card-label">Questions</p>
+        </div>
+      </div>
+
       {/* Stream label */}
       <p className="label-caps mb-5">Stream</p>
 

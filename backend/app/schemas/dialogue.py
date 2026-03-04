@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -32,6 +34,18 @@ class AnswerResponse(BaseModel):
     dialogue_turns_completed: int
     ai_question_score: float | None
     answered_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class AnswerWithQuestionResponse(BaseModel):
+    id: str
+    session_id: str
+    question_id: str
+    question_text: str
+    answer_text: str | None
+    mcq_selections: list[dict] | None
+    dialogue_turns_completed: int
 
     model_config = {"from_attributes": True}
 

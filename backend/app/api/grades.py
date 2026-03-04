@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Optional
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -91,7 +95,7 @@ async def update_grade(
     return grade
 
 
-@router.get("/grade", response_model=GradeResponse | None)
+@router.get("/grade", response_model=Optional[GradeResponse])
 async def get_grade(
     session_id: str,
     current_user: User = Depends(get_current_user),

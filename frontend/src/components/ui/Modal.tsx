@@ -20,12 +20,80 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-charcoal-900/50" onClick={onClose} />
-      <div className="relative bg-cream-50 rounded-sm shadow-lg max-w-lg w-full mx-4 p-6 decorative-border">
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(26, 26, 26, 0.45)',
+          backdropFilter: 'blur(2px)',
+        }}
+      />
+
+      {/* Panel */}
+      <div
+        style={{
+          position: 'relative',
+          background: 'var(--color-cream-50)',
+          width: '100%',
+          maxWidth: '440px',
+          margin: '0 1rem',
+          padding: '2.5rem',
+          borderTop: '2px solid var(--color-charcoal-800)',
+        }}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '1.25rem',
+            right: '1.25rem',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: 'var(--color-warmgray-400)',
+            fontSize: '1.1rem',
+            lineHeight: 1,
+            padding: '2px 6px',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-charcoal-800)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-warmgray-400)')}
+        >
+          ×
+        </button>
+
+        {/* Diamond ornament */}
+        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+          <img src="/assets/diamond.png" alt="" style={{ height: '1.75rem', display: 'inline-block' }} />
+        </div>
+
+        {/* Title */}
         {title && (
-          <h2 className="font-serif text-xl text-charcoal-800 mb-4">{title}</h2>
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.6rem',
+            fontWeight: 500,
+            color: 'var(--color-charcoal-800)',
+            textAlign: 'center',
+            marginBottom: '1.75rem',
+            letterSpacing: '0.01em',
+          }}>
+            {title}
+          </h2>
         )}
+
         {children}
       </div>
     </div>

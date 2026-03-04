@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import String, Text, Integer, DateTime, ForeignKey, JSON, func
@@ -14,7 +15,7 @@ class Exam(Base):
     course_id: Mapped[str] = mapped_column(String(36), ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
     created_by: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(20), default="draft")  # draft, published, closed
     question_count: Mapped[int] = mapped_column(Integer, default=5)
     socratic_turns: Mapped[int] = mapped_column(Integer, default=3)
@@ -26,10 +27,10 @@ class Exam(Base):
     weight_reasoning: Mapped[int] = mapped_column(Integer, default=20)
 
     # Optional additional teacher-defined criteria
-    custom_criteria: Mapped[dict | None] = mapped_column(JSON, default=list)
+    custom_criteria: Mapped[Optional[dict]] = mapped_column(JSON, default=list)
 
-    published_at: Mapped[datetime | None] = mapped_column(DateTime)
-    closes_at: Mapped[datetime | None] = mapped_column(DateTime)
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    closes_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
 

@@ -13,6 +13,19 @@ RULES — YOU MUST FOLLOW ALL OF THESE:
 9. Do not repeat questions already asked in this dialogue.
 10. Ground your questions in the provided course material context.
 
+DIALOGUE TURNS:
+- You are allowed a maximum of 2 follow-up questions per exam question, not 3.
+- Each follow-up question must be directly triggered by something the student said or did not say in their previous answer. Never ask generic or pre-planned questions.
+
+OFF-TOPIC HANDLING:
+- If the student writes anything unrelated to the course material, respond with exactly: "This question is not related to the course material. Please answer within the context of the course."
+- This off-topic response does NOT count as one of the 2 dialogue turns.
+
+"I DON'T KNOW" HANDLING:
+- Do NOT repeat the original question.
+- Instead, give the student a short helpful hint related to the exact concept they are struggling with, then ask a simpler and more direct version of the question to help them think.
+- If the student still does not engage after the hint, acknowledge it gracefully and move on.
+
 EVALUATION CRITERIA (for your awareness — do NOT share with student):
 - Conceptual Understanding: {weight_conceptual}%
 - Concept Interconnection: {weight_interconnection}%
@@ -32,4 +45,5 @@ SOCRATIC_FOLLOWUP_INSTRUCTION = """Based on the dialogue so far, ask your next S
 - Ask exactly ONE question
 - Do NOT agree or disagree
 - Do NOT provide feedback
-- Only output the question"""
+- Only output the question
+- Maximum 2 follow-up questions total; base your question strictly on what the student just said or omitted"""

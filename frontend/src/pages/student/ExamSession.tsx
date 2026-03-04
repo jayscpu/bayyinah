@@ -81,13 +81,28 @@ export default function ExamSession() {
 
   if (session.status !== 'in_progress') {
     return (
-      <div className="text-center py-16 animate-fade-in">
-        <img src="/assets/diamond.png" alt="" className="ornament-img h-10 mx-auto mb-6" />
-        <h2 className="font-display text-3xl text-charcoal-800 mb-4">Exam Completed</h2>
-        <p className="text-warmgray-400 text-sm mb-6">Your exam has been submitted for review.</p>
+      <div className="animate-fade-in" style={{ textAlign: 'center', paddingTop: '4rem', paddingBottom: '4rem' }}>
+        <img src="/assets/diamond.png" alt="" style={{ height: '2.5rem', margin: '0 auto 1.5rem' }} />
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--color-charcoal-800)', marginBottom: '0.75rem' }}>
+          Exam Completed
+        </h2>
+        <p style={{ fontSize: '0.875rem', color: 'var(--color-warmgray-400)', marginBottom: '2rem' }}>
+          Your exam has been submitted for review.
+        </p>
         <button
           onClick={() => navigate('/student/results')}
-          className="px-6 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+          style={{
+            padding: '0.5rem 1.5rem',
+            background: 'var(--color-cream-200)',
+            border: '1px solid var(--color-warmgray-200)',
+            fontSize: '0.7rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.12em',
+            color: 'var(--color-charcoal-600)',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-charcoal-900)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-charcoal-600)')}
         >
           View Results
         </button>

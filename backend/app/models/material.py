@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import String, Text, Integer, BigInteger, DateTime, ForeignKey, func
@@ -17,7 +18,7 @@ class Material(Base):
     original_name: Mapped[str] = mapped_column(String(255), nullable=False)
     file_type: Mapped[str] = mapped_column(String(10), nullable=False)  # 'pdf' or 'pptx'
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
-    file_size_bytes: Mapped[int | None] = mapped_column(BigInteger)
+    file_size_bytes: Mapped[Optional[int]] = mapped_column(BigInteger)
     processing_status: Mapped[str] = mapped_column(String(20), default="pending")  # pending, processing, completed, failed
     chunk_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

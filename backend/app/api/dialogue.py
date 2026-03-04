@@ -10,7 +10,7 @@ from app.models.student_answer import StudentAnswer
 from app.models.exam_session import ExamSession
 from app.models.question import ExamQuestion
 from app.models.dialogue import DialogueMessage
-from app.schemas.dialogue import AnswerSubmit, AnswerResponse, DialogueResponse, DialogueMessageResponse
+from app.schemas.dialogue import AnswerSubmit, AnswerResponse, AnswerWithQuestionResponse, DialogueResponse, DialogueMessageResponse
 
 router = APIRouter(tags=["dialogue"])
 
@@ -70,6 +70,28 @@ async def get_answers(
     return result.scalars().all()
 
 
+@router.get("/api/answers/{answer_id}", response_model=AnswerWithQuestionResponse)
+async def get_answer_with_question(
+    answer_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    answer = await _get_answer_for_user(answer_id, current_user, db)
+    result = await db.execute(select(ExamQuestion).where(ExamQuestion.id == answer.question_id))
+    question = result.scalar_one_or_none()
+    if not question:
+        raise NotFoundError("Question not found")
+    return {
+        "id": answer.id,
+        "session_id": answer.session_id,
+        "question_id": answer.question_id,
+        "question_text": question.question_text,
+        "answer_text": answer.answer_text,
+        "mcq_selections": answer.mcq_selections,
+        "dialogue_turns_completed": answer.dialogue_turns_completed,
+    }
+
+
 # --- Socratic Dialogue ---
 @router.post("/api/answers/{answer_id}/dialogue/start", response_model=DialogueMessageResponse)
 async def start_dialogue(
@@ -77,6 +99,7 @@ async def start_dialogue(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    import traceback
     answer = await _get_answer_for_user(answer_id, current_user, db)
 
     if answer.dialogue_turns_completed > 0:
@@ -84,7 +107,11 @@ async def start_dialogue(
 
     # Generate first Socratic question
     from app.services.dialogue_service import generate_socratic_question
-    message = await generate_socratic_question(answer, turn_number=1, db=db)
+    try:
+        message = await generate_socratic_question(answer, turn_number=1, db=db)
+    except Exception as e:
+        traceback.print_exc()
+        raise BadRequestError(f"AI error: {type(e).__name__}: {str(e)}")
     return message
 
 
@@ -124,9 +151,9 @@ async def respond_to_dialogue(
     db.add(student_msg)
     await db.flush()
 
-    # Check if dialogue is complete (3 turns)
-    if current_turn >= 3:
-        answer.dialogue_turns_completed = 3
+    # Check if dialogue is complete (2 turns)
+    if current_turn >= 2:
+        answer.dialogue_turns_completed = 2
         await db.flush()
         # Check if all questions answered and dialogues complete
         await _check_exam_completion(answer.session_id, db)
@@ -187,7 +214,7 @@ async def _check_exam_completion(session_id: str, db: AsyncSession):
     if not exam:
         return
 
-    if len(answers) >= exam.question_count and all(a.dialogue_turns_completed >= 3 for a in answers):
+    if len(answers) >= exam.question_count and all(a.dialogue_turns_completed >= 2 for a in answers):
         from datetime import datetime, timezone
         session.status = "completed"
         session.completed_at = datetime.now(timezone.utc)

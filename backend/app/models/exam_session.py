@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import String, Integer, Float, DateTime, ForeignKey, JSON, UniqueConstraint, func
@@ -15,16 +16,16 @@ class ExamSession(Base):
     student_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     status: Mapped[str] = mapped_column(String(20), default="in_progress")  # in_progress, completed, scored, validated
     started_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    completed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime)
 
     # AI preliminary score (0-100)
-    ai_score: Mapped[float | None] = mapped_column(Float)
+    ai_score: Mapped[Optional[float]] = mapped_column(Float)
     # Per-criterion AI scores as JSON
-    ai_criterion_scores: Mapped[dict | None] = mapped_column(JSON)
+    ai_criterion_scores: Mapped[Optional[dict]] = mapped_column(JSON)
 
     current_question_index: Mapped[int] = mapped_column(Integer, default=0)
     # Student's chosen question order as JSON array of question IDs
-    question_order: Mapped[dict | None] = mapped_column(JSON)
+    question_order: Mapped[Optional[dict]] = mapped_column(JSON)
 
     __table_args__ = (UniqueConstraint("exam_id", "student_id"),)
 

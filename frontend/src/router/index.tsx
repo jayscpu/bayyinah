@@ -63,4 +63,6 @@ export const router = createBrowserRouter([
       { path: '/teacher/sessions/:sessionId/review', element: <StudentReview /> },
     ],
   },
+
+  { path: '*', element: <Landing /> },
 ]);
