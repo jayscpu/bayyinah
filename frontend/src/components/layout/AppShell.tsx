@@ -1,8 +1,27 @@
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
 export default function AppShell() {
+  useEffect(() => {
+    const el = document.querySelector('.paper-bg') as HTMLElement;
+    if (el) {
+      el.style.backgroundImage = "url('/assets/courses-bg.jpeg')";
+      el.style.backgroundSize = '50% 50%';
+      el.style.backgroundRepeat = 'repeat';
+      el.style.backgroundPosition = 'top left';
+    }
+    return () => {
+      if (el) {
+        el.style.backgroundImage = '';
+        el.style.backgroundSize = '';
+        el.style.backgroundRepeat = '';
+        el.style.backgroundPosition = '';
+      }
+    };
+  }, []);
+
   return (
     <div className="min-h-screen paper-bg flex">
       <Sidebar />

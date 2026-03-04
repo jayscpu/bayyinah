@@ -6,24 +6,6 @@ import toast from 'react-hot-toast';
 import type { Course, Exam } from '../../types';
 
 export default function ExamList() {
-  useEffect(() => {
-    const paperBg = document.querySelector('.paper-bg') as HTMLElement;
-    if (paperBg) {
-      paperBg.style.backgroundImage = "url('/assets/exam-bg.jpeg')";
-      paperBg.style.backgroundSize = '50% 50%';
-      paperBg.style.backgroundRepeat = 'repeat';
-      paperBg.style.backgroundPosition = 'top left';
-    }
-    return () => {
-      if (paperBg) {
-        paperBg.style.backgroundImage = '';
-        paperBg.style.backgroundSize = '';
-        paperBg.style.backgroundRepeat = '';
-        paperBg.style.backgroundPosition = '';
-      }
-    };
-  }, []);
-
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);

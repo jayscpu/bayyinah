@@ -26,20 +26,28 @@ export default function Vision() {
       <div className="flex-1 flex flex-col items-center justify-center px-8">
         <div className="w-full max-w-[700px] animate-fade-in">
           {/* Ornament */}
-          <div className="flex justify-center mb-16">
+          <div className="flex justify-center mb-40">
             <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
           </div>
 
-          <div style={{ direction: 'rtl' }}>
-            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] text-justify"
+          <div className="mx-auto" style={{ direction: 'rtl', textAlign: 'center' }}>
+            <p className="font-serif text-lg text-charcoal-800 leading-[2.2]"
                style={{ fontFamily: "'Amiri', serif" }}>
-              النظام يكافئ الحفظ لا الفهم، ويصوغ من الطلاب أوعية ذاكرة لا عقول فكر. من يستظهر النص كما ورد يحصد الدرجة، على عكس المتعمق بلغة لم تطابق نموذج الإجابة.
+              النظام يكافئ الحفظ لا الفهم، ويصوغ من الطلاب أوعية ذاكرة لا عقول فكر،
+              <br />
+              من يستظهر النص كما ورد يحصد الدرجة، على عكس المتعمق بلغة لم تطابق نموذج الإجابة.
             </p>
-            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] text-justify mt-6"
+
+            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] mt-10"
                style={{ fontFamily: "'Amiri', serif" }}>
-              بيّنة: منصة يسلّم إليها الطلاب أعمالهم ويقابلون بسؤال لا درجة، نموذج ذكاء اصطناعي يستقرئ حلولهم، يتبين أمتن حججهم وأوهنها ويولّد أسئلة سقراطية تدفعهم للتبرير، يصل للأستاذ حوارًا منطقيًا لا إجابة منسوخة.
+              بيّنة: منصة يسلّم إليها الطلاب أعمالهم ويقابلون بسؤال لا درجة،
+              <br />
+              نموذج ذكاء اصطناعي يستقرئ حلولهم، يتبين أمتن حججهم وأوهنها
+              <br />
+              ويولّد أسئلة سقراطية تدفعهم للتبرير، يصل للأستاذ حوارًا منطقيًا لا إجابة منسوخة.
             </p>
-            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] text-justify mt-6"
+
+            <p className="font-serif text-lg text-charcoal-800 leading-[2.2] mt-10"
                style={{ fontFamily: "'Amiri', serif" }}>
               طالبين أحدهم حفظ والآخر فهم، والاختبار لا يواري ذلك
             </p>
