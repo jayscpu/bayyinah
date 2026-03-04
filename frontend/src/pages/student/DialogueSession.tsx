@@ -119,7 +119,9 @@ export default function DialogueSession() {
           </button>
         )}
       </div>
-      <p className="text-xs text-warmgray-400 mb-6">Turn {currentTurn} of 2</p>
+      <p className="text-xs text-warmgray-400 mb-6">
+        {dialogueComplete ? 'Complete' : `Turn ${currentTurn} of 2`}
+      </p>
 
       {/* Progress bar */}
       <div className="flex gap-2 mb-10">
