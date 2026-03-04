@@ -18,7 +18,7 @@
   --color-charcoal-900: #1A1A1A;
 
   --color-warmgray-200: #D4CCC0;
-  --color-warmgray-300: #C4BCB0;
+  --color-warmgray-300: #D8D1C6;
   --color-warmgray-400: #A89E92;
   --color-warmgray-500: #8C8278;
 
@@ -221,7 +221,7 @@ html, body {
 }
 
 .timeline-bar {
-  background-color: rgba(175, 188, 202, 0.35);
+  background-color: var(--color-warmgray-300);
   padding: 0.85rem 2.5rem;
   display: flex;
   align-items: center;
