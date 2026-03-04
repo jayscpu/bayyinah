@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import Spinner from '../../components/ui/Spinner';
-import type { DialogueMessage } from '../../types';
+import type { DialogueMessage, AnswerWithQuestion } from '../../types';
 
 export default function DialogueSession() {
   const { answerId } = useParams<{ answerId: string }>();
   const navigate = useNavigate();
+  const [answerContext, setAnswerContext] = useState<AnswerWithQuestion | null>(null);
   const [messages, setMessages] = useState<DialogueMessage[]>([]);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(true);
@@ -27,8 +28,12 @@ export default function DialogueSession() {
   const loadDialogue = async () => {
     try {
       setError('');
-      const res = await api.get(`/answers/${answerId}/dialogue`);
-      const msgs = res.data;
+      const [contextRes, msgsRes] = await Promise.all([
+        api.get(`/answers/${answerId}`),
+        api.get(`/answers/${answerId}/dialogue`),
+      ]);
+      setAnswerContext(contextRes.data);
+      const msgs = msgsRes.data;
 
       if (msgs.length === 0) {
         setLoading(false);
@@ -122,6 +127,37 @@ export default function DialogueSession() {
       <p className="text-xs text-warmgray-400 mb-6">
         {dialogueComplete ? 'Complete' : `Turn ${currentTurn} of 2`}
       </p>
+
+      {/* Original Q & A */}
+      {answerContext && (
+        <div className="mb-8 border border-warmgray-200">
+          <div className="px-5 py-4 bg-cream-200 border-b border-warmgray-200">
+            <p className="label-caps mb-2">Question</p>
+            <p className="font-serif text-charcoal-800 text-base leading-[1.8]">
+              {answerContext.question_text}
+            </p>
+          </div>
+          <div className="px-5 py-4 bg-cream-50">
+            <p className="label-caps mb-2">Your Answer</p>
+            {answerContext.answer_text ? (
+              <p className="text-sm text-charcoal-700 leading-[1.8] whitespace-pre-wrap">
+                {answerContext.answer_text}
+              </p>
+            ) : answerContext.mcq_selections?.length ? (
+              <div className="space-y-2">
+                {answerContext.mcq_selections.map((sel, i) => (
+                  <div key={i} className="flex gap-2 text-sm text-charcoal-700">
+                    <span className="font-serif font-semibold">{sel.key}.</span>
+                    <span className="italic text-charcoal-600">{sel.justification}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-warmgray-400 italic">No answer recorded.</p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Progress bar */}
       <div className="flex gap-2 mb-10">
