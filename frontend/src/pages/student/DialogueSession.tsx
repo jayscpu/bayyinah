@@ -36,7 +36,7 @@ export default function DialogueSession() {
       } else {
         setMessages(msgs);
         const studentMsgsAtTurn3 = msgs.filter(
-          (m: DialogueMessage) => m.role === 'student' && m.turn_number >= 3
+          (m: DialogueMessage) => m.role === 'student' && m.turn_number >= 2
         );
         if (studentMsgsAtTurn3.length > 0) {
           setDialogueComplete(true);
@@ -119,11 +119,11 @@ export default function DialogueSession() {
           </button>
         )}
       </div>
-      <p className="text-xs text-warmgray-400 mb-6">Turn {currentTurn} of 3</p>
+      <p className="text-xs text-warmgray-400 mb-6">Turn {currentTurn} of 2</p>
 
       {/* Progress bar */}
       <div className="flex gap-2 mb-10">
-        {[1, 2, 3].map((turn) => (
+        {[1, 2].map((turn) => (
           <div key={turn} className="flex-1">
             <div className={`h-[2px] ${turn <= currentTurn ? 'bg-charcoal-800' : 'bg-warmgray-200'}`} />
           </div>
