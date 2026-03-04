@@ -82,10 +82,15 @@ export default function StudentDashboard() {
                 <img src="/assets/diamond.png" alt="" />
               </div>
               <Link to={item.link} className="block">
-                <div className="timeline-bar hover:bg-warmgray-300 transition-colors cursor-pointer">
-                  <p className="font-serif text-sm text-charcoal-800 flex-1 leading-relaxed">
-                    {item.text}
-                  </p>
+                <div className="timeline-bar transition-colors cursor-pointer">
+                  <div className="flex-1">
+                    <p className="font-serif text-sm text-charcoal-800 leading-relaxed">
+                      {item.text}
+                    </p>
+                    <p className="text-xs text-charcoal-500 mt-1">
+                      {item.course} &middot; {item.questions} question{item.questions !== 1 ? 's' : ''}
+                    </p>
+                  </div>
                   <span className="text-xs text-charcoal-600 shrink-0 ml-4">{item.date}</span>
                 </div>
               </Link>

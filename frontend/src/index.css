@@ -183,6 +183,8 @@ html, body {
 .timeline {
   position: relative;
   padding-left: 44px;
+  margin-left: -40px;
+  margin-right: -40px;
 }
 
 .timeline::before {
@@ -196,7 +198,7 @@ html, body {
 
 .timeline-item {
   position: relative;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .timeline-bullet {
@@ -219,12 +221,13 @@ html, body {
 }
 
 .timeline-bar {
-  background-color: #C5BFB4;
-  padding: 1rem 1.5rem;
+  background-color: rgba(175, 188, 202, 0.35);
+  padding: 0.85rem 2.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
 }
 
 /* ========================================

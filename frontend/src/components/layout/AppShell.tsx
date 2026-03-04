@@ -13,7 +13,7 @@ export default function AppShell() {
         </div>
         {/* Content — centered */}
         <main className="flex-1 flex flex-col items-center px-8">
-          <div className="w-full max-w-[700px]">
+          <div className="w-full max-w-[900px]">
             <Outlet />
           </div>
         </main>
