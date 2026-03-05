@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -5,6 +6,8 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
     full_name: str
+    name_en: Optional[str] = None
+    name_ar: Optional[str] = None
     role: str
 
     @field_validator("role")
@@ -41,6 +44,8 @@ class UserResponse(BaseModel):
     id: str
     email: str
     full_name: str
+    name_en: Optional[str] = None
+    name_ar: Optional[str] = None
     role: str
     is_active: bool
 

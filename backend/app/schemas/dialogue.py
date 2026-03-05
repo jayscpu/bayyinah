@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -54,6 +55,7 @@ class SessionResponse(BaseModel):
     id: str
     exam_id: str
     student_id: str
+    student_name: Optional[str] = None
     status: str
     started_at: datetime
     completed_at: datetime | None

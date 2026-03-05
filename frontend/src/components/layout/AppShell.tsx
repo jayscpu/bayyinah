@@ -1,34 +1,12 @@
-import { useEffect } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
 export default function AppShell() {
-  useEffect(() => {
-    const el = document.querySelector('.paper-bg') as HTMLElement;
-    if (el) {
-      el.style.backgroundImage = "url('/assets/courses-bg.jpeg')";
-      el.style.backgroundSize = '50% 50%';
-      el.style.backgroundRepeat = 'repeat';
-      el.style.backgroundPosition = 'top left';
-    }
-    return () => {
-      if (el) {
-        el.style.backgroundImage = '';
-        el.style.backgroundSize = '';
-        el.style.backgroundRepeat = '';
-        el.style.backgroundPosition = '';
-      }
-    };
-  }, []);
-
   return (
-    <div className="min-h-screen paper-bg flex relative">
-      <Link to="/" className="fixed top-6 right-8 z-50 hover:opacity-80 transition-opacity">
-        <span className="brand-text">بيّنة</span>
-      </Link>
+    <div className="min-h-screen paper-bg">
       <Sidebar />
-      <div className="flex-1 flex flex-col min-h-screen overflow-visible">
+      <div className="flex flex-col min-h-screen" style={{ marginLeft: '160px' }}>
         {/* Content — centered */}
         <main className="flex-1 flex flex-col items-center px-8" style={{ paddingTop: '80px' }}>
           <div className="w-full max-w-[900px]">

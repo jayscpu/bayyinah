@@ -50,6 +50,37 @@ html, body {
   line-height: 1.6;
 }
 
+/* Arabic mode — Amiri for all text, slightly larger to match English visual weight */
+html[dir="rtl"] {
+  font-family: 'Amiri', serif;
+}
+
+html[dir="rtl"] .label-caps {
+  font-size: 150%;
+}
+
+html[dir="rtl"] .sidebar-tab,
+html[dir="rtl"] .sidebar-signout {
+  font-family: 'Amiri', serif;
+  text-transform: none;
+  font-size: 125%;
+}
+
+html[dir="rtl"] .label-caps,
+html[dir="rtl"] .landing-nav a,
+html[dir="rtl"] .course-card-desc,
+html[dir="rtl"] .dashboard-card-label {
+  font-family: 'Amiri', serif;
+  text-transform: none;
+}
+
+html[dir="rtl"] .heading-display,
+html[dir="rtl"] .font-display,
+html[dir="rtl"] .font-serif,
+html[dir="rtl"] h1, html[dir="rtl"] h2 {
+  font-family: 'Amiri', serif;
+}
+
 /* ========================================
    ILLUSTRATION BLEND — removes white bg
    ======================================== */
@@ -64,26 +95,34 @@ html, body {
    ======================================== */
 .paper-bg {
   background-color: var(--color-cream-100);
+  background-image: url('/assets/courses-bg.jpeg');
+  background-size: 50% 50%;
+  background-repeat: repeat;
+  background-position: top left;
+  background-attachment: fixed;
 }
 
 /* ========================================
    SIDEBAR — simple vertical tabs
    ======================================== */
 .sidebar-simple {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 160px;
-  flex-shrink: 0;
+  height: 100vh;
   background: #E8DECE;
   display: flex;
   flex-direction: column;
+  z-index: 50;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 12px;
+  justify-content: center;
+  flex: 1;
   gap: 16px;
 }
 
@@ -108,7 +147,7 @@ html, body {
 .sidebar-tab.active {
   color: var(--color-charcoal-900);
   font-weight: 600;
-  background-color: #E8DECE;
+  background-color: #DDD6C8;
 }
 
 .sidebar-signout {
@@ -419,7 +458,6 @@ html, body {
 }
 
 .dialogue-context-card {
-  border-left: 3px solid var(--color-charcoal-800);
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
 }
 

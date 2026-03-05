@@ -2,6 +2,8 @@ export interface User {
   id: string;
   email: string;
   full_name: string;
+  name_en?: string | null;
+  name_ar?: string | null;
   role: 'student' | 'teacher';
   is_active: boolean;
 }
@@ -65,6 +67,7 @@ export interface ExamSession {
   id: string;
   exam_id: string;
   student_id: string;
+  student_name?: string | null;
   status: 'in_progress' | 'completed' | 'scored' | 'validated';
   started_at: string;
   completed_at: string | null;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useLanguageStore, t } from '../stores/languageStore';
 import toast from 'react-hot-toast';
 
 export default function Login() {
@@ -8,6 +9,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuthStore();
+  const { toggle } = useLanguageStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,17 +29,16 @@ export default function Login() {
 
   return (
     <div className="min-h-screen paper-bg flex flex-col">
-      <Link to="/" className="fixed top-6 right-8 z-50 hover:opacity-80 transition-opacity">
-        <span className="brand-text">بيّنة</span>
-      </Link>
-
       {/* Nav bar — matching landing page */}
       <nav className="landing-nav">
         <div className="flex gap-8">
-          <Link to="/">Home</Link>
+          <Link to="/">{t('nav.home')}</Link>
         </div>
         <div className="flex gap-8">
-          <Link to="/register">Register</Link>
+          <Link to="/register">{t('nav.register')}</Link>
+          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit' }}>
+            {t('lang.toggle')}
+          </button>
         </div>
       </nav>
 
@@ -49,12 +50,12 @@ export default function Login() {
             <img src="/assets/diamond.png" alt="" className="ornament-img h-10" />
           </div>
 
-          <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">Sign In</h1>
-          <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">Welcome back</p>
+          <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">{t('login.title')}</h1>
+          <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">{t('login.subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <p className="label-caps mb-2">Email</p>
+              <p className="label-caps mb-2">{t('login.email')}</p>
               <input
                 type="email"
                 value={email}
@@ -65,7 +66,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <p className="label-caps mb-2">Password</p>
+              <p className="label-caps mb-2">{t('login.password')}</p>
               <input
                 type="password"
                 value={password}
@@ -80,16 +81,16 @@ export default function Login() {
               disabled={loading}
               className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? t('login.submitting') : t('login.submit')}
             </button>
           </form>
 
           <hr className="dotted-divider" />
 
           <p className="text-center text-xs text-charcoal-600">
-            Don't have an account?{' '}
+            {t('login.noAccount')}{' '}
             <Link to="/register" className="text-charcoal-800 font-medium hover:underline">
-              Create one
+              {t('login.createOne')}
             </Link>
           </p>
         </div>
@@ -97,7 +98,7 @@ export default function Login() {
 
       {/* Footer */}
       <div className="page-footer">
-        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
+        <p className="footer-quote">{t('footer.quote')}</p>
       </div>
     </div>
   );

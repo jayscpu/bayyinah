@@ -23,6 +23,8 @@ async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
         email=data.email,
         password_hash=hash_password(data.password),
         full_name=data.full_name,
+        name_en=data.name_en,
+        name_ar=data.name_ar,
         role=data.role,
     )
     db.add(user)

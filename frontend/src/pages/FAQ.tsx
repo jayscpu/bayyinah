@@ -1,65 +1,42 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
-
-const faqs = [
-  {
-    question: 'What is Bayyinah?',
-    answer: 'Bayyinah is an educational assessment platform built on a simple conviction: understanding cannot be measured by recall alone. Traditional exams reward students who reproduce memorized text, while penalizing those who reason in their own words. Bayyinah reverses this by replacing static grading with Socratic dialogue \u2014 a structured, AI-driven conversation that surfaces how deeply a student has engaged with the material, not merely whether they can repeat it.',
-  },
-  {
-    question: 'How does the Socratic dialogue work?',
-    answer: 'Once you submit your answer to an exam question, the AI initiates a three-round exchange. Each round poses a single, carefully constructed follow-up question designed to probe the logic behind your response. It may ask you to reconcile a contradiction, extend your reasoning to an adjacent case, or defend an assumption you made implicitly. The AI never agrees or disagrees with you \u2014 it only asks. The complete transcript of this exchange is then delivered to your instructor as the primary artifact of your assessment.',
-  },
-  {
-    question: 'How is my work evaluated?',
-    answer: 'Evaluation happens in two stages. First, the AI produces a preliminary score on a 0\u2013100 scale by analyzing your dialogue across four weighted criteria: conceptual understanding, the ability to connect ideas across topics, practical application of theory, and logical coherence of your reasoning. Second, your instructor reads the full transcript \u2014 your original answer and all three dialogue rounds \u2014 and assigns a final grade on a 1\u20135 scale. The AI score informs but never dictates the instructor\'s judgment.',
-  },
-  {
-    question: 'What happens if I select the wrong MCQ option?',
-    answer: 'A wrong selection is not the end of the conversation \u2014 it is the beginning of one. If you chose an incorrect option but demonstrate through the Socratic dialogue that your underlying reasoning is sound, that you understand why the correct answer is correct, or that your interpretation reflects a legitimate reading of the material, you can still earn meaningful credit. Bayyinah is designed to distinguish between a student who guessed incorrectly and a student who reasoned incorrectly. The two are not the same.',
-  },
-  {
-    question: 'What materials can instructors upload?',
-    answer: 'Instructors upload course materials in PDF or PPTX format. These documents are parsed, segmented into meaningful passages, and indexed into a retrieval system. When the AI generates exam questions or engages in Socratic dialogue, it draws directly from this indexed material \u2014 ensuring that every question and every follow-up is grounded in what was actually taught, not in the AI\'s general knowledge.',
-  },
-  {
-    question: 'When will I receive my results?',
-    answer: 'Your results become visible only after your instructor has personally reviewed the dialogue transcript and submitted a final grade. This is by design. Bayyinah treats assessment as a deliberate act of human judgment, not an automated pipeline. You will see the AI\'s preliminary score alongside your instructor\'s grade and any written feedback they choose to provide.',
-  },
-  {
-    question: 'Does the AI monitor me during the exam?',
-    answer: 'No. The AI plays no role during the answer-writing phase of the exam. It activates only after you submit each answer, and its sole function is to ask clarifying questions. It does not proctor, does not track your behavior, and does not make any judgments until the dialogue begins. Its purpose is inquiry, not surveillance.',
-  },
-  {
-    question: 'Why Socratic dialogue instead of traditional grading?',
-    answer: 'A written answer is a finished product \u2014 it reveals what a student chose to say, but conceals the depth of what they understand. Socratic dialogue opens a window into the reasoning process itself. A student who memorized a textbook paragraph will struggle to defend it under questioning. A student who genuinely understands the concept will find the dialogue natural, even clarifying. The method does not punish memorization \u2014 it simply stops rewarding it as a substitute for thought.',
-  },
-];
+import { useLanguageStore, t } from '../stores/languageStore';
 
 export default function FAQ() {
   const [expanded, setExpanded] = useState<number | null>(null);
   const { user } = useAuthStore();
+  const { toggle } = useLanguageStore();
   const dashboardPath = user?.role === 'teacher' ? '/teacher' : '/student';
+
+  const faqs = [
+    { question: t('faq.q1'), answer: t('faq.a1') },
+    { question: t('faq.q2'), answer: t('faq.a2') },
+    { question: t('faq.q3'), answer: t('faq.a3') },
+    { question: t('faq.q4'), answer: t('faq.a4') },
+    { question: t('faq.q5'), answer: t('faq.a5') },
+    { question: t('faq.q6'), answer: t('faq.a6') },
+    { question: t('faq.q7'), answer: t('faq.a7') },
+    { question: t('faq.q8'), answer: t('faq.a8') },
+  ];
 
   return (
     <div className="min-h-screen paper-bg flex flex-col">
-      <Link to="/" className="fixed top-6 right-8 z-50 hover:opacity-80 transition-opacity">
-        <span className="brand-text">بيّنة</span>
-      </Link>
-
       {/* Nav bar */}
       <nav className="landing-nav">
         <div className="flex gap-8">
-          <Link to="/">Home</Link>
+          <Link to="/">{t('nav.home')}</Link>
         </div>
         <div className="flex gap-8">
-          <Link to="/vision">Philosophy</Link>
+          <Link to="/vision">{t('nav.philosophy')}</Link>
           {user ? (
-            <Link to={dashboardPath}>Dashboard</Link>
+            <Link to={dashboardPath}>{t('nav.dashboard')}</Link>
           ) : (
-            <Link to="/login">Sign In</Link>
+            <Link to="/login">{t('nav.signIn')}</Link>
           )}
+          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit' }}>
+            {t('lang.toggle')}
+          </button>
         </div>
       </nav>
 
@@ -72,7 +49,7 @@ export default function FAQ() {
           </div>
 
           <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-2">
-            Frequently Asked Questions
+            {t('faq.title')}
           </h1>
 
           <hr className="dotted-divider" />
@@ -108,7 +85,7 @@ export default function FAQ() {
 
       {/* Footer */}
       <div className="page-footer">
-        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
+        <p className="footer-quote">{t('footer.quote')}</p>
       </div>
     </div>
   );

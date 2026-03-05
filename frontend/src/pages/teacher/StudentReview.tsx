@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { ExamSession, StudentAnswer, ExamQuestion, DialogueMessage } from '../../types';
@@ -12,6 +13,7 @@ interface FullAnswer {
 }
 
 export default function StudentReview() {
+  useLanguageStore();
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
   const [session, setSession] = useState<ExamSession | null>(null);
@@ -80,18 +82,18 @@ export default function StudentReview() {
   }
 
   if (!session) {
-    return <div className="text-center py-20 text-warmgray-400 font-display italic">Session not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">{t('studentReview.sessionNotFound')}</div>;
   }
 
   return (
     <div className="max-w-3xl animate-fade-in">
       <div className="flex items-center justify-between mb-1">
-        <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase">Student Review</h1>
+        <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase">{t('studentReview.title')}</h1>
         <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{session.status}</span>
       </div>
       {session.ai_score !== null && (
         <p className="text-xs text-warmgray-400">
-          AI Score: <span className="font-display text-2xl text-charcoal-800">{session.ai_score.toFixed(1)}</span>/100
+          {t('studentReview.aiScore')} <span className="font-display text-2xl text-charcoal-800">{session.ai_score.toFixed(1)}</span>/100
         </p>
       )}
 
@@ -100,7 +102,7 @@ export default function StudentReview() {
       {/* AI Criterion Scores */}
       {session.ai_criterion_scores && (
         <>
-          <p className="label-caps mb-3">AI Score Breakdown</p>
+          <p className="label-caps mb-3">{t('studentReview.aiBreakdown')}</p>
           <div className="grid grid-cols-2 gap-3 mb-6">
             {Object.entries(session.ai_criterion_scores).filter(([k]) => k !== 'summary').map(([key, val]: [string, any]) => (
               <div key={key} className="bg-cream-200 border border-warmgray-200 p-4">
@@ -118,11 +120,11 @@ export default function StudentReview() {
       )}
 
       {/* Full Transcript */}
-      <p className="label-caps mb-4">Dialogue Transcript</p>
+      <p className="label-caps mb-4">{t('studentReview.transcript')}</p>
       {fullAnswers.map((fa) => (
         <div key={fa.answer.id} className="mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <span className="font-display text-charcoal-800 text-lg">Question {fa.question.display_order}</span>
+            <span className="font-display text-charcoal-800 text-lg">{t('exam.questionNum')} {fa.question.display_order}</span>
             <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{fa.question.question_type}</span>
           </div>
 
@@ -130,7 +132,7 @@ export default function StudentReview() {
 
           {/* Initial answer */}
           <div className="bg-cream-200 border border-warmgray-200 p-4 mb-3">
-            <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mb-2">Student's Initial Answer</p>
+            <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mb-2">{t('studentReview.initialAnswer')}</p>
             {fa.answer.answer_text ? (
               <p className="text-charcoal-800 text-sm leading-relaxed">{fa.answer.answer_text}</p>
             ) : fa.answer.mcq_selections ? (
@@ -153,7 +155,7 @@ export default function StudentReview() {
                   : 'bg-cream-200 border-warmgray-200'
               }`}>
                 <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mb-1">
-                  {msg.role === 'agent' ? 'Examiner' : 'Student'} — Turn {msg.turn_number}
+                  {msg.role === 'agent' ? t('studentReview.examiner') : t('studentReview.studentLabel')} — Turn {msg.turn_number}
                 </p>
                 <p className="text-charcoal-800 text-sm leading-relaxed">{msg.content}</p>
               </div>
@@ -167,7 +169,7 @@ export default function StudentReview() {
       {/* Grading section */}
       {session.status !== 'validated' && (
         <div className="bg-cream-200 border border-warmgray-200 p-6">
-          <p className="font-serif text-xl text-charcoal-800 mb-5">Assign Grade</p>
+          <p className="font-serif text-xl text-charcoal-800 mb-5">{t('studentReview.assignGrade')}</p>
 
           {/* Grade selector */}
           <div className="flex gap-3 mb-6">
@@ -187,22 +189,22 @@ export default function StudentReview() {
           </div>
 
           <div className="mb-4">
-            <p className="label-caps mb-2">Feedback (visible to student)</p>
+            <p className="label-caps mb-2">{t('studentReview.feedback')}</p>
             <textarea
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
-              placeholder="Write feedback for the student..."
+              placeholder={t('studentReview.feedbackPlaceholder')}
               rows={3}
               className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
             />
           </div>
 
           <div className="mb-6">
-            <p className="label-caps mb-2">Internal Notes (teacher only)</p>
+            <p className="label-caps mb-2">{t('studentReview.internalNotes')}</p>
             <textarea
               value={internalNotes}
               onChange={(e) => setInternalNotes(e.target.value)}
-              placeholder="Your private notes..."
+              placeholder={t('studentReview.notesPlaceholder')}
               rows={2}
               className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
             />
@@ -214,21 +216,21 @@ export default function StudentReview() {
               disabled={submitting}
               className="px-4 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-warmgray-400 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
             >
-              Re-Dialogue
+              {t('studentReview.reDialogue')}
             </button>
             <button
               onClick={() => handleSubmitGrade('overridden')}
               disabled={submitting}
               className="px-4 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
             >
-              Override
+              {t('studentReview.override')}
             </button>
             <button
               onClick={() => handleSubmitGrade('approved')}
               disabled={submitting}
               className="px-6 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
             >
-              {submitting ? 'Submitting...' : 'Approve Grade'}
+              {submitting ? t('studentReview.submittingGrade') : t('studentReview.approveGrade')}
             </button>
           </div>
         </div>
