@@ -450,7 +450,6 @@ html[dir="rtl"] h1, html[dir="rtl"] h2 {
 }
 
 .dialogue-context-card {
-  border-inline-start: 3px solid var(--color-charcoal-800);
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
 }
 

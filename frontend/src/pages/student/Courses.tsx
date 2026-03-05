@@ -188,7 +188,7 @@ export default function StudentCourses() {
                       {selectedExams.map((exam) => (
                         <Link
                           key={exam.id}
-                          to={`/student/exams/${exam.id}`}
+                          to={`/student/exam/${exam.id}`}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
