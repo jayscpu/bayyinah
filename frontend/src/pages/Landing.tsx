@@ -9,7 +9,7 @@ export default function Landing() {
   const dashboardPath = user?.role === 'teacher' ? '/teacher' : '/student';
 
   return (
-    <div className="min-h-screen paper-bg flex flex-col relative overflow-hidden">
+    <div className="min-h-screen paper-bg flex flex-col relative overflow-hidden" style={{ backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
       {/* Nav bar — thin lines top and bottom */}
       <nav className="landing-nav">
         <div className="flex gap-8">
