@@ -7,8 +7,11 @@ import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam, ExamSession } from '../../types';
 
 export default function StudentDashboard() {
-  useLanguageStore();
+  const { lang } = useLanguageStore();
   const { user } = useAuthStore();
+  const displayName = lang === 'ar'
+    ? (user?.name_ar || user?.name_en || user?.full_name)
+    : (user?.name_en || user?.name_ar || user?.full_name);
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Record<string, Exam[]>>({});
   const [completedCount, setCompletedCount] = useState(0);
@@ -82,7 +85,7 @@ export default function StudentDashboard() {
 
       {/* Welcome */}
       <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
-        {t('dashboard.welcome')} {user?.full_name}
+        {t('dashboard.welcome')} {displayName}
       </h1>
 
       {/* Colored dotted divider */}

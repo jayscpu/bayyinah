@@ -331,7 +331,23 @@ async def list_sessions(
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(select(ExamSession).where(ExamSession.exam_id == exam_id))
-    return result.scalars().all()
+    sessions = result.scalars().all()
+
+    # Collect student IDs and fetch names
+    student_ids = list({s.student_id for s in sessions})
+    user_result = await db.execute(select(User).where(User.id.in_(student_ids)))
+    users = {u.id: u for u in user_result.scalars().all()}
+
+    enriched = []
+    for s in sessions:
+        user = users.get(s.student_id)
+        name = None
+        if user:
+            name = user.name_en or user.name_ar or user.full_name
+        data = {c.key: getattr(s, c.key) for c in s.__table__.columns}
+        data["student_name"] = name
+        enriched.append(data)
+    return enriched
 
 
 @router.get("/{exam_id}/sessions/me", response_model=SessionResponse)

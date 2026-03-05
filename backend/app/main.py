@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from sqlalchemy import text
+
 from app.core.database import engine, Base
 from app.api.router import api_router
 
@@ -12,6 +14,12 @@ async def lifespan(app: FastAPI):
     # Create tables on startup
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Add bilingual name columns to existing databases
+        for col in ("name_en", "name_ar"):
+            try:
+                await conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} VARCHAR(255)"))
+            except Exception:
+                pass  # Column already exists
     yield
 
 

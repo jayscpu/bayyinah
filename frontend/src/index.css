@@ -95,18 +95,26 @@ html[dir="rtl"] h1, html[dir="rtl"] h2 {
    ======================================== */
 .paper-bg {
   background-color: var(--color-cream-100);
+  background-image: url('/assets/courses-bg.jpeg');
+  background-size: 50% 50%;
+  background-repeat: repeat;
+  background-position: top left;
+  background-attachment: fixed;
 }
 
 /* ========================================
    SIDEBAR — simple vertical tabs
    ======================================== */
 .sidebar-simple {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 160px;
-  flex-shrink: 0;
+  height: 100vh;
   background: #E8DECE;
   display: flex;
   flex-direction: column;
+  z-index: 50;
 }
 
 .sidebar-nav {

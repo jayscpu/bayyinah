@@ -58,20 +58,8 @@ export default function CourseManage() {
     }
   };
 
-  const handleUpload = async (courseId: string, files: File[]) => {
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append('file', file);
-      try {
-        await api.post(`/courses/${courseId}/materials`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        toast.success(`Uploaded: ${file.name}`);
-      } catch (err: any) {
-        toast.error(`Failed: ${file.name} — ${err.response?.data?.detail || 'Error'}`);
-      }
-    }
-    await loadCourses();
+  const handleUploadComplete = () => {
+    loadCourses();
   };
 
   const handleDeleteMaterial = async (courseId: string, materialId: string) => {
@@ -173,7 +161,7 @@ export default function CourseManage() {
               {/* Expanded: materials + upload */}
               {expandedCourse === course.id && (
                 <div className="pb-7 animate-fade-in">
-                  <DropZone courseId={course.id} onUpload={handleUpload} />
+                  <DropZone courseId={course.id} onUploadComplete={handleUploadComplete} />
                   {(materials[course.id] || []).length > 0 && (
                     <div className="mt-4 space-y-1">
                       {(materials[course.id] || []).map((mat) => (
@@ -259,10 +247,36 @@ export default function CourseManage() {
   );
 }
 
-function DropZone({ courseId, onUpload }: { courseId: string; onUpload: (id: string, files: File[]) => void }) {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    onUpload(courseId, acceptedFiles);
-  }, [courseId, onUpload]);
+type UploadState =
+  | { status: 'idle' }
+  | { status: 'uploading'; fileName: string; progress: number }
+  | { status: 'error'; fileName: string; message: string };
+
+function DropZone({ courseId, onUploadComplete }: { courseId: string; onUploadComplete: () => void }) {
+  const [uploadState, setUploadState] = useState<UploadState>({ status: 'idle' });
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    for (const file of acceptedFiles) {
+      setUploadState({ status: 'uploading', fileName: file.name, progress: 0 });
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        await api.post(`/courses/${courseId}/materials`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (e) => {
+            const pct = e.total ? Math.round((e.loaded / e.total) * 100) : 0;
+            setUploadState({ status: 'uploading', fileName: file.name, progress: pct });
+          },
+        });
+        setUploadState({ status: 'idle' });
+        onUploadComplete();
+      } catch (err: any) {
+        const msg = err.response?.data?.detail || 'Upload failed';
+        setUploadState({ status: 'error', fileName: file.name, message: msg });
+        setTimeout(() => setUploadState({ status: 'idle' }), 4000);
+      }
+    }
+  }, [courseId, onUploadComplete]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -270,7 +284,35 @@ function DropZone({ courseId, onUpload }: { courseId: string; onUpload: (id: str
       'application/pdf': ['.pdf'],
       'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
     },
+    disabled: uploadState.status === 'uploading',
   });
+
+  if (uploadState.status === 'uploading') {
+    return (
+      <div className="border border-dashed border-warmgray-300 p-5">
+        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider truncate mb-3">
+          {uploadState.fileName}
+        </p>
+        <div className="w-full bg-cream-300 rounded-full overflow-hidden" style={{ height: '4px' }}>
+          <div
+            className="h-full bg-warmgray-400 rounded-full transition-all duration-200"
+            style={{ width: `${uploadState.progress}%` }}
+          />
+        </div>
+        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mt-2">
+          {t('courseManage.uploading')} {uploadState.progress}%
+        </p>
+      </div>
+    );
+  }
+
+  if (uploadState.status === 'error') {
+    return (
+      <div className="border border-dashed border-red-300 p-5 text-center">
+        <p className="text-[0.6rem] text-red-400 uppercase tracking-wider">{uploadState.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div

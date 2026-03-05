@@ -63,7 +63,7 @@ export default function ExamReview() {
                 <div className="timeline-bar hover:bg-cream-300 transition-colors cursor-pointer">
                   <div className="flex-1">
                     <p className="font-serif text-sm text-charcoal-800">
-                      {t('examReview.student')} {session.student_id.substring(0, 8)}...
+                      {session.student_name || `${t('examReview.student')} ${session.student_id.substring(0, 8)}...`}
                     </p>
                     <p className="text-xs text-warmgray-400 mt-0.5">
                       {session.completed_at

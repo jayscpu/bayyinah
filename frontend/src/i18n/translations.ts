@@ -28,7 +28,8 @@ export const translations: Record<string, { en: string; ar: string }> = {
   // ── Register ──
   'register.title': { en: 'Create Account', ar: 'إنشاء حساب' },
   'register.subtitle': { en: 'Join Bayyinah', ar: 'انضم إلى بيّنة' },
-  'register.fullName': { en: 'Full Name', ar: 'الاسم الكامل' },
+  'register.nameEn': { en: 'Name (English)', ar: 'الاسم بالإنجليزية' },
+  'register.nameAr': { en: 'Name (Arabic)', ar: 'الاسم بالعربية' },
   'register.email': { en: 'Email', ar: 'البريد الإلكتروني' },
   'register.password': { en: 'Password', ar: 'كلمة المرور' },
   'register.iAmA': { en: 'I am a...', ar: 'أنا...' },
@@ -100,8 +101,8 @@ export const translations: Record<string, { en: string; ar: string }> = {
 
   // ── Teacher Dashboard ──
   'teacherDash.welcome': { en: 'Welcome, Dr.', ar: 'أهلاً، د.' },
-  'teacherDash.exams': { en: 'Exams', ar: 'اختبارات' },
-  'teacherDash.questions': { en: 'Questions', ar: 'أسئلة' },
+  'teacherDash.exams': { en: 'Current Exams', ar: 'الاختبارات الحالية' },
+  'teacherDash.pendingReviews': { en: 'Pending Reviews', ar: 'بانتظار المراجعة' },
 
   // ── Student Courses ──
   'courses.title': { en: 'Courses', ar: 'المقررات' },
@@ -204,6 +205,7 @@ export const translations: Record<string, { en: string; ar: string }> = {
   'courseManage.dropFiles': { en: 'Drop files here...', ar: 'أسقط الملفات هنا...' },
   'courseManage.dropUpload': { en: 'Drop PDF / PPTX or click to upload', ar: 'أسقط PDF / PPTX أو اضغط للرفع' },
   'courseManage.chunks': { en: 'chunks', ar: 'أجزاء' },
+  'courseManage.uploading': { en: 'Uploading...', ar: 'جارٍ الرفع...' },
 
   // ── Teacher Course Detail ──
   'courseDetail.students': { en: 'students', ar: 'طلاب' },
