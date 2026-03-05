@@ -4,7 +4,9 @@ import api from '../../config/api';
 import { useAuthStore } from '../../stores/authStore';
 import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
-import type { Course, Exam, ExamSession } from '../../types';
+import type { Course, Exam, ExamSession, Assignment } from '../../types';
+
+type StreamItem = { id: string; text: string; subtitle: string; link: string; };
 
 export default function StudentDashboard() {
   const { lang } = useLanguageStore();
@@ -14,6 +16,7 @@ export default function StudentDashboard() {
     : (user?.name_en || user?.name_ar || user?.full_name);
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Record<string, Exam[]>>({});
+  const [assignments, setAssignments] = useState<{ assignment: Assignment; courseName: string }[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -28,6 +31,7 @@ export default function StudentDashboard() {
       setCourses(res.data);
 
       const examsMap: Record<string, Exam[]> = {};
+      const assignmentList: { assignment: Assignment; courseName: string }[] = [];
       let completed = 0;
       let inProgress = 0;
 
@@ -45,9 +49,15 @@ export default function StudentDashboard() {
             // no session for this exam yet
           }
         }
+
+        const assignRes = await api.get(`/assignments?course_id=${course.id}`);
+        for (const assignment of assignRes.data as Assignment[]) {
+          assignmentList.push({ assignment, courseName: course.title });
+        }
       }
 
       setExams(examsMap);
+      setAssignments(assignmentList);
       setCompletedCount(completed);
       setInProgressCount(inProgress);
     } catch (err) {
@@ -62,18 +72,24 @@ export default function StudentDashboard() {
   }
 
   // Build stream items
-  const streamItems: { id: string; text: string; course: string; questions: number; link: string; date: string }[] = [];
+  const streamItems: StreamItem[] = [];
   for (const course of courses) {
     for (const exam of (exams[course.id] || [])) {
       streamItems.push({
-        id: exam.id,
+        id: `exam-${exam.id}`,
         text: `${t('dashboard.newExam')} ${exam.title} – ${course.title} ${t('dashboard.published')}`,
-        course: course.title,
-        questions: exam.question_count,
+        subtitle: `${course.title} · ${exam.question_count} ${exam.question_count !== 1 ? t('dashboard.questions') : t('dashboard.question')}`,
         link: `/student/exam/${exam.id}`,
-        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }),
       });
     }
+  }
+  for (const { assignment, courseName } of assignments) {
+    streamItems.push({
+      id: `assignment-${assignment.id}`,
+      text: `New assignment: ${assignment.title} – ${courseName} published`,
+      subtitle: `${courseName} · Assignment`,
+      link: `/student/assignments/${assignment.id}/submit`,
+    });
   }
 
   return (
@@ -128,11 +144,8 @@ export default function StudentDashboard() {
                     <p className="font-serif text-sm text-charcoal-800 leading-relaxed">
                       {item.text}
                     </p>
-                    <p className="text-xs text-charcoal-500 mt-1">
-                      {item.course} &middot; {item.questions} {item.questions !== 1 ? t('dashboard.questions') : t('dashboard.question')}
-                    </p>
+                    <p className="text-xs text-charcoal-500 mt-1">{item.subtitle}</p>
                   </div>
-                  <span className="text-xs text-charcoal-600 shrink-0 ml-4">{item.date}</span>
                 </div>
               </Link>
             </div>
