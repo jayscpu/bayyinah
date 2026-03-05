@@ -74,56 +74,86 @@ export default function ExamList() {
   }
 
   return (
-    <div className="animate-fade-in">
-      {/* Diamond ornament */}
-      <div className="flex justify-center mb-8">
-        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
-      </div>
-
-      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">{t('examList.title')}</h1>
-      <div className="flex justify-end mb-1">
+    <div
+      className="animate-fade-in"
+      style={{
+        marginInlineStart: 'min(calc(570px - 50vw), 8px)',
+        width: 'calc(100vw - 240px)',
+      }}
+    >
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">
+          {t('examList.title')}
+        </h1>
         <Link
           to="/teacher/exams/create"
-          className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+          style={{
+            padding: '6px 18px',
+            background: 'transparent',
+            border: '1px solid #C4BCB0',
+            fontSize: '0.65rem',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#4A4A4A',
+            textDecoration: 'none',
+            transition: 'border-color 0.2s, color 0.2s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = '#2A2A2A'; (e.currentTarget as HTMLAnchorElement).style.color = '#2A2A2A'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = '#C4BCB0'; (e.currentTarget as HTMLAnchorElement).style.color = '#4A4A4A'; }}
         >
           {t('examList.createExam')}
         </Link>
       </div>
 
-      <hr className="dotted-divider" />
+      {/* Full-width divider */}
+      <div style={{ borderTop: '1px solid #2A2A2A', marginBottom: '0' }} />
 
       {exams.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-warmgray-400 font-display italic text-lg">{t('examList.noExams')}</p>
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('examList.noExams')}</p>
           <Link
             to="/teacher/exams/create"
-            className="inline-block mt-3 text-xs text-warmgray-400 hover:text-charcoal-800 transition-colors"
+            style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px', display: 'inline-block' }}
           >
             {t('examList.createFirst')}
           </Link>
         </div>
       ) : (
-        <div className="timeline">
-          {exams.map((exam) => (
-            <div key={exam.id} className="timeline-item">
-              <div className="timeline-bullet">
-                <img src="/assets/diamond.png" alt="" />
-              </div>
-              <div className="timeline-bar">
-                <div className="flex-1">
-                  <p className="font-serif text-sm text-charcoal-800">{exam.title}</p>
-                  <p className="text-xs text-warmgray-400 mt-0.5">
+        <div style={{ paddingTop: '28px' }}>
+          <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
+            {exams.length} {exams.length !== 1 ? 'exams' : 'exam'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {exams.map((exam) => (
+              <div
+                key={exam.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 24px',
+                  background: '#E8DECE',
+                  border: '1px solid #D4CCC0',
+                }}
+              >
+                <div>
+                  <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.9rem', color: '#2A2A2A', marginBottom: '3px' }}>
+                    {exam.title}
+                  </p>
+                  <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                     {getCourseName(exam.course_id)} &middot; {exam.question_count} {t('dashboard.questions')}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                  <span style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                     {exam.status}
                   </span>
 
                   <Link
                     to={`/teacher/exams/${exam.id}/manage`}
-                    className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                    style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', textDecoration: 'none' }}
                   >
                     {t('examList.edit')}
                   </Link>
@@ -131,7 +161,7 @@ export default function ExamList() {
                   {exam.status === 'draft' && (
                     <button
                       onClick={() => handlePublish(exam.id)}
-                      className="text-[0.65rem] text-charcoal-600 uppercase tracking-wider hover:text-charcoal-900 transition-colors cursor-pointer"
+                      style={{ fontSize: '0.6rem', color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: '0.12em', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
                       {t('examList.publish')}
                     </button>
@@ -141,13 +171,13 @@ export default function ExamList() {
                     <>
                       <Link
                         to={`/teacher/exams/${exam.id}/review`}
-                        className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                        style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', textDecoration: 'none' }}
                       >
                         {t('examList.review')}
                       </Link>
                       <button
                         onClick={() => handleClose(exam.id)}
-                        className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors cursor-pointer"
+                        style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', background: 'none', border: 'none', cursor: 'pointer' }}
                       >
                         {t('examList.end')}
                       </button>
@@ -156,14 +186,15 @@ export default function ExamList() {
 
                   <button
                     onClick={() => handleDelete(exam.id)}
-                    className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 transition-colors cursor-pointer"
+                    className="hover:text-red-400 transition-colors"
+                    style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     {t('examList.delete')}
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

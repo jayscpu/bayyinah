@@ -190,7 +190,8 @@ export default function ExamSession() {
                 value={answerText}
                 onChange={(e) => setAnswerText(e.target.value)}
                 placeholder={t('exam.writePlaceholder')}
-                className="w-full px-5 py-4 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y min-h-[180px] leading-[1.8]"
+                className="w-full px-5 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y min-h-[180px] leading-[1.8]"
+                style={{ background: '#E8DECE' }}
                 rows={6}
               />
             </div>
@@ -245,7 +246,19 @@ export default function ExamSession() {
             <button
               onClick={handleSubmitAnswer}
               disabled={submitting}
-              className="px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+              style={{
+                padding: '6px 18px',
+                background: 'transparent',
+                border: '1px solid #C4BCB0',
+                fontSize: '0.65rem',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: '#4A4A4A',
+                cursor: 'pointer',
+                opacity: submitting ? 0.5 : 1,
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2A2A2A'; (e.currentTarget as HTMLButtonElement).style.color = '#2A2A2A'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#C4BCB0'; (e.currentTarget as HTMLButtonElement).style.color = '#4A4A4A'; }}
             >
               {submitting ? t('exam.submitting') : t('exam.submitDialogue')}
             </button>

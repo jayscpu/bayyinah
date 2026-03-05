@@ -191,7 +191,7 @@ export default function ExamManage() {
         {exam.status === 'draft' && (
           <button
             onClick={handlePublish}
-            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+            className="px-5 py-3 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
           >
             {t('examManage.publishExam')}
           </button>
@@ -199,7 +199,7 @@ export default function ExamManage() {
         {exam.status === 'published' && (
           <button
             onClick={handleClose}
-            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+            className="px-5 py-3 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
           >
             {t('examManage.closeExam')}
           </button>
@@ -208,7 +208,7 @@ export default function ExamManage() {
           <button
             onClick={handleRegenerate}
             disabled={regenerating}
-            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            className="px-5 py-3 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
           >
             {regenerating ? t('examManage.generating') : t('examManage.aiGenerate')}
           </button>
@@ -216,14 +216,14 @@ export default function ExamManage() {
         {exam.status === 'draft' && (
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
+            className="px-5 py-3 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
           >
             {showAddForm ? t('examManage.cancel') : t('examManage.writeQuestion')}
           </button>
         )}
         <button
           onClick={handleDelete}
-          className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-warmgray-400 hover:text-red-400 cursor-pointer transition-colors"
+          className="px-5 py-3 border border-warmgray-200 text-xs uppercase tracking-widest text-warmgray-400 hover:text-red-400 cursor-pointer transition-colors"
         >
           {t('examManage.deleteExam')}
         </button>
@@ -231,7 +231,7 @@ export default function ExamManage() {
 
       {/* Add Question Form */}
       {showAddForm && (
-        <div className="bg-cream-200 border border-warmgray-200 p-6 mb-6">
+        <div className="border border-warmgray-200 p-6 mb-6" style={{ background: '#E8DECE' }}>
           <p className="font-serif text-lg text-charcoal-800 mb-4">{t('examManage.addQuestion')}</p>
 
           <div className="mb-4">
@@ -240,22 +240,24 @@ export default function ExamManage() {
               <button
                 type="button"
                 onClick={() => setNewType('essay')}
-                className={`px-4 py-2 text-xs uppercase tracking-wider cursor-pointer transition-colors ${
+                className={`px-6 py-3 text-sm uppercase tracking-wider cursor-pointer transition-colors ${
                   newType === 'essay'
-                    ? 'bg-charcoal-800 text-cream-100'
-                    : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
+                    ? 'text-cream-100 border border-charcoal-800'
+                    : 'text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
                 }`}
+                style={newType === 'essay' ? { background: '#D5CCBE', borderColor: '#4A4A4A' } : {}}
               >
                 {t('examManage.essay')}
               </button>
               <button
                 type="button"
                 onClick={() => setNewType('mcq')}
-                className={`px-4 py-2 text-xs uppercase tracking-wider cursor-pointer transition-colors ${
+                className={`px-6 py-3 text-sm uppercase tracking-wider cursor-pointer transition-colors ${
                   newType === 'mcq'
-                    ? 'bg-charcoal-800 text-cream-100'
-                    : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
+                    ? 'text-cream-100 border border-charcoal-800'
+                    : 'text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
                 }`}
+                style={newType === 'mcq' ? { background: '#D5CCBE', borderColor: '#4A4A4A' } : {}}
               >
                 {t('examManage.multipleChoice')}
               </button>
@@ -269,7 +271,8 @@ export default function ExamManage() {
               onChange={(e) => setNewText(e.target.value)}
               placeholder={t('examManage.questionPlaceholder')}
               rows={3}
-              className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
+              className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
+              style={{ background: '#E8DECE' }}
             />
           </div>
 
@@ -287,7 +290,8 @@ export default function ExamManage() {
                       setNewOptions(updated);
                     }}
                     placeholder={`Option ${opt.key}`}
-                    className="flex-1 px-3 py-2 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+                    className="flex-1 px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+                    style={{ background: '#E8DECE' }}
                   />
                 </div>
               ))}
@@ -297,7 +301,8 @@ export default function ExamManage() {
           <button
             onClick={handleAddQuestion}
             disabled={addingQuestion}
-            className="px-6 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+            className="px-8 py-4 border uppercase cursor-pointer transition-colors disabled:opacity-50"
+            style={{ background: '#D5CCBE', borderColor: '#C4BCB0', color: '#4A4A4A', fontSize: '0.85rem', letterSpacing: '0' }}
           >
             {addingQuestion ? t('examManage.adding') : t('examManage.addQuestion')}
           </button>
@@ -342,7 +347,8 @@ export default function ExamManage() {
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
                             rows={3}
-                            className="w-full px-3 py-2 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600 resize-y"
+                            className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600 resize-y"
+                            style={{ background: '#E8DECE' }}
                           />
                           <div className="flex gap-2">
                             <button

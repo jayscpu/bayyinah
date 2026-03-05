@@ -63,7 +63,7 @@ html[dir="rtl"] .sidebar-tab,
 html[dir="rtl"] .sidebar-signout {
   font-family: 'Amiri', serif;
   text-transform: none;
-  font-size: 125%;
+  font-size: 105%;
 }
 
 html[dir="rtl"] .label-caps,

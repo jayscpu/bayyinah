@@ -53,14 +53,15 @@ export default function ExamCreate() {
 
       <hr className="dotted-divider" />
 
-      <form onSubmit={handleCreate} className="space-y-5">
+      <form onSubmit={handleCreate} className="space-y-6">
         <div>
           <p className="label-caps mb-2">{t('examCreate.course')}</p>
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
             required
-            className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+            className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+            style={{ background: '#E8DECE' }}
           >
             <option value="">{t('examCreate.selectCourse')}</option>
             {courses.map((c) => (
@@ -77,7 +78,8 @@ export default function ExamCreate() {
             onChange={(e) => setTitle(e.target.value)}
             placeholder={t('examCreate.titlePlaceholder')}
             required
-            className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+            className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+            style={{ background: '#E8DECE' }}
           />
         </div>
 
@@ -88,7 +90,8 @@ export default function ExamCreate() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder={t('examCreate.descPlaceholder')}
-            className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+            className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+            style={{ background: '#E8DECE' }}
           />
         </div>
 
@@ -101,7 +104,8 @@ export default function ExamCreate() {
         <button
           type="submit"
           disabled={creating || !selectedCourse}
-          className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+          className="w-full px-6 py-4 border text-sm uppercase cursor-pointer transition-colors disabled:opacity-50"
+          style={{ background: '#D5CCBE', borderColor: '#C4BCB0', color: '#4A4A4A', fontSize: '0.85rem', letterSpacing: '0' }}
         >
           {creating ? <Spinner size="sm" /> : t('examCreate.submit')}
         </button>

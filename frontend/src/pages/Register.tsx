@@ -55,7 +55,7 @@ export default function Register() {
 
       {/* Form centered */}
       <div className="flex-1 flex items-center justify-center px-6 py-8">
-        <div className="w-full max-w-sm animate-fade-in-up">
+        <div className="w-full max-w-md animate-fade-in-up">
           {/* Ornament */}
           <div className="flex justify-center mb-6">
             <img src="/assets/diamond.png" alt="" className="ornament-img h-10" />
@@ -64,41 +64,41 @@ export default function Register() {
           <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">{t('register.title')}</h1>
           <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">{t('register.subtitle')}</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <p className="label-caps mb-2">{t('register.nameEn')}</p>
+              <p className="label-caps mb-3">{t('register.nameEn')}</p>
               <input
                 type="text"
                 value={nameEn}
                 onChange={(e) => setNameEn(e.target.value)}
                 placeholder=""
-                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+                className="w-full px-6 py-5 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
               />
             </div>
             <div>
-              <p className="label-caps mb-2">{t('register.nameAr')}</p>
+              <p className="label-caps mb-3">{t('register.nameAr')}</p>
               <input
                 type="text"
                 value={nameAr}
                 onChange={(e) => setNameAr(e.target.value)}
                 placeholder=""
                 dir="rtl"
-                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+                className="w-full px-6 py-5 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
               />
             </div>
             <div>
-              <p className="label-caps mb-2">{t('register.email')}</p>
+              <p className="label-caps mb-3">{t('register.email')}</p>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder=""
                 required
-                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+                className="w-full px-6 py-5 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
               />
             </div>
             <div>
-              <p className="label-caps mb-2">{t('register.password')}</p>
+              <p className="label-caps mb-3">{t('register.password')}</p>
               <input
                 type="password"
                 value={password}
@@ -106,24 +106,25 @@ export default function Register() {
                 placeholder=""
                 minLength={6}
                 required
-                className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+                className="w-full px-6 py-5 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
               />
             </div>
 
             {/* Role selector */}
             <div>
-              <p className="label-caps mb-2">{t('register.iAmA')}</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="label-caps mb-3">{t('register.iAmA')}</p>
+              <div className="grid grid-cols-2 gap-4">
                 {([{ value: 'student' as const, label: t('register.student') }, { value: 'teacher' as const, label: t('register.instructor') }]).map((r) => (
                   <button
                     key={r.value}
                     type="button"
                     onClick={() => setRole(r.value)}
-                    className={`py-3 border text-center cursor-pointer transition-colors ${
+                    className={`py-5 border text-center cursor-pointer transition-colors ${
                       role === r.value
-                        ? 'bg-charcoal-800 text-cream-100 border-charcoal-800'
-                        : 'bg-cream-200 border-warmgray-200 text-charcoal-600 hover:bg-cream-300'
+                        ? 'border-charcoal-800 text-charcoal-800 font-semibold'
+                        : 'paper-warm border-warmgray-200 text-charcoal-600 hover:bg-cream-300'
                     }`}
+                    style={role === r.value ? { backgroundColor: '#D5CCBE', borderColor: '#4A4A4A' } : {}}
                   >
                     <span className="font-serif text-sm">{r.label}</span>
                   </button>
@@ -137,7 +138,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
+              className="w-full mt-6 px-10 py-10 border label-caps cursor-pointer transition-colors disabled:opacity-50" style={{ backgroundColor: '#D5CCBE', borderColor: '#C4BCB0', color: '#4A4A4A', fontSize: '0.85rem', letterSpacing: '0' }}
             >
               {loading ? t('register.submitting') : t('register.submit')}
             </button>
