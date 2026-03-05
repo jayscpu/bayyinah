@@ -322,8 +322,16 @@ async def start_assignment_dialogue(
     import traceback
     submission = await _get_submission_for_user(submission_id, current_user, db)
 
-    if submission.dialogue_turns_completed > 0:
-        raise BadRequestError("Dialogue already started")
+    # Idempotent: if a message already exists, return it
+    result = await db.execute(
+        select(AssignmentDialogueMessage)
+        .where(AssignmentDialogueMessage.submission_id == submission_id)
+        .order_by(AssignmentDialogueMessage.created_at)
+        .limit(1)
+    )
+    existing = result.scalar_one_or_none()
+    if existing:
+        return existing
 
     submission.status = "in_progress"
     await db.flush()

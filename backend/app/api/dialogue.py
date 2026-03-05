@@ -102,8 +102,16 @@ async def start_dialogue(
     import traceback
     answer = await _get_answer_for_user(answer_id, current_user, db)
 
-    if answer.dialogue_turns_completed > 0:
-        raise BadRequestError("Dialogue already started")
+    # Idempotent: if a message already exists, return it
+    result = await db.execute(
+        select(DialogueMessage)
+        .where(DialogueMessage.answer_id == answer_id)
+        .order_by(DialogueMessage.created_at)
+        .limit(1)
+    )
+    existing = result.scalar_one_or_none()
+    if existing:
+        return existing
 
     # Generate first Socratic question
     from app.services.dialogue_service import generate_socratic_question
