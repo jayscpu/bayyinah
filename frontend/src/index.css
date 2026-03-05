@@ -441,11 +441,12 @@ html, body {
   background: var(--color-cream-100);
 }
 
-.dialogue-avatar {
-  width: 26px;
-  height: 26px;
+.dialogue-avatar-outline {
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--color-charcoal-800);
+  border: 1px solid rgba(42, 42, 42, 0.35);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;

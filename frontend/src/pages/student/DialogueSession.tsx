@@ -4,6 +4,25 @@ import api from '../../config/api';
 import Spinner from '../../components/ui/Spinner';
 import type { DialogueMessage, AnswerWithQuestion } from '../../types';
 
+type MessageGroup = {
+  role: 'agent' | 'student';
+  turn_number: number;
+  msgs: DialogueMessage[];
+};
+
+function groupMessages(messages: DialogueMessage[]): MessageGroup[] {
+  const groups: MessageGroup[] = [];
+  for (const msg of messages) {
+    const last = groups[groups.length - 1];
+    if (last && last.role === msg.role && last.turn_number === msg.turn_number) {
+      last.msgs.push(msg);
+    } else {
+      groups.push({ role: msg.role as 'agent' | 'student', turn_number: msg.turn_number, msgs: [msg] });
+    }
+  }
+  return groups;
+}
+
 export default function DialogueSession() {
   const { answerId } = useParams<{ answerId: string }>();
   const navigate = useNavigate();
@@ -99,22 +118,28 @@ export default function DialogueSession() {
   const currentTurn = Math.max(agentMessages.length, 1);
   const lastMessage = messages[messages.length - 1];
   const waitingForStudent = lastMessage?.role === 'agent' && !dialogueComplete;
+  const groups = groupMessages(messages);
 
   return (
     <div className="max-w-3xl animate-fade-in">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between mb-1">
+        <div>
           <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase">Dialogue</h1>
-          <span className={`dialogue-status-pill ${dialogueComplete ? 'complete' : ''}`}>
-            {dialogueComplete ? 'Complete' : `Turn ${currentTurn} of 2`}
-          </span>
+          {dialogueComplete ? (
+            <p className="text-[0.6rem] text-warmgray-400 mt-1.5 flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-warmgray-400" />
+              <span className="font-display italic tracking-wider">complete</span>
+            </p>
+          ) : (
+            <p className="text-xs text-warmgray-400 mt-1">Turn {currentTurn} of 2</p>
+          )}
         </div>
         {dialogueComplete && (
           <button
             onClick={() => navigate(-1)}
-            className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors"
+            className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors mt-1"
           >
             Return to Exam
           </button>
@@ -122,7 +147,7 @@ export default function DialogueSession() {
       </div>
 
       {/* ── Progress bar ── */}
-      <div className="flex gap-2 mt-4 mb-8">
+      <div className="flex gap-2 mt-5 mb-8">
         {[1, 2].map((turn) => (
           <div key={turn} className="flex-1 h-px bg-warmgray-200 overflow-hidden">
             <div
@@ -133,33 +158,14 @@ export default function DialogueSession() {
         ))}
       </div>
 
-      {/* ── Question context card (pinned) ── */}
+      {/* ── Question context card (question only, pinned) ── */}
       {answerContext && (
-        <div className="dialogue-context-card mb-8 border border-warmgray-200 bg-cream-50">
-          <div className="px-5 py-4 border-b border-warmgray-200 bg-cream-200">
+        <div className="dialogue-context-card mb-6 border border-warmgray-200 bg-cream-50">
+          <div className="px-5 py-4">
             <p className="label-caps mb-2">Question</p>
             <p className="font-serif text-charcoal-800 text-base leading-[1.85]">
               {answerContext.question_text}
             </p>
-          </div>
-          <div className="px-5 py-4">
-            <p className="label-caps mb-2">Your Answer</p>
-            {answerContext.answer_text ? (
-              <p className="text-sm text-charcoal-700 leading-[1.8] whitespace-pre-wrap">
-                {answerContext.answer_text}
-              </p>
-            ) : answerContext.mcq_selections?.length ? (
-              <div className="space-y-2">
-                {answerContext.mcq_selections.map((sel, i) => (
-                  <div key={i} className="flex gap-2 text-sm text-charcoal-700">
-                    <span className="font-serif font-semibold">{sel.key}.</span>
-                    <span className="italic text-charcoal-600">{sel.justification}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-warmgray-400 italic">No answer recorded.</p>
-            )}
           </div>
         </div>
       )}
@@ -187,62 +193,94 @@ export default function DialogueSession() {
 
       {/* ── Chat thread ── */}
       {!starting && !error && (
-        <div className="space-y-7 mb-6">
-          {messages.map((msg, i) => {
-            const isAgent = msg.role === 'agent';
+        <div className="mb-6">
+
+          {/* Initial answer as first bubble */}
+          {answerContext && (answerContext.answer_text || answerContext.mcq_selections?.length) && (
+            <div className="flex flex-col items-end mb-8 animate-fade-in-up">
+              <p className="text-[0.55rem] text-warmgray-400 uppercase tracking-widest mb-1.5 px-1">
+                You &middot; Initial Answer
+              </p>
+              <div className="dialogue-bubble-student max-w-[78%] px-5 py-4 border border-warmgray-200 bg-cream-50">
+                {answerContext.answer_text ? (
+                  <p className="text-sm text-charcoal-800 whitespace-pre-wrap leading-[1.85]">
+                    {answerContext.answer_text}
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {answerContext.mcq_selections!.map((sel, i) => (
+                      <div key={i} className="flex gap-2 text-sm text-charcoal-800">
+                        <span className="font-serif font-semibold">{sel.key}.</span>
+                        <span className="italic text-charcoal-600">{sel.justification}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Message groups */}
+          {groups.map((group, gi) => {
+            const isAgent = group.role === 'agent';
+            const isNewTurn = gi > 0;
             return (
               <div
-                key={msg.id || i}
-                className={`flex flex-col ${isAgent ? 'items-start' : 'items-end'} animate-fade-in-up`}
-                style={{ animationDelay: `${i * 40}ms`, animationFillMode: 'both' }}
+                key={`${group.role}-${group.turn_number}-${gi}`}
+                className={`flex flex-col ${isAgent ? 'items-start' : 'items-end'} animate-fade-in-up ${isNewTurn ? 'mt-8' : 'mt-3'}`}
+                style={{ animationDelay: `${gi * 50}ms`, animationFillMode: 'both' }}
               >
-                {/* Label above bubble */}
-                <p className="text-[0.55rem] text-warmgray-400 uppercase tracking-widest mb-1.5 px-1">
-                  {isAgent ? 'Examiner' : 'You'} &middot; Turn {msg.turn_number}
-                </p>
-
-                <div className={`flex items-end gap-2 max-w-[78%] ${isAgent ? '' : 'flex-row-reverse'}`}>
-                  {/* Examiner avatar */}
+                {/* Single label per group */}
+                <div className={`flex items-center gap-2 mb-2 ${isAgent ? '' : 'flex-row-reverse'}`}>
                   {isAgent && (
-                    <div className="dialogue-avatar mb-0.5">
-                      <span className="text-cream-50 font-serif text-[0.6rem] tracking-wide">E</span>
+                    <div className="dialogue-avatar-outline">
+                      <span className="font-serif text-[0.6rem] text-charcoal-700">E</span>
                     </div>
                   )}
+                  <p className="text-[0.55rem] text-warmgray-400 uppercase tracking-widest">
+                    {isAgent ? 'Examiner' : 'You'} &middot; Turn {group.turn_number}
+                  </p>
+                </div>
 
-                  {/* Bubble */}
-                  <div className={`px-5 py-4 border border-warmgray-200 ${
-                    isAgent
-                      ? 'dialogue-bubble-agent bg-cream-200'
-                      : 'dialogue-bubble-student bg-cream-50'
-                  }`}>
-                    <p className="text-sm text-charcoal-800 whitespace-pre-wrap leading-[1.85]">
-                      {msg.content}
-                    </p>
-                  </div>
+                {/* Bubbles in this group — stacked closely */}
+                <div className={`flex flex-col gap-1 max-w-[78%] ${isAgent ? 'items-start' : 'items-end'}`}>
+                  {group.msgs.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`px-5 py-4 border border-warmgray-200 ${
+                        isAgent
+                          ? 'dialogue-bubble-agent'
+                          : 'dialogue-bubble-student bg-cream-50'
+                      }`}
+                      style={isAgent ? { background: 'rgba(180,168,154,0.18)' } : {}}
+                    >
+                      <p className="text-sm text-charcoal-800 whitespace-pre-wrap leading-[1.85]">
+                        {msg.content}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             );
           })}
 
           {/* Typing indicator */}
-          {(sending || starting) && (
-            <div className="flex flex-col items-start animate-fade-in">
-              <p className="text-[0.55rem] text-warmgray-400 uppercase tracking-widest mb-1.5 px-1">
-                Examiner
-              </p>
-              <div className="flex items-end gap-2">
-                <div className="dialogue-avatar">
-                  <span className="text-cream-50 font-serif text-[0.6rem] tracking-wide">E</span>
+          {(sending || (starting && messages.length > 0)) && (
+            <div className="flex flex-col items-start mt-8 animate-fade-in">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="dialogue-avatar-outline">
+                  <span className="font-serif text-[0.6rem] text-charcoal-700">E</span>
                 </div>
-                <div className="dialogue-bubble-agent px-5 py-4 bg-cream-200 border border-warmgray-200 flex gap-1.5 items-center h-[46px]">
-                  {[0, 150, 300].map((d) => (
-                    <span
-                      key={d}
-                      className="w-1.5 h-1.5 rounded-full bg-warmgray-400 animate-bounce"
-                      style={{ animationDelay: `${d}ms` }}
-                    />
-                  ))}
-                </div>
+                <p className="text-[0.55rem] text-warmgray-400 uppercase tracking-widest">Examiner</p>
+              </div>
+              <div
+                className="dialogue-bubble-agent px-5 py-4 border border-warmgray-200 flex gap-1.5 items-center"
+                style={{ background: 'rgba(180,168,154,0.18)' }}
+              >
+                {[0, 150, 300].map((d) => (
+                  <span key={d} className="w-1.5 h-1.5 rounded-full bg-warmgray-400 animate-bounce"
+                        style={{ animationDelay: `${d}ms` }} />
+                ))}
               </div>
             </div>
           )}
@@ -251,7 +289,7 @@ export default function DialogueSession() {
         </div>
       )}
 
-      {/* ── Composer (input) ── */}
+      {/* ── Composer ── */}
       {waitingForStudent && !dialogueComplete && !error && (
         <div className="sticky bottom-0 bg-cream-100 border-t border-warmgray-200 pt-4 pb-4 mt-2 animate-fade-in">
           <p className="label-caps mb-3">Your Response</p>
