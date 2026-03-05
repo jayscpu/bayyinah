@@ -112,7 +112,7 @@ export default function Results() {
                       width: '100%',
                       textAlign: 'start',
                       padding: '14px 24px',
-                      background: isSelected ? '#DDD6C8' : 'transparent',
+                      background: isSelected ? '#E8DECE' : 'transparent',
                       border: 'none',
                       borderInlineStart: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
                       cursor: 'pointer',

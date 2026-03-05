@@ -264,7 +264,8 @@ export default function CourseManage() {
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder={t('courseManage.titlePlaceholder')}
-              className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors"
+              className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors"
+              style={{ background: '#E8DECE' }}
               autoFocus
               onKeyDown={(e) => { if (e.key === 'Enter') handleCreateCourse(); }}
             />
@@ -278,7 +279,8 @@ export default function CourseManage() {
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               placeholder={t('courseManage.descPlaceholder')}
-              className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors resize-none"
+              className="w-full px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors resize-none"
+              style={{ background: '#E8DECE' }}
               rows={3}
             />
           </div>
@@ -292,7 +294,8 @@ export default function CourseManage() {
             <button
               onClick={handleCreateCourse}
               disabled={creating || !newTitle.trim()}
-              className="px-5 py-2.5 bg-cream-200 border border-warmgray-300 text-[0.65rem] uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 hover:border-charcoal-600 cursor-pointer transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-8 py-4 border uppercase cursor-pointer transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ background: '#D5CCBE', borderColor: '#C4BCB0', color: '#4A4A4A', fontSize: '0.85rem', letterSpacing: '0' }}
             >
               {creating ? t('courseManage.creating') : t('courseManage.create')}
             </button>

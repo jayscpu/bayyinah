@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam } from '../../types';
 
 export default function StudentExams() {
+  useLanguageStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<{ exam: Exam; courseName: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,50 +41,68 @@ export default function StudentExams() {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="flex justify-center mb-8">
-        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
+    <div
+      className="animate-fade-in"
+      style={{
+        marginInlineStart: 'min(calc(570px - 50vw), 8px)',
+        width: 'calc(100vw - 240px)',
+      }}
+    >
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">
+          {t('nav.exams')}
+        </h1>
       </div>
 
-      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">Exams</h1>
-
-      <hr className="dotted-divider" />
+      {/* Full-width divider */}
+      <div style={{ borderTop: '1px solid #2A2A2A', marginBottom: '0' }} />
 
       {exams.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-warmgray-400 font-display italic text-lg">No exams available</p>
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <p className="text-warmgray-400 font-display italic text-xl">No exams available</p>
           {courses.length === 0 && (
-            <Link
-              to="/student/courses"
-              className="inline-block mt-3 text-xs text-warmgray-400 hover:text-charcoal-800 transition-colors"
-            >
-              Enroll in a course first
-            </Link>
+            <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>Enroll in a course first</p>
           )}
         </div>
       ) : (
-        <div className="timeline">
-          {exams.map(({ exam, courseName }) => (
-            <div key={exam.id} className="timeline-item">
-              <div className="timeline-bullet">
-                <img src="/assets/diamond.png" alt="" />
-              </div>
-              <div className="timeline-bar">
-                <div className="flex-1">
-                  <p className="font-serif text-sm text-charcoal-800">{exam.title}</p>
-                  <p className="text-xs text-warmgray-400 mt-0.5">
+        <div style={{ paddingTop: '28px' }}>
+          <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
+            {exams.length} {exams.length !== 1 ? 'exams' : 'exam'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {exams.map(({ exam, courseName }) => (
+              <Link
+                key={exam.id}
+                to={`/student/exam/${exam.id}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 24px',
+                  background: '#E8DECE',
+                  border: '1px solid #D4CCC0',
+                  textDecoration: 'none',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#DDD6C8'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#E8DECE'; }}
+              >
+                <div>
+                  <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.9rem', color: '#2A2A2A', marginBottom: '3px' }}>
+                    {exam.title}
+                  </p>
+                  <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                     {courseName} &middot; {exam.question_count} questions
                   </p>
                 </div>
-                <Link
-                  to={`/student/exam/${exam.id}`}
-                  className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
-                >
+                <span style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                   Start
-                </Link>
-              </div>
-            </div>
-          ))}
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Course, Assignment } from '../../types';
 
 export default function AssignmentList() {
+  useLanguageStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,56 +70,87 @@ export default function AssignmentList() {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="flex justify-center mb-8">
-        <img src="/assets/diamond.png" alt="" className="h-10 w-auto" />
-      </div>
-
-      <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">
-        Assignments
-      </h1>
-      <div className="flex justify-end mb-1">
+    <div
+      className="animate-fade-in"
+      style={{
+        marginInlineStart: 'min(calc(570px - 50vw), 8px)',
+        width: 'calc(100vw - 240px)',
+      }}
+    >
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">
+          {t('nav.assignments')}
+        </h1>
         <Link
           to="/teacher/assignments/create"
-          className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+          style={{
+            padding: '6px 18px',
+            background: 'transparent',
+            border: '1px solid #C4BCB0',
+            fontSize: '0.65rem',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#4A4A4A',
+            textDecoration: 'none',
+            transition: 'border-color 0.2s, color 0.2s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = '#2A2A2A'; (e.currentTarget as HTMLAnchorElement).style.color = '#2A2A2A'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = '#C4BCB0'; (e.currentTarget as HTMLAnchorElement).style.color = '#4A4A4A'; }}
         >
           + Create Assignment
         </Link>
       </div>
 
-      <hr className="dotted-divider" />
+      {/* Full-width divider */}
+      <div style={{ borderTop: '1px solid #2A2A2A', marginBottom: '0' }} />
 
       {assignments.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-warmgray-400 font-display italic text-lg">No assignments yet</p>
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <p className="text-warmgray-400 font-display italic text-xl">No assignments yet</p>
           <Link
             to="/teacher/assignments/create"
-            className="inline-block mt-3 text-xs text-warmgray-400 hover:text-charcoal-800 transition-colors"
+            style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px', display: 'inline-block' }}
           >
             Create your first assignment
           </Link>
         </div>
       ) : (
-        <div className="timeline">
-          {assignments.map((a) => (
-            <div key={a.id} className="timeline-item">
-              <div className="timeline-bullet">
-                <img src="/assets/diamond.png" alt="" />
-              </div>
-              <div className="timeline-bar">
-                <div className="flex-1">
-                  <p className="font-serif text-sm text-charcoal-800">{a.title}</p>
-                  <p className="text-xs text-warmgray-400 mt-0.5">{getCourseName(a.course_id)}</p>
+        <div style={{ paddingTop: '28px' }}>
+          <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
+            {assignments.length} {assignments.length !== 1 ? 'assignments' : 'assignment'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {assignments.map((a) => (
+              <div
+                key={a.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 24px',
+                  background: '#E8DECE',
+                  border: '1px solid #D4CCC0',
+                }}
+              >
+                <div>
+                  <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.9rem', color: '#2A2A2A', marginBottom: '3px' }}>
+                    {a.title}
+                  </p>
+                  <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    {getCourseName(a.course_id)}
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                  <span style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                     {a.status}
                   </span>
 
                   {a.status === 'draft' && (
                     <button
                       onClick={() => handlePublish(a.id)}
-                      className="text-[0.65rem] text-charcoal-600 uppercase tracking-wider hover:text-charcoal-900 transition-colors cursor-pointer"
+                      style={{ fontSize: '0.6rem', color: '#4A4A4A', textTransform: 'uppercase', letterSpacing: '0.12em', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
                       Publish
                     </button>
@@ -127,13 +160,13 @@ export default function AssignmentList() {
                     <>
                       <Link
                         to={`/teacher/assignments/${a.id}/review`}
-                        className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                        style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', textDecoration: 'none' }}
                       >
                         Review
                       </Link>
                       <button
                         onClick={() => handleClose(a.id)}
-                        className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors cursor-pointer"
+                        style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', background: 'none', border: 'none', cursor: 'pointer' }}
                       >
                         Close
                       </button>
@@ -142,14 +175,15 @@ export default function AssignmentList() {
 
                   <button
                     onClick={() => handleDelete(a.id)}
-                    className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 transition-colors cursor-pointer"
+                    className="hover:text-red-400 transition-colors"
+                    style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     Delete
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>
