@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam, ExamSession, TeacherGrade } from '../../types';
 
@@ -10,18 +11,15 @@ interface ResultItem {
   grade: TeacherGrade | null;
 }
 
-const gradeLabels: Record<number, string> = {
-  1: 'Poor',
-  2: 'Below Average',
-  3: 'Average',
-  4: 'Good',
-  5: 'Excellent',
-};
-
 export default function Results() {
+  useLanguageStore();
   const [results, setResults] = useState<ResultItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const gradeLabels: Record<number, string> = {
+    1: t('results.poor'), 2: t('results.belowAverage'), 3: t('results.average'), 4: t('results.good'), 5: t('results.excellent'),
+  };
 
   useEffect(() => {
     loadResults();
@@ -71,16 +69,16 @@ export default function Results() {
     <div
       className="animate-fade-in"
       style={{
-        marginLeft: 'min(calc(570px - 50vw), 8px)',
+        marginInlineStart: 'min(calc(570px - 50vw), 8px)',
         width: 'calc(100vw - 240px)',
       }}
     >
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div>
-          <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">Results</h1>
+          <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">{t('results.title')}</h1>
           <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginTop: '4px' }}>
-            Grades visible after teacher validation
+            {t('results.gradesVisible')}
           </p>
         </div>
       </div>
@@ -90,16 +88,16 @@ export default function Results() {
 
       {results.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <p className="font-display italic text-xl text-warmgray-400">No results yet</p>
-          <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>Complete an exam to see your results here</p>
+          <p className="font-display italic text-xl text-warmgray-400">{t('results.noResults')}</p>
+          <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>{t('results.completeExam')}</p>
         </div>
       ) : (
         <div style={{ display: 'flex' }}>
 
           {/* Left panel — result list */}
-          <div style={{ width: '35%', borderRight: '1px solid #D4CCC0', paddingTop: '28px', flexShrink: 0 }}>
+          <div style={{ width: '35%', borderInlineEnd: '1px solid #D4CCC0', paddingTop: '28px', flexShrink: 0 }}>
             <p style={{ padding: '0 24px 12px', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92' }}>
-              {results.length} exam{results.length !== 1 ? 's' : ''}
+              {results.length} {results.length !== 1 ? t('courses.exams') : t('courses.exam')}
             </p>
             <div>
               {results.map((item) => {
@@ -112,11 +110,11 @@ export default function Results() {
                     style={{
                       display: 'block',
                       width: '100%',
-                      textAlign: 'left',
+                      textAlign: 'start',
                       padding: '14px 24px',
                       background: isSelected ? '#DDD6C8' : 'transparent',
                       border: 'none',
-                      borderLeft: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
+                      borderInlineStart: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
                       cursor: 'pointer',
                       transition: 'background 0.15s',
                     }}
@@ -131,8 +129,8 @@ export default function Results() {
                     </p>
                     <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: statusColor }}>
                       {item.grade ? `${item.grade.final_grade}/5 · ${gradeLabels[item.grade.final_grade]}` :
-                       item.session.status === 'scored' ? 'Under Review' :
-                       item.session.status === 'completed' ? 'Submitted' : 'In Progress'}
+                       item.session.status === 'scored' ? t('results.underReview') :
+                       item.session.status === 'completed' ? t('results.submitted') : t('results.inProgress')}
                     </p>
                   </button>
                 );
@@ -141,7 +139,7 @@ export default function Results() {
           </div>
 
           {/* Right panel — selected result detail */}
-          <div style={{ flex: 1, paddingTop: '28px', paddingLeft: '48px', paddingRight: '0' }}>
+          <div style={{ flex: 1, paddingTop: '28px', paddingInlineStart: '48px', paddingInlineEnd: '0' }}>
             {selected && (
               <div className="animate-fade-in">
                 <h2 className="font-serif" style={{ fontSize: '1.5rem', color: '#2A2A2A', marginBottom: '4px', letterSpacing: '0.02em' }}>
@@ -153,7 +151,7 @@ export default function Results() {
 
                 {selected.session.completed_at && (
                   <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '24px' }}>
-                    Submitted {new Date(selected.session.completed_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    {t('results.submittedDate')} {new Date(selected.session.completed_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                   </p>
                 )}
 
@@ -162,7 +160,7 @@ export default function Results() {
                   {selected.session.ai_score !== null && (
                     <div>
                       <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
-                        Agent Score
+                        {t('results.agentScore')}
                       </p>
                       <p style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: '#2A2A2A', lineHeight: 1 }}>
                         {selected.session.ai_score.toFixed(0)}%
@@ -174,7 +172,7 @@ export default function Results() {
                   {selected.grade ? (
                     <div>
                       <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
-                        Final Grade
+                        {t('results.finalGrade')}
                       </p>
                       <p style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: '#2A2A2A', lineHeight: 1 }}>
                         {selected.grade.final_grade}<span style={{ fontSize: '1.25rem', color: '#A89E92' }}>/5</span>
@@ -186,11 +184,11 @@ export default function Results() {
                   ) : (
                     <div>
                       <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
-                        Status
+                        {t('results.status')}
                       </p>
                       <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', color: '#2A2A2A', fontStyle: 'italic' }}>
-                        {selected.session.status === 'scored' ? 'Under Review' :
-                         selected.session.status === 'completed' ? 'Submitted' : 'In Progress'}
+                        {selected.session.status === 'scored' ? t('results.underReview') :
+                         selected.session.status === 'completed' ? t('results.submitted') : t('results.inProgress')}
                       </p>
                     </div>
                   )}
@@ -198,9 +196,9 @@ export default function Results() {
 
                 {/* Instructor feedback */}
                 {selected.grade?.feedback && (
-                  <div style={{ marginTop: '28px', padding: '16px 20px', background: '#E6E0D4', borderLeft: '2px solid #C4BCB0' }}>
+                  <div style={{ marginTop: '28px', padding: '16px 20px', background: '#E6E0D4', borderInlineStart: '2px solid #C4BCB0' }}>
                     <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
-                      Instructor Note
+                      {t('results.instructorNote')}
                     </p>
                     <p style={{ fontSize: '0.875rem', color: '#3D3D3D', lineHeight: 1.7, fontStyle: 'italic' }}>
                       {selected.grade.feedback}

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import Modal from '../../components/ui/Modal';
 import type { Course, Exam } from '../../types';
 
 export default function StudentCourses() {
+  useLanguageStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Record<string, Exam[]>>({});
   const [loading, setLoading] = useState(true);
@@ -48,7 +50,7 @@ export default function StudentCourses() {
       setEnrollCode('');
       setShowModal(false);
     } catch (err: any) {
-      setEnrollError(err.response?.data?.detail || 'Enrollment failed');
+      setEnrollError(err.response?.data?.detail || t('courses.enrollFailed'));
     } finally {
       setEnrolling(false);
     }
@@ -78,14 +80,14 @@ export default function StudentCourses() {
     <div
       className="animate-fade-in"
       style={{
-        marginLeft: 'min(calc(570px - 50vw), 8px)',
+        marginInlineStart: 'min(calc(570px - 50vw), 8px)',
         width: 'calc(100vw - 240px)',
       }}
     >
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">
-          Courses
+          {t('courses.title')}
         </h1>
         <button
           onClick={() => setShowModal(true)}
@@ -102,7 +104,7 @@ export default function StudentCourses() {
           onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2A2A2A'; (e.currentTarget as HTMLButtonElement).style.color = '#2A2A2A'; }}
           onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#C4BCB0'; (e.currentTarget as HTMLButtonElement).style.color = '#4A4A4A'; }}
         >
-          + Enroll
+          {t('courses.enroll')}
         </button>
       </div>
 
@@ -111,17 +113,17 @@ export default function StudentCourses() {
 
       {courses.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <p className="text-warmgray-400 font-display italic text-xl">No courses yet</p>
-          <p className="text-xs text-warmgray-400 mt-2 uppercase tracking-wider">Click Enroll to get started</p>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('courses.noCourses')}</p>
+          <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>{t('courses.clickEnroll')}</p>
         </div>
       ) : (
         /* Two-column layout — full width */
         <div style={{ display: 'flex' }}>
 
           {/* Left panel — course list */}
-          <div style={{ width: '35%', borderRight: '1px solid #D4CCC0', paddingTop: '28px', flexShrink: 0 }}>
+          <div style={{ width: '35%', borderInlineEnd: '1px solid #D4CCC0', paddingTop: '28px', flexShrink: 0 }}>
             <p style={{ padding: '0 24px 12px', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92' }}>
-              {filtered.length} course{filtered.length !== 1 ? 's' : ''}
+              {filtered.length} {filtered.length !== 1 ? t('courses.courses') : t('courses.course')}
             </p>
 
             <div>
@@ -134,11 +136,11 @@ export default function StudentCourses() {
                     style={{
                       display: 'block',
                       width: '100%',
-                      textAlign: 'left',
+                      textAlign: 'start',
                       padding: '14px 24px',
                       background: isSelected ? '#E8DECE' : 'transparent',
                       border: 'none',
-                      borderLeft: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
+                      borderInlineStart: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
                       cursor: 'pointer',
                       transition: 'background 0.15s',
                     }}
@@ -149,7 +151,7 @@ export default function StudentCourses() {
                       {course.title}
                     </p>
                     <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                      {(exams[course.id] || []).length} exam{(exams[course.id] || []).length !== 1 ? 's' : ''}
+                      {(exams[course.id] || []).length} {(exams[course.id] || []).length !== 1 ? t('courses.exams') : t('courses.exam')}
                     </p>
                   </button>
                 );
@@ -158,7 +160,7 @@ export default function StudentCourses() {
           </div>
 
           {/* Right panel — selected course detail */}
-          <div style={{ flex: 1, paddingTop: '28px', paddingLeft: '48px', paddingRight: '0' }}>
+          <div style={{ flex: 1, paddingTop: '28px', paddingInlineStart: '48px', paddingInlineEnd: '0' }}>
             {selected && (
               <div className="animate-fade-in">
                 <h2 className="font-serif" style={{ fontSize: '1.5rem', color: '#2A2A2A', marginBottom: '8px', letterSpacing: '0.02em' }}>
@@ -175,11 +177,11 @@ export default function StudentCourses() {
 
                 <div style={{ borderTop: '1px dotted #C4BCB0', paddingTop: '24px' }}>
                   <p style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
-                    Available Exams
+                    {t('courses.availableExams')}
                   </p>
                   {selectedExams.length === 0 ? (
                     <p style={{ fontSize: '0.8rem', color: '#C4BCB0', fontStyle: 'italic', fontFamily: 'Cormorant Garamond, serif' }}>
-                      No exams available yet
+                      {t('courses.noExams')}
                     </p>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -204,7 +206,7 @@ export default function StudentCourses() {
                             {exam.title}
                           </span>
                           <span style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                            Start →
+                            {t('courses.start')}
                           </span>
                         </Link>
                       ))}
@@ -218,16 +220,16 @@ export default function StudentCourses() {
       )}
 
       {/* Enroll Modal */}
-      <Modal isOpen={showModal} onClose={closeModal} title="Enroll in a Course">
+      <Modal isOpen={showModal} onClose={closeModal} title={t('courses.enrollTitle')}>
         <div>
           <label style={{ display: 'block', fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-warmgray-400)', marginBottom: '0.5rem' }}>
-            Course ID
+            {t('courses.courseId')}
           </label>
           <input
             type="text"
             value={enrollCode}
             onChange={(e) => { setEnrollCode(e.target.value); setEnrollError(''); }}
-            placeholder="Paste your course ID here"
+            placeholder={t('courses.pasteId')}
             autoFocus
             onKeyDown={(e) => { if (e.key === 'Enter') handleEnroll(); }}
             style={{
@@ -266,7 +268,7 @@ export default function StudentCourses() {
               transition: 'opacity 0.2s',
             }}
           >
-            {enrolling ? 'Joining...' : 'Join Course'}
+            {enrolling ? t('courses.joining') : t('courses.joinCourse')}
           </button>
         </div>
       </Modal>

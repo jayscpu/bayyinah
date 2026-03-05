@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
 import { useAuthStore } from '../../stores/authStore';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam } from '../../types';
 
 export default function TeacherDashboard() {
+  useLanguageStore();
   const { user } = useAuthStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
@@ -59,7 +61,7 @@ export default function TeacherDashboard() {
 
       {/* Welcome */}
       <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
-        Welcome, Dr. {user?.full_name}
+        {t('teacherDash.welcome')} {user?.full_name}
       </h1>
 
       {/* Colored dotted divider */}
@@ -69,25 +71,25 @@ export default function TeacherDashboard() {
       <div className="dashboard-cards">
         <div className="dashboard-card">
           <p className="dashboard-card-value">{courses.length}</p>
-          <p className="dashboard-card-label">Courses</p>
+          <p className="dashboard-card-label">{t('dashboard.courses')}</p>
         </div>
         <div className="dashboard-card">
           <p className="dashboard-card-value">{exams.length}</p>
-          <p className="dashboard-card-label">Exams</p>
+          <p className="dashboard-card-label">{t('teacherDash.exams')}</p>
         </div>
         <div className="dashboard-card">
           <p className="dashboard-card-value">{exams.reduce((s, e) => s + (e.question_count || 0), 0)}</p>
-          <p className="dashboard-card-label">Questions</p>
+          <p className="dashboard-card-label">{t('teacherDash.questions')}</p>
         </div>
       </div>
 
       {/* Stream label */}
-      <p className="label-caps mb-5">Stream</p>
+      <p className="label-caps mb-5">{t('dashboard.stream')}</p>
 
       {/* Timeline */}
       {streamItems.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-warmgray-400 font-display italic text-xl">No notifications yet</p>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('dashboard.noNotifications')}</p>
         </div>
       ) : (
         <div className="timeline">

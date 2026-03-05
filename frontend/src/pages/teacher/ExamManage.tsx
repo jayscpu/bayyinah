@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Exam, ExamQuestion } from '../../types';
 
 export default function ExamManage() {
+  useLanguageStore();
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
   const [exam, setExam] = useState<Exam | null>(null);
@@ -67,7 +69,7 @@ export default function ExamManage() {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this exam? This cannot be undone.')) return;
+    if (!confirm(t('examManage.confirmDelete'))) return;
     try {
       await api.delete(`/exams/${examId}`);
       toast.success('Exam deleted');
@@ -78,11 +80,11 @@ export default function ExamManage() {
   };
 
   const handleRegenerate = async () => {
-    if (questions.length > 0 && !confirm('This will replace all existing questions. Continue?')) return;
+    if (questions.length > 0 && !confirm(t('examManage.replaceQuestions'))) return;
     setRegenerating(true);
     try {
       await api.post(`/exams/${examId}/regenerate-questions`);
-      toast.success('Generating questions from course materials...');
+      toast.success(t('examManage.generatingFromMaterials'));
       for (let i = 0; i < 30; i++) {
         await new Promise((r) => setTimeout(r, 2000));
         const res = await api.get(`/exams/${examId}/questions`);
@@ -170,7 +172,7 @@ export default function ExamManage() {
   }
 
   if (!exam) {
-    return <div className="text-center py-20 text-warmgray-400 font-display italic">Exam not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">{t('examManage.examNotFound')}</div>;
   }
 
   return (
@@ -191,7 +193,7 @@ export default function ExamManage() {
             onClick={handlePublish}
             className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
           >
-            Publish Exam
+            {t('examManage.publishExam')}
           </button>
         )}
         {exam.status === 'published' && (
@@ -199,7 +201,7 @@ export default function ExamManage() {
             onClick={handleClose}
             className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
           >
-            Close Exam
+            {t('examManage.closeExam')}
           </button>
         )}
         {exam.status === 'draft' && (
@@ -208,7 +210,7 @@ export default function ExamManage() {
             disabled={regenerating}
             className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
           >
-            {regenerating ? 'Generating...' : 'AI Generate Questions'}
+            {regenerating ? t('examManage.generating') : t('examManage.aiGenerate')}
           </button>
         )}
         {exam.status === 'draft' && (
@@ -216,24 +218,24 @@ export default function ExamManage() {
             onClick={() => setShowAddForm(!showAddForm)}
             className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
           >
-            {showAddForm ? 'Cancel' : 'Write Question'}
+            {showAddForm ? t('examManage.cancel') : t('examManage.writeQuestion')}
           </button>
         )}
         <button
           onClick={handleDelete}
           className="px-4 py-2 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-warmgray-400 hover:text-red-400 cursor-pointer transition-colors"
         >
-          Delete Exam
+          {t('examManage.deleteExam')}
         </button>
       </div>
 
       {/* Add Question Form */}
       {showAddForm && (
         <div className="bg-cream-200 border border-warmgray-200 p-6 mb-6">
-          <p className="font-serif text-lg text-charcoal-800 mb-4">Add Question</p>
+          <p className="font-serif text-lg text-charcoal-800 mb-4">{t('examManage.addQuestion')}</p>
 
           <div className="mb-4">
-            <p className="label-caps mb-2">Type</p>
+            <p className="label-caps mb-2">{t('examManage.type')}</p>
             <div className="flex gap-3">
               <button
                 type="button"
@@ -244,7 +246,7 @@ export default function ExamManage() {
                     : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
                 }`}
               >
-                Essay
+                {t('examManage.essay')}
               </button>
               <button
                 type="button"
@@ -255,17 +257,17 @@ export default function ExamManage() {
                     : 'bg-cream-100 text-charcoal-600 border border-warmgray-200 hover:bg-cream-300'
                 }`}
               >
-                Multiple Choice
+                {t('examManage.multipleChoice')}
               </button>
             </div>
           </div>
 
           <div className="mb-4">
-            <p className="label-caps mb-2">Question Text</p>
+            <p className="label-caps mb-2">{t('examManage.questionText')}</p>
             <textarea
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
-              placeholder="Enter your question..."
+              placeholder={t('examManage.questionPlaceholder')}
               rows={3}
               className="w-full px-4 py-3 bg-cream-50 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y"
             />
@@ -273,7 +275,7 @@ export default function ExamManage() {
 
           {newType === 'mcq' && (
             <div className="mb-4 space-y-2">
-              <p className="label-caps">Options</p>
+              <p className="label-caps">{t('examManage.options')}</p>
               {newOptions.map((opt, i) => (
                 <div key={opt.key} className="flex items-center gap-2">
                   <span className="font-serif text-charcoal-600 w-6">{opt.key}.</span>
@@ -297,7 +299,7 @@ export default function ExamManage() {
             disabled={addingQuestion}
             className="px-6 py-2 bg-cream-50 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
           >
-            {addingQuestion ? 'Adding...' : 'Add Question'}
+            {addingQuestion ? t('examManage.adding') : t('examManage.addQuestion')}
           </button>
         </div>
       )}
@@ -306,19 +308,19 @@ export default function ExamManage() {
       {regenerating ? (
         <div className="text-center py-12">
           <Spinner />
-          <p className="text-warmgray-400 mt-4 font-display italic">Generating questions from course materials...</p>
+          <p className="text-warmgray-400 mt-4 font-display italic">{t('examManage.generatingFromMaterials')}</p>
         </div>
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">
-            <p className="label-caps">Questions ({questions.length})</p>
+            <p className="label-caps">{t('examManage.questionsLabel')} ({questions.length})</p>
           </div>
 
           {questions.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-warmgray-400 font-display italic text-lg">No questions yet.</p>
+              <p className="text-warmgray-400 font-display italic text-lg">{t('examManage.noQuestions')}</p>
               <p className="text-warmgray-400 text-xs mt-2">
-                Use "AI Generate Questions" or "Write Question" above.
+                {t('examManage.useAI')}
               </p>
             </div>
           ) : (
@@ -347,13 +349,13 @@ export default function ExamManage() {
                               onClick={() => saveEdit(q.id)}
                               className="px-3 py-1 bg-cream-50 border border-warmgray-200 text-[0.65rem] uppercase tracking-wider text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors"
                             >
-                              Save
+                              {t('examManage.save')}
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
                               className="px-3 py-1 text-[0.65rem] uppercase tracking-wider text-warmgray-400 hover:text-charcoal-800 cursor-pointer transition-colors"
                             >
-                              Cancel
+                              {t('examManage.cancel')}
                             </button>
                           </div>
                         </div>
@@ -378,13 +380,13 @@ export default function ExamManage() {
                           onClick={() => startEdit(q)}
                           className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors"
                         >
-                          Edit
+                          {t('examManage.edit')}
                         </button>
                         <button
                           onClick={() => deleteQuestion(q.id)}
                           className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 cursor-pointer transition-colors"
                         >
-                          Delete
+                          {t('examManage.delete')}
                         </button>
                       </div>
                     )}

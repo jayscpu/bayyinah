@@ -1,26 +1,32 @@
 import { NavLink, Link } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-
-const studentLinks = [
-  { to: '/student', label: 'Home', end: true },
-  { to: '/student/courses', label: 'Courses' },
-  { to: '/student/results', label: 'Results' },
-];
-
-const teacherLinks = [
-  { to: '/teacher', label: 'Home', end: true },
-  { to: '/teacher/courses', label: 'Courses' },
-  { to: '/teacher/exams', label: 'Exams' },
-  { to: '/teacher/reviews', label: 'Reviews' },
-];
+import { useLanguageStore, t } from '../../stores/languageStore';
 
 export default function Sidebar() {
   const { user, logout } = useAuthStore();
+  const { lang, toggle } = useLanguageStore();
+
+  const studentLinks = [
+    { to: '/student', label: t('nav.home'), end: true },
+    { to: '/student/courses', label: t('nav.courses') },
+    { to: '/student/results', label: t('nav.results') },
+  ];
+
+  const teacherLinks = [
+    { to: '/teacher', label: t('nav.home'), end: true },
+    { to: '/teacher/courses', label: t('nav.courses') },
+    { to: '/teacher/exams', label: t('nav.exams') },
+    { to: '/teacher/reviews', label: t('nav.reviews') },
+  ];
+
   const links = user?.role === 'teacher' ? teacherLinks : studentLinks;
 
   return (
     <aside className="sidebar-simple">
-      <nav className="sidebar-nav" style={{ paddingTop: '40px' }}>
+      <Link to="/" className="hover:opacity-80 transition-opacity" style={{ textAlign: 'center', marginTop: '-0.5rem' }}>
+        <span className="brand-text" style={{ fontSize: '2.75rem' }}>بيّنة</span>
+      </Link>
+      <nav className="sidebar-nav">
         {links.map((link) => (
           <NavLink
             key={link.to}
@@ -36,15 +42,21 @@ export default function Sidebar() {
       </nav>
 
       {user && (
-        <>
+        <div style={{ marginTop: 'auto', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <button
+            onClick={toggle}
+            className="sidebar-signout"
+            style={{ fontFamily: lang === 'en' ? "'Amiri', serif" : 'Inter, sans-serif', fontSize: '0.7rem' }}
+          >
+            {t('lang.toggle')}
+          </button>
           <button
             onClick={logout}
             className="sidebar-signout"
-            style={{ marginTop: 'auto', marginBottom: '1rem' }}
           >
-            Sign Out
+            {t('nav.signOut')}
           </button>
-        </>
+        </div>
       )}
     </aside>
   );

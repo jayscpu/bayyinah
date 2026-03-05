@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import toast from 'react-hot-toast';
 import type { Course } from '../../types';
 
 export default function ExamCreate() {
+  useLanguageStore();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const courseId = searchParams.get('courseId') || '';
@@ -45,22 +47,22 @@ export default function ExamCreate() {
   return (
     <div className="max-w-2xl animate-fade-in">
       <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase mb-1">
-        Create Exam
+        {t('examCreate.title')}
       </h1>
-      <p className="text-xs text-warmgray-400 mb-4">Set up a new exam for your course</p>
+      <p className="text-xs text-warmgray-400 mb-4">{t('examCreate.subtitle')}</p>
 
       <hr className="dotted-divider" />
 
       <form onSubmit={handleCreate} className="space-y-5">
         <div>
-          <p className="label-caps mb-2">Course</p>
+          <p className="label-caps mb-2">{t('examCreate.course')}</p>
           <select
             value={selectedCourse}
             onChange={(e) => setSelectedCourse(e.target.value)}
             required
             className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
           >
-            <option value="">Select a course</option>
+            <option value="">{t('examCreate.selectCourse')}</option>
             {courses.map((c) => (
               <option key={c.id} value={c.id}>{c.title}</option>
             ))}
@@ -68,31 +70,31 @@ export default function ExamCreate() {
         </div>
 
         <div>
-          <p className="label-caps mb-2">Exam Title</p>
+          <p className="label-caps mb-2">{t('examCreate.examTitle')}</p>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Midterm Exam"
+            placeholder={t('examCreate.titlePlaceholder')}
             required
             className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
           />
         </div>
 
         <div>
-          <p className="label-caps mb-2">Description (optional)</p>
+          <p className="label-caps mb-2">{t('examCreate.descOptional')}</p>
           <input
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Brief description"
+            placeholder={t('examCreate.descPlaceholder')}
             className="w-full px-4 py-2.5 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
           />
         </div>
 
         {courses.length === 0 && (
           <p className="text-sm text-warmgray-400 font-display italic">
-            Create a course first and upload materials before creating exams.
+            {t('examCreate.noCourses')}
           </p>
         )}
 
@@ -101,7 +103,7 @@ export default function ExamCreate() {
           disabled={creating || !selectedCourse}
           className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
         >
-          {creating ? <Spinner size="sm" /> : 'Create Exam'}
+          {creating ? <Spinner size="sm" /> : t('examCreate.submit')}
         </button>
       </form>
     </div>
