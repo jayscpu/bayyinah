@@ -51,6 +51,16 @@ async def generate_assignment_socratic_question(
 ) -> AssignmentDialogueMessage:
     """Generate a Socratic question about the student's uploaded assignment."""
 
+    # Idempotent: return existing agent message for this turn if already generated
+    existing_check = await db.execute(
+        select(AssignmentDialogueMessage)
+        .where(AssignmentDialogueMessage.submission_id == submission_id, AssignmentDialogueMessage.role == "agent", AssignmentDialogueMessage.turn_number == turn_number)
+        .limit(1)
+    )
+    existing_msg = existing_check.scalar_one_or_none()
+    if existing_msg:
+        return existing_msg
+
     result = await db.execute(select(AssignmentSubmission).where(AssignmentSubmission.id == submission_id))
     submission = result.scalar_one()
 

@@ -38,6 +38,7 @@ export default function DialogueSession() {
   const [dialogueComplete, setDialogueComplete] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const startingRef = useRef(false);
 
   useEffect(() => { loadDialogue(); }, [answerId]);
 
@@ -72,6 +73,8 @@ export default function DialogueSession() {
   };
 
   const startDialogue = async () => {
+    if (startingRef.current) return;
+    startingRef.current = true;
     setStarting(true);
     setError('');
     try {

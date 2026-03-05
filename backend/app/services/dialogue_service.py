@@ -19,6 +19,16 @@ async def generate_socratic_question(
 ) -> DialogueMessage:
     """Generate a Socratic question for the given turn."""
 
+    # Idempotent: return existing agent message for this turn if already generated
+    existing_check = await db.execute(
+        select(DialogueMessage)
+        .where(DialogueMessage.answer_id == answer.id, DialogueMessage.role == "agent", DialogueMessage.turn_number == turn_number)
+        .limit(1)
+    )
+    existing_msg = existing_check.scalar_one_or_none()
+    if existing_msg:
+        return existing_msg
+
     # Load related data
     result = await db.execute(select(ExamQuestion).where(ExamQuestion.id == answer.question_id))
     question = result.scalar_one()
