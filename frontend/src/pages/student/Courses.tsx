@@ -136,13 +136,13 @@ export default function StudentCourses() {
                       width: '100%',
                       textAlign: 'left',
                       padding: '14px 24px',
-                      background: isSelected ? '#DDD6C8' : 'transparent',
+                      background: isSelected ? '#E8DECE' : 'transparent',
                       border: 'none',
                       borderLeft: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
                       cursor: 'pointer',
                       transition: 'background 0.15s',
                     }}
-                    onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = '#E6E0D4'; }}
+                    onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = '#E8DECE'; }}
                     onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
                   >
                     <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.9rem', color: '#2A2A2A', marginBottom: '3px' }}>
@@ -192,13 +192,13 @@ export default function StudentCourses() {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             padding: '12px 18px',
-                            background: '#E6E0D4',
+                            background: '#E8DECE',
                             border: '1px solid #D4CCC0',
                             textDecoration: 'none',
                             transition: 'background 0.2s',
                           }}
                           onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#DDD6C8'; }}
-                          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#E6E0D4'; }}
+                          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#E8DECE'; }}
                         >
                           <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.875rem', color: '#2A2A2A' }}>
                             {exam.title}

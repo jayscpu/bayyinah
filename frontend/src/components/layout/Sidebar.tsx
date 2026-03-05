@@ -20,11 +20,7 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar-simple">
-      <Link to="/" className="flex items-center justify-center px-3 pt-10 pb-4 hover:opacity-80 transition-opacity">
-        <span className="brand-text">بيّنة</span>
-      </Link>
-
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" style={{ paddingTop: '40px' }}>
         {links.map((link) => (
           <NavLink
             key={link.to}
