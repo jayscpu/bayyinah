@@ -142,6 +142,7 @@ html[dir="rtl"] h1, html[dir="rtl"] h2 {
 
 .sidebar-tab:hover {
   color: var(--color-charcoal-900);
+  background-color: rgba(180, 168, 154, 0.3);
 }
 
 .sidebar-tab.active {

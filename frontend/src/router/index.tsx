@@ -10,6 +10,7 @@ import StudentDashboard from '../pages/student/Dashboard';
 import ExamSession from '../pages/student/ExamSession';
 import DialogueSession from '../pages/student/DialogueSession';
 import StudentCourses from '../pages/student/Courses';
+import StudentExams from '../pages/student/Exams';
 import Results from '../pages/student/Results';
 import TeacherDashboard from '../pages/teacher/Dashboard';
 import CourseManage from '../pages/teacher/CourseManage';
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/student', element: <StudentDashboard /> },
       { path: '/student/courses', element: <StudentCourses /> },
+      { path: '/student/exams', element: <StudentExams /> },
       { path: '/student/exam/:examId', element: <ExamSession /> },
       { path: '/student/dialogue/:answerId', element: <DialogueSession /> },
       { path: '/student/results', element: <Results /> },
