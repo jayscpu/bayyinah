@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 
@@ -24,9 +24,6 @@ export default function AppShell() {
 
   return (
     <div className="min-h-screen paper-bg flex relative">
-      <Link to="/" className="fixed right-8 z-50 hover:opacity-80 transition-opacity" style={{ top: '-1.25rem' }}>
-        <span className="brand-text">بيّنة</span>
-      </Link>
       <Sidebar />
       <div className="flex-1 flex flex-col min-h-screen overflow-visible">
         {/* Content — centered */}

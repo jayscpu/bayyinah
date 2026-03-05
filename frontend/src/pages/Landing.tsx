@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useLanguageStore, t } from '../stores/languageStore';
 
 export default function Landing() {
   const { user } = useAuthStore();
+  const { toggle } = useLanguageStore();
 
   const dashboardPath = user?.role === 'teacher' ? '/teacher' : '/student';
 
@@ -16,15 +18,18 @@ export default function Landing() {
       {/* Nav bar — thin lines top and bottom */}
       <nav className="landing-nav">
         <div className="flex gap-8">
-          <Link to="/vision">Philosophy</Link>
+          <Link to="/vision">{t('nav.philosophy')}</Link>
         </div>
         <div className="flex gap-8">
-          <Link to="/faq">FAQ</Link>
+          <Link to="/faq">{t('nav.faq')}</Link>
           {user ? (
-            <Link to={dashboardPath}>Dashboard</Link>
+            <Link to={dashboardPath}>{t('nav.dashboard')}</Link>
           ) : (
-            <Link to="/login">Sign In</Link>
+            <Link to="/login">{t('nav.signIn')}</Link>
           )}
+          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit' }}>
+            {t('lang.toggle')}
+          </button>
         </div>
       </nav>
 
@@ -55,7 +60,7 @@ export default function Landing() {
 
       {/* Footer */}
       <div className="page-footer relative z-10">
-        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
+        <p className="footer-quote">{t('footer.quote')}</p>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useLanguageStore, t } from '../stores/languageStore';
 import toast from 'react-hot-toast';
 
 export default function Register() {
@@ -10,6 +11,7 @@ export default function Register() {
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const [loading, setLoading] = useState(false);
   const { register } = useAuthStore();
+  const { toggle } = useLanguageStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,10 +37,13 @@ export default function Register() {
       {/* Nav bar */}
       <nav className="landing-nav">
         <div className="flex gap-8">
-          <Link to="/">Home</Link>
+          <Link to="/">{t('nav.home')}</Link>
         </div>
         <div className="flex gap-8">
-          <Link to="/login">Sign In</Link>
+          <Link to="/login">{t('nav.signIn')}</Link>
+          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit' }}>
+            {t('lang.toggle')}
+          </button>
         </div>
       </nav>
 
@@ -50,12 +55,12 @@ export default function Register() {
             <img src="/assets/diamond.png" alt="" className="ornament-img h-10" />
           </div>
 
-          <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">Create Account</h1>
-          <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">Join Bayyinah</p>
+          <h1 className="font-display text-3xl text-charcoal-800 text-center mb-1">{t('register.title')}</h1>
+          <p className="text-xs text-warmgray-400 text-center mb-8 uppercase tracking-wider">{t('register.subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <p className="label-caps mb-2">Full Name</p>
+              <p className="label-caps mb-2">{t('register.fullName')}</p>
               <input
                 type="text"
                 value={fullName}
@@ -66,7 +71,7 @@ export default function Register() {
               />
             </div>
             <div>
-              <p className="label-caps mb-2">Email</p>
+              <p className="label-caps mb-2">{t('register.email')}</p>
               <input
                 type="email"
                 value={email}
@@ -77,7 +82,7 @@ export default function Register() {
               />
             </div>
             <div>
-              <p className="label-caps mb-2">Password</p>
+              <p className="label-caps mb-2">{t('register.password')}</p>
               <input
                 type="password"
                 value={password}
@@ -91,9 +96,9 @@ export default function Register() {
 
             {/* Role selector */}
             <div>
-              <p className="label-caps mb-2">I am a...</p>
+              <p className="label-caps mb-2">{t('register.iAmA')}</p>
               <div className="grid grid-cols-2 gap-3">
-                {([{ value: 'student' as const, label: 'Student' }, { value: 'teacher' as const, label: 'Instructor' }]).map((r) => (
+                {([{ value: 'student' as const, label: t('register.student') }, { value: 'teacher' as const, label: t('register.instructor') }]).map((r) => (
                   <button
                     key={r.value}
                     type="button"
@@ -115,16 +120,16 @@ export default function Register() {
               disabled={loading}
               className="w-full px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
             >
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? t('register.submitting') : t('register.submit')}
             </button>
           </form>
 
           <hr className="dotted-divider" />
 
           <p className="text-center text-xs text-charcoal-600">
-            Already have an account?{' '}
+            {t('register.hasAccount')}{' '}
             <Link to="/login" className="text-charcoal-800 font-medium hover:underline">
-              Sign in
+              {t('register.signIn')}
             </Link>
           </p>
         </div>
@@ -132,7 +137,7 @@ export default function Register() {
 
       {/* Footer */}
       <div className="page-footer">
-        <p className="footer-quote">إن للمرء عقلٌ يستضيء بهِ</p>
+        <p className="footer-quote">{t('footer.quote')}</p>
       </div>
     </div>
   );

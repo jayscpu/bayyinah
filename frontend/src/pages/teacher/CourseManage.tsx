@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import Modal from '../../components/ui/Modal';
 import toast from 'react-hot-toast';
 import type { Course, Material } from '../../types';
 
 export default function CourseManage() {
+  useLanguageStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [materials, setMaterials] = useState<Record<string, Material[]>>({});
   const [loading, setLoading] = useState(true);
@@ -73,7 +75,7 @@ export default function CourseManage() {
   };
 
   const handleDeleteMaterial = async (courseId: string, materialId: string) => {
-    if (!confirm('Delete this material?')) return;
+    if (!confirm(t('courseManage.deleteMaterial'))) return;
     try {
       await api.delete(`/courses/${courseId}/materials/${materialId}`);
       toast.success('Material deleted');
@@ -93,17 +95,17 @@ export default function CourseManage() {
       <div className="flex items-end justify-between mb-10">
         <div>
           <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase">
-            Courses
+            {t('courses.title')}
           </h1>
           <p className="text-xs text-warmgray-400 mt-1.5 uppercase tracking-wider">
-            {courses.length} course{courses.length !== 1 ? 's' : ''}
+            {courses.length} {courses.length !== 1 ? t('courses.courses') : t('courses.course')}
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
           className="px-5 py-2.5 bg-cream-200 border border-warmgray-300 text-[0.65rem] uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 hover:border-charcoal-600 cursor-pointer transition-all duration-200"
         >
-          + Create Course
+          {t('courseManage.createCourse')}
         </button>
       </div>
 
@@ -112,9 +114,9 @@ export default function CourseManage() {
       {/* Course list */}
       {courses.length === 0 ? (
         <div className="text-center py-20">
-          <p className="font-display italic text-xl text-warmgray-400">No courses yet</p>
+          <p className="font-display italic text-xl text-warmgray-400">{t('courseManage.noCourses')}</p>
           <p className="text-xs text-warmgray-400 mt-3 uppercase tracking-wider">
-            Create your first course to get started
+            {t('courseManage.createFirst')}
           </p>
         </div>
       ) : (
@@ -138,11 +140,11 @@ export default function CourseManage() {
                     </span>
                     {course.student_count !== undefined && (
                       <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                        {course.student_count} student{course.student_count !== 1 ? 's' : ''}
+                        {course.student_count} {course.student_count !== 1 ? t('courseManage.students') : t('courseManage.student')}
                       </span>
                     )}
                     <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                      {(materials[course.id] || []).length} material{(materials[course.id] || []).length !== 1 ? 's' : ''}
+                      {(materials[course.id] || []).length} {(materials[course.id] || []).length !== 1 ? t('courseManage.materialPlural') : t('courseManage.material')}
                     </span>
                   </div>
                 </div>
@@ -153,7 +155,7 @@ export default function CourseManage() {
                     to={`/teacher/courses/${course.id}`}
                     className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
                   >
-                    Details
+                    {t('courseManage.details')}
                   </Link>
                   <button
                     onClick={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
@@ -163,7 +165,7 @@ export default function CourseManage() {
                         : 'text-warmgray-400 hover:text-charcoal-800'
                     }`}
                   >
-                    Materials
+                    {t('courseManage.materials')}
                   </button>
                 </div>
               </div>
@@ -187,13 +189,13 @@ export default function CourseManage() {
                               'text-warmgray-400'
                             }`}>
                               {mat.processing_status}
-                              {mat.chunk_count > 0 && ` · ${mat.chunk_count} chunks`}
+                              {mat.chunk_count > 0 && ` · ${mat.chunk_count} ${t('courseManage.chunks')}`}
                             </span>
                             <button
                               onClick={() => handleDeleteMaterial(course.id, mat.id)}
                               className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 transition-colors cursor-pointer"
                             >
-                              Delete
+                              {t('courseManage.delete')}
                             </button>
                           </div>
                         </div>
@@ -211,27 +213,27 @@ export default function CourseManage() {
       <Modal
         isOpen={showModal}
         onClose={() => { setShowModal(false); setNewTitle(''); setNewDesc(''); }}
-        title="Create a Course"
+        title={t('courseManage.createTitle')}
       >
         <div className="space-y-4 mt-2">
           <div>
-            <label className="label-caps block mb-1.5">Course Title</label>
+            <label className="label-caps block mb-1.5">{t('courseManage.courseTitle')}</label>
             <input
               type="text"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="e.g. Introduction to Philosophy"
+              placeholder={t('courseManage.titlePlaceholder')}
               className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors"
               autoFocus
               onKeyDown={(e) => { if (e.key === 'Enter') handleCreateCourse(); }}
             />
           </div>
           <div>
-            <label className="label-caps block mb-1.5">Description <span className="text-warmgray-400 normal-case tracking-normal font-sans">(optional)</span></label>
+            <label className="label-caps block mb-1.5">{t('courseManage.description')} <span className="text-warmgray-400 normal-case tracking-normal font-sans">{t('courseManage.optional')}</span></label>
             <textarea
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
-              placeholder="Brief description of the course..."
+              placeholder={t('courseManage.descPlaceholder')}
               className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors resize-none"
               rows={3}
             />
@@ -241,14 +243,14 @@ export default function CourseManage() {
               onClick={() => { setShowModal(false); setNewTitle(''); setNewDesc(''); }}
               className="px-5 py-2.5 text-[0.65rem] uppercase tracking-widest text-warmgray-400 hover:text-charcoal-600 cursor-pointer transition-colors"
             >
-              Cancel
+              {t('courseManage.cancel')}
             </button>
             <button
               onClick={handleCreateCourse}
               disabled={creating || !newTitle.trim()}
               className="px-5 py-2.5 bg-cream-200 border border-warmgray-300 text-[0.65rem] uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 hover:border-charcoal-600 cursor-pointer transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {creating ? 'Creating...' : 'Create'}
+              {creating ? t('courseManage.creating') : t('courseManage.create')}
             </button>
           </div>
         </div>
@@ -279,7 +281,7 @@ function DropZone({ courseId, onUpload }: { courseId: string; onUpload: (id: str
     >
       <input {...getInputProps()} />
       <p className="text-warmgray-400 text-xs uppercase tracking-wider">
-        {isDragActive ? 'Drop files here...' : 'Drop PDF / PPTX or click to upload'}
+        {isDragActive ? t('courseManage.dropFiles') : t('courseManage.dropUpload')}
       </p>
     </div>
   );

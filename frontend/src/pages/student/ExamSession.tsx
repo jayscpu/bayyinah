@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Exam, ExamQuestion, ExamSession as Session, StudentAnswer } from '../../types';
 
 export default function ExamSession() {
+  useLanguageStore();
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
   const [exam, setExam] = useState<Exam | null>(null);
@@ -76,7 +78,7 @@ export default function ExamSession() {
   }
 
   if (!exam || !session) {
-    return <div className="text-center py-20 text-warmgray-400 font-display italic">Exam not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">{t('exam.notFound')}</div>;
   }
 
   if (session.status !== 'in_progress') {
@@ -84,10 +86,10 @@ export default function ExamSession() {
       <div className="animate-fade-in" style={{ textAlign: 'center', paddingTop: '4rem', paddingBottom: '4rem' }}>
         <img src="/assets/diamond.png" alt="" style={{ height: '2.5rem', margin: '0 auto 1.5rem' }} />
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--color-charcoal-800)', marginBottom: '0.75rem' }}>
-          Exam Completed
+          {t('exam.examCompleted')}
         </h2>
         <p style={{ fontSize: '0.875rem', color: 'var(--color-warmgray-400)', marginBottom: '2rem' }}>
-          Your exam has been submitted for review.
+          {t('exam.submittedForReview')}
         </p>
         <button
           onClick={() => navigate('/student/results')}
@@ -104,7 +106,7 @@ export default function ExamSession() {
           onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-charcoal-900)')}
           onMouseLeave={e => (e.currentTarget.style.color = 'var(--color-charcoal-600)')}
         >
-          View Results
+          {t('exam.viewResults')}
         </button>
       </div>
     );
@@ -115,7 +117,7 @@ export default function ExamSession() {
       {/* Header */}
       <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase mb-1">{exam.title}</h1>
       <p className="text-xs text-warmgray-400 mb-8">
-        {answers.filter((a) => a.dialogue_turns_completed >= 3).length} of {questions.length} completed
+        {answers.filter((a) => a.dialogue_turns_completed >= 3).length} {t('exam.of')} {questions.length} {t('exam.completed')}
       </p>
 
       <hr className="dotted-divider" />
@@ -155,7 +157,7 @@ export default function ExamSession() {
                     </p>
                   </div>
                   <span className="text-xs text-warmgray-400 uppercase tracking-wider ml-4">
-                    {complete ? 'Done' : answered ? 'Continue' : 'Answer'}
+                    {complete ? t('exam.done') : answered ? t('exam.continue') : t('exam.answer')}
                   </span>
                 </div>
               </div>
@@ -166,12 +168,12 @@ export default function ExamSession() {
         /* Active question */
         <div className="mt-6">
           <div className="flex items-center justify-between mb-6">
-            <p className="label-caps">Question {activeQuestion.display_order}</p>
+            <p className="label-caps">{t('exam.questionNum')} {activeQuestion.display_order}</p>
             <button
               onClick={() => setActiveQuestion(null)}
               className="text-xs text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 cursor-pointer transition-colors"
             >
-              Back
+              {t('exam.back')}
             </button>
           </div>
 
@@ -183,18 +185,18 @@ export default function ExamSession() {
 
           {activeQuestion.question_type === 'essay' ? (
             <div className="mt-8">
-              <p className="label-caps mb-4">Your Answer</p>
+              <p className="label-caps mb-4">{t('exam.yourAnswer')}</p>
               <textarea
                 value={answerText}
                 onChange={(e) => setAnswerText(e.target.value)}
-                placeholder="Write your answer here..."
+                placeholder={t('exam.writePlaceholder')}
                 className="w-full px-5 py-4 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-y min-h-[180px] leading-[1.8]"
                 rows={6}
               />
             </div>
           ) : (
             <div className="mt-8">
-              <p className="label-caps mb-6">Select and justify</p>
+              <p className="label-caps mb-6">{t('exam.selectJustify')}</p>
               <div className="space-y-5">
                 {activeQuestion.mcq_options?.map((opt) => (
                   <div
@@ -226,7 +228,7 @@ export default function ExamSession() {
                     {opt.key in mcqSelections && (
                       <textarea
                         className="w-full mt-4 px-4 py-3 bg-cream-50 border border-warmgray-200 text-sm text-charcoal-800 placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 resize-none leading-[1.8]"
-                        placeholder="Justify your selection..."
+                        placeholder={t('exam.justifyPlaceholder')}
                         value={mcqSelections[opt.key]}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => setMcqSelections((prev) => ({ ...prev, [opt.key]: e.target.value }))}
@@ -245,7 +247,7 @@ export default function ExamSession() {
               disabled={submitting}
               className="px-6 py-3 bg-cream-200 border border-warmgray-200 text-xs uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-50"
             >
-              {submitting ? 'Submitting...' : 'Submit & Begin Dialogue'}
+              {submitting ? t('exam.submitting') : t('exam.submitDialogue')}
             </button>
           </div>
         </div>

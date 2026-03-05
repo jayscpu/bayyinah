@@ -45,12 +45,12 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
       <div
         style={{
           position: 'relative',
-          background: 'var(--color-cream-50)',
+          background: '#E8DECE',
           width: '100%',
           maxWidth: '440px',
           margin: '0 1rem',
           padding: '2.5rem',
-          borderTop: '2px solid var(--color-charcoal-800)',
+          borderRadius: '4px',
         }}
       >
         {/* Close button */}
@@ -81,8 +81,7 @@ export default function Modal({ isOpen, onClose, title, children }: ModalProps) 
 
         {/* Title */}
         {title && (
-          <h2 style={{
-            fontFamily: 'var(--font-display)',
+          <h2 className="font-display" style={{
             fontSize: '1.6rem',
             fontWeight: 500,
             color: 'var(--color-charcoal-800)',

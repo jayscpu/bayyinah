@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam } from '../../types';
 
 export default function Reviews() {
+  useLanguageStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,16 +52,16 @@ export default function Reviews() {
       </div>
 
       <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase text-center mb-1">
-        Reviews
+        {t('reviews.title')}
       </h1>
 
       <hr className="dotted-divider" />
 
       {/* Pending Reviews */}
-      <p className="label-caps mb-4">Pending</p>
+      <p className="label-caps mb-4">{t('reviews.pending')}</p>
 
       {pending.length === 0 ? (
-        <p className="text-warmgray-400 font-display italic text-center mb-8">No pending reviews</p>
+        <p className="text-warmgray-400 font-display italic text-center mb-8">{t('reviews.noPending')}</p>
       ) : (
         <div className="timeline mb-8">
           {pending.map((exam) => (
@@ -72,11 +74,11 @@ export default function Reviews() {
                   <div className="flex-1">
                     <p className="font-serif text-sm text-charcoal-800">{exam.title}</p>
                     <p className="text-xs text-warmgray-400 mt-0.5">
-                      {getCourseName(exam.course_id)} &middot; {exam.question_count} questions
+                      {getCourseName(exam.course_id)} &middot; {exam.question_count} {t('dashboard.questions')}
                     </p>
                   </div>
                   <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                    {exam.submission_count ?? 0} submissions
+                    {exam.submission_count ?? 0} {t('reviews.submissions')}
                   </span>
                 </div>
               </Link>
@@ -86,10 +88,10 @@ export default function Reviews() {
       )}
 
       {/* Previous Reviews */}
-      <p className="label-caps mb-4">Previous</p>
+      <p className="label-caps mb-4">{t('reviews.previous')}</p>
 
       {previous.length === 0 ? (
-        <p className="text-warmgray-400 font-display italic text-center">No previous reviews</p>
+        <p className="text-warmgray-400 font-display italic text-center">{t('reviews.noPrevious')}</p>
       ) : (
         <div className="timeline">
           {previous.map((exam) => (
@@ -102,11 +104,11 @@ export default function Reviews() {
                   <div className="flex-1">
                     <p className="font-serif text-sm text-charcoal-800">{exam.title}</p>
                     <p className="text-xs text-warmgray-400 mt-0.5">
-                      {getCourseName(exam.course_id)} &middot; {exam.question_count} questions
+                      {getCourseName(exam.course_id)} &middot; {exam.question_count} {t('dashboard.questions')}
                     </p>
                   </div>
                   <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                    closed
+                    {t('reviews.closed')}
                   </span>
                 </div>
               </Link>

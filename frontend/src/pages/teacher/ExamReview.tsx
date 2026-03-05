@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../config/api';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Exam, ExamSession } from '../../types';
 
 export default function ExamReview() {
+  useLanguageStore();
   const { examId } = useParams<{ examId: string }>();
   const [exam, setExam] = useState<Exam | null>(null);
   const [sessions, setSessions] = useState<ExamSession[]>([]);
@@ -34,7 +36,7 @@ export default function ExamReview() {
   }
 
   if (!exam) {
-    return <div className="text-center py-20 text-warmgray-400 font-display italic">Exam not found</div>;
+    return <div className="text-center py-20 text-warmgray-400 font-display italic">{t('exam.notFound')}</div>;
   }
 
   return (
@@ -42,13 +44,13 @@ export default function ExamReview() {
       <h1 className="font-serif text-2xl text-charcoal-800 tracking-wider uppercase mb-1">
         {exam.title}
       </h1>
-      <p className="text-xs text-warmgray-400 mb-4">Review student submissions</p>
+      <p className="text-xs text-warmgray-400 mb-4">{t('examReview.reviewSubmissions')}</p>
 
       <hr className="dotted-divider" />
 
       {sessions.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-warmgray-400 font-display italic text-lg">No submissions yet</p>
+          <p className="text-warmgray-400 font-display italic text-lg">{t('examReview.noSubmissions')}</p>
         </div>
       ) : (
         <div className="timeline">
@@ -61,25 +63,25 @@ export default function ExamReview() {
                 <div className="timeline-bar hover:bg-cream-300 transition-colors cursor-pointer">
                   <div className="flex-1">
                     <p className="font-serif text-sm text-charcoal-800">
-                      Student: {session.student_id.substring(0, 8)}...
+                      {t('examReview.student')} {session.student_id.substring(0, 8)}...
                     </p>
                     <p className="text-xs text-warmgray-400 mt-0.5">
                       {session.completed_at
-                        ? `Submitted: ${new Date(session.completed_at).toLocaleDateString()}`
-                        : `Started: ${new Date(session.started_at).toLocaleDateString()}`}
+                        ? `${t('examReview.submittedDate')} ${new Date(session.completed_at).toLocaleDateString()}`
+                        : `${t('examReview.startedDate')} ${new Date(session.started_at).toLocaleDateString()}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
                     {session.ai_score !== null && (
                       <div className="text-right">
-                        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">Agent Grade</p>
+                        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{t('examReview.agentGrade')}</p>
                         <p className="font-display text-xl text-charcoal-800">{session.ai_score.toFixed(0)}%</p>
                       </div>
                     )}
                     <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                      {session.status === 'validated' ? 'Graded' :
-                       session.status === 'scored' ? 'Review' :
-                       session.status === 'completed' ? 'Pending' : session.status}
+                      {session.status === 'validated' ? t('examReview.graded') :
+                       session.status === 'scored' ? t('examReview.review') :
+                       session.status === 'completed' ? t('examReview.pending') : session.status}
                     </span>
                   </div>
                 </div>

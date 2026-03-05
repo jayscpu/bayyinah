@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../config/api';
 import { useAuthStore } from '../../stores/authStore';
+import { useLanguageStore, t } from '../../stores/languageStore';
 import Spinner from '../../components/ui/Spinner';
 import type { Course, Exam, ExamSession } from '../../types';
 
 export default function StudentDashboard() {
+  useLanguageStore();
   const { user } = useAuthStore();
   const [courses, setCourses] = useState<Course[]>([]);
   const [exams, setExams] = useState<Record<string, Exam[]>>({});
@@ -62,7 +64,7 @@ export default function StudentDashboard() {
     for (const exam of (exams[course.id] || [])) {
       streamItems.push({
         id: exam.id,
-        text: `New exam titled ${exam.title} – ${course.title} has been published.`,
+        text: `${t('dashboard.newExam')} ${exam.title} – ${course.title} ${t('dashboard.published')}`,
         course: course.title,
         questions: exam.question_count,
         link: `/student/exam/${exam.id}`,
@@ -80,7 +82,7 @@ export default function StudentDashboard() {
 
       {/* Welcome */}
       <h1 className="font-display text-[2.75rem] text-charcoal-800 text-center leading-tight">
-        Welcome, {user?.full_name}
+        {t('dashboard.welcome')} {user?.full_name}
       </h1>
 
       {/* Colored dotted divider */}
@@ -89,26 +91,26 @@ export default function StudentDashboard() {
       {/* Summary cards */}
       <div className="dashboard-cards">
         <div className="dashboard-card">
-          <p className="dashboard-card-value">{courses.length}</p>
-          <p className="dashboard-card-label">Courses</p>
-        </div>
-        <div className="dashboard-card">
-          <p className="dashboard-card-value">{completedCount}</p>
-          <p className="dashboard-card-label">Completed</p>
+          <p className="dashboard-card-value">{Object.values(exams).flat().length}</p>
+          <p className="dashboard-card-label">{t('dashboard.exams')}</p>
         </div>
         <div className="dashboard-card">
           <p className="dashboard-card-value">{inProgressCount}</p>
-          <p className="dashboard-card-label">In Progress</p>
+          <p className="dashboard-card-label">{t('dashboard.inProgress')}</p>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-card-value">{completedCount}</p>
+          <p className="dashboard-card-label">{t('dashboard.completed')}</p>
         </div>
       </div>
 
       {/* STREAM label */}
-      <p className="label-caps mb-5">Stream</p>
+      <p className="label-caps mb-5">{t('dashboard.stream')}</p>
 
       {/* Timeline */}
       {streamItems.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-warmgray-400 font-display italic text-xl">No notifications yet</p>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('dashboard.noNotifications')}</p>
         </div>
       ) : (
         <div className="timeline">
@@ -124,7 +126,7 @@ export default function StudentDashboard() {
                       {item.text}
                     </p>
                     <p className="text-xs text-charcoal-500 mt-1">
-                      {item.course} &middot; {item.questions} question{item.questions !== 1 ? 's' : ''}
+                      {item.course} &middot; {item.questions} {item.questions !== 1 ? t('dashboard.questions') : t('dashboard.question')}
                     </p>
                   </div>
                   <span className="text-xs text-charcoal-600 shrink-0 ml-4">{item.date}</span>
