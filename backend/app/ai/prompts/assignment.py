@@ -24,7 +24,10 @@ OFF-TOPIC RESPONSE: If the student goes off-topic, respond only with:
 "Please address this question in the context of your submission."
 """
 
-ASSIGNMENT_SOCRATIC_FOLLOWUP = """Based on the dialogue so far, ask your second and final Socratic question.
+ASSIGNMENT_SOCRATIC_FOLLOWUP = """Before generating your next question, first assess whether the student's response is relevant to the question asked.
+If it is not relevant, respond only with:
+"Your response doesn't seem to address the question. Please try again."
+Otherwise, ask your second and final Socratic question.
 Ground it strictly in what the student said or clearly omitted in their last response.
 Ask exactly ONE question. Output ONLY the question — no preamble, no commentary."""
 

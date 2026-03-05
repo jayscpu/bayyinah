@@ -41,7 +41,10 @@ EXAM QUESTION:
 STUDENT'S INITIAL ANSWER:
 {student_answer}"""
 
-SOCRATIC_FOLLOWUP_INSTRUCTION = """Based on the dialogue so far, ask your next Socratic question. Remember:
+SOCRATIC_FOLLOWUP_INSTRUCTION = """Before generating your next question, first assess whether the student's response is relevant to the question asked.
+If it is not relevant, respond only with:
+"Your response doesn't seem to address the question. Please try again."
+Otherwise, ask your next Socratic question following these rules:
 - Ask exactly ONE question
 - Do NOT agree or disagree
 - Do NOT provide feedback
