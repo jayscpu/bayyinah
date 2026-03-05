@@ -17,7 +17,7 @@ export default function CourseManage() {
   const [newDesc, setNewDesc] = useState('');
   const [creating, setCreating] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     loadCourses();
@@ -27,6 +27,7 @@ export default function CourseManage() {
     try {
       const res = await api.get('/courses');
       setCourses(res.data);
+      if (res.data.length > 0) setSelectedId((prev) => prev ?? res.data[0].id);
 
       const matsMap: Record<string, Material[]> = {};
       for (const course of res.data) {
@@ -45,21 +46,18 @@ export default function CourseManage() {
     if (!newTitle.trim()) return;
     setCreating(true);
     try {
-      await api.post('/courses', { title: newTitle, description: newDesc || null });
+      const res = await api.post('/courses', { title: newTitle, description: newDesc || null });
       setNewTitle('');
       setNewDesc('');
       setShowModal(false);
       await loadCourses();
+      setSelectedId(res.data.id);
       toast.success('Course created');
     } catch (err: any) {
       toast.error(err.response?.data?.detail || 'Failed to create course');
     } finally {
       setCreating(false);
     }
-  };
-
-  const handleUploadComplete = () => {
-    loadCourses();
   };
 
   const handleDeleteMaterial = async (courseId: string, materialId: string) => {
@@ -77,111 +75,166 @@ export default function CourseManage() {
     return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
   }
 
+  const selected = courses.find((c) => c.id === selectedId) ?? null;
+  const selectedMaterials = selected ? (materials[selected.id] || []) : [];
+
   return (
-    <div className="animate-fade-in">
-      {/* Page header */}
-      <div className="flex items-end justify-between mb-10">
-        <div>
-          <h1 className="font-serif text-3xl text-charcoal-800 tracking-wider uppercase">
-            {t('courses.title')}
-          </h1>
-          <p className="text-xs text-warmgray-400 mt-1.5 uppercase tracking-wider">
-            {courses.length} {courses.length !== 1 ? t('courses.courses') : t('courses.course')}
-          </p>
-        </div>
+    <div
+      className="animate-fade-in"
+      style={{
+        marginInlineStart: 'min(calc(570px - 50vw), 8px)',
+        width: 'calc(100vw - 240px)',
+      }}
+    >
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h1 className="font-display text-[2.75rem] text-charcoal-800 leading-tight">
+          {t('courses.title')}
+        </h1>
         <button
           onClick={() => setShowModal(true)}
-          className="px-5 py-2.5 bg-cream-200 border border-warmgray-300 text-[0.65rem] uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 hover:border-charcoal-600 cursor-pointer transition-all duration-200"
+          style={{
+            padding: '6px 18px',
+            background: 'transparent',
+            border: '1px solid #C4BCB0',
+            fontSize: '0.65rem',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            color: '#4A4A4A',
+            cursor: 'pointer',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#2A2A2A'; (e.currentTarget as HTMLButtonElement).style.color = '#2A2A2A'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#C4BCB0'; (e.currentTarget as HTMLButtonElement).style.color = '#4A4A4A'; }}
         >
           {t('courseManage.createCourse')}
         </button>
       </div>
 
-      <div className="border-t border-charcoal-800" />
+      {/* Full-width divider */}
+      <div style={{ borderTop: '1px solid #2A2A2A', marginBottom: '0' }} />
 
-      {/* Course list */}
       {courses.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="font-display italic text-xl text-warmgray-400">{t('courseManage.noCourses')}</p>
-          <p className="text-xs text-warmgray-400 mt-3 uppercase tracking-wider">
-            {t('courseManage.createFirst')}
-          </p>
+        <div style={{ textAlign: 'center', padding: '80px 0' }}>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('courseManage.noCourses')}</p>
+          <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>{t('courseManage.createFirst')}</p>
         </div>
       ) : (
-        <div>
-          {courses.map((course) => (
-            <div key={course.id} className="border-b border-warmgray-200">
-              <div className="py-7 flex items-start justify-between group">
-                {/* Left: course info */}
-                <div className="flex-1 min-w-0 pr-8">
-                  <h2 className="font-serif text-lg text-charcoal-800 tracking-wide">
-                    {course.title}
-                  </h2>
-                  {course.description && (
-                    <p className="text-sm text-warmgray-400 mt-1.5 leading-relaxed">
-                      {course.description}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-5 mt-3">
-                    <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                      ID: <span className="font-mono">{course.id.substring(0, 8)}</span>
-                    </span>
-                    {course.student_count !== undefined && (
-                      <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                        {course.student_count} {course.student_count !== 1 ? t('courseManage.students') : t('courseManage.student')}
-                      </span>
-                    )}
-                    <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
-                      {(materials[course.id] || []).length} {(materials[course.id] || []).length !== 1 ? t('courseManage.materialPlural') : t('courseManage.material')}
-                    </span>
-                  </div>
-                </div>
+        <div style={{ display: 'flex' }}>
 
-                {/* Right: actions */}
-                <div className="flex items-center gap-6 shrink-0 pt-1">
+          {/* Left panel — course list */}
+          <div style={{ width: '35%', borderInlineEnd: '1px solid #D4CCC0', paddingTop: '28px', flexShrink: 0 }}>
+            <p style={{ padding: '0 24px 12px', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92' }}>
+              {courses.length} {courses.length !== 1 ? t('courses.courses') : t('courses.course')}
+            </p>
+
+            <div>
+              {courses.map((course) => {
+                const isSelected = course.id === selectedId;
+                return (
+                  <button
+                    key={course.id}
+                    onClick={() => setSelectedId(course.id)}
+                    style={{
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'start',
+                      padding: '14px 24px',
+                      background: isSelected ? '#E8DECE' : 'transparent',
+                      border: 'none',
+                      borderInlineStart: isSelected ? '3px solid #2A2A2A' : '3px solid transparent',
+                      cursor: 'pointer',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = '#E8DECE'; }}
+                    onMouseLeave={e => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+                  >
+                    <p style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.9rem', color: '#2A2A2A', marginBottom: '3px' }}>
+                      {course.title}
+                    </p>
+                    <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                      {(materials[course.id] || []).length} {(materials[course.id] || []).length !== 1 ? t('courseManage.materialPlural') : t('courseManage.material')}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right panel — selected course detail */}
+          <div style={{ flex: 1, paddingTop: '28px', paddingInlineStart: '48px', paddingInlineEnd: '0' }}>
+            {selected && (
+              <div className="animate-fade-in">
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <h2 className="font-serif" style={{ fontSize: '1.5rem', color: '#2A2A2A', letterSpacing: '0.02em' }}>
+                    {selected.title}
+                  </h2>
                   <Link
-                    to={`/teacher/courses/${course.id}`}
-                    className="text-[0.65rem] text-warmgray-400 uppercase tracking-wider hover:text-charcoal-800 transition-colors"
+                    to={`/teacher/courses/${selected.id}`}
+                    style={{ fontSize: '0.65rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em', textDecoration: 'none', marginTop: '6px', flexShrink: 0 }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#2A2A2A')}
+                    onMouseLeave={e => (e.currentTarget.style.color = '#A89E92')}
                   >
                     {t('courseManage.details')}
                   </Link>
-                  <button
-                    onClick={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
-                    className={`text-[0.65rem] uppercase tracking-wider transition-colors cursor-pointer ${
-                      expandedCourse === course.id
-                        ? 'text-charcoal-800'
-                        : 'text-warmgray-400 hover:text-charcoal-800'
-                    }`}
-                  >
-                    {t('courseManage.materials')}
-                  </button>
                 </div>
-              </div>
 
-              {/* Expanded: materials + upload */}
-              {expandedCourse === course.id && (
-                <div className="pb-7 animate-fade-in">
-                  <DropZone courseId={course.id} onUploadComplete={handleUploadComplete} />
-                  {(materials[course.id] || []).length > 0 && (
-                    <div className="mt-4 space-y-1">
-                      {(materials[course.id] || []).map((mat) => (
+                {selected.description && (
+                  <p style={{ fontSize: '0.875rem', color: '#A89E92', lineHeight: 1.7, marginBottom: '12px' }}>
+                    {selected.description}
+                  </p>
+                )}
+
+                <div style={{ display: 'flex', gap: '20px', marginBottom: '24px' }}>
+                  <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                    ID: <span style={{ fontFamily: 'monospace' }}>{selected.id.substring(0, 8)}</span>
+                  </p>
+                  {selected.student_count !== undefined && (
+                    <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                      {selected.student_count} {selected.student_count !== 1 ? t('courseManage.students') : t('courseManage.student')}
+                    </p>
+                  )}
+                </div>
+
+                {/* Materials */}
+                <div style={{ borderTop: '1px dotted #C4BCB0', paddingTop: '24px' }}>
+                  <p style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
+                    {t('courseManage.materials')}
+                  </p>
+
+                  <DropZone courseId={selected.id} onUploadComplete={loadCourses} />
+
+                  {selectedMaterials.length > 0 && (
+                    <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {selectedMaterials.map((mat) => (
                         <div
                           key={mat.id}
-                          className="flex items-center justify-between px-4 py-3 bg-cream-200 border border-warmgray-200"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 16px',
+                            background: '#E8DECE',
+                            border: '1px solid #D4CCC0',
+                          }}
                         >
-                          <span className="text-xs text-charcoal-700 truncate mr-4">{mat.original_name}</span>
-                          <div className="flex items-center gap-4 shrink-0">
-                            <span className={`text-[0.6rem] uppercase tracking-wider ${
-                              mat.processing_status === 'completed' ? 'text-sage-500' :
-                              mat.processing_status === 'failed' ? 'text-red-400' :
-                              'text-warmgray-400'
-                            }`}>
+                          <span style={{ fontSize: '0.75rem', color: '#3D3D3D', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginInlineEnd: '16px' }}>
+                            {mat.original_name}
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+                            <span style={{
+                              fontSize: '0.6rem',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.1em',
+                              color: mat.processing_status === 'completed' ? '#5B6B4A' : mat.processing_status === 'failed' ? '#f87171' : '#A89E92',
+                            }}>
                               {mat.processing_status}
                               {mat.chunk_count > 0 && ` · ${mat.chunk_count} ${t('courseManage.chunks')}`}
                             </span>
                             <button
-                              onClick={() => handleDeleteMaterial(course.id, mat.id)}
-                              className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider hover:text-red-400 transition-colors cursor-pointer"
+                              onClick={() => handleDeleteMaterial(selected.id, mat.id)}
+                              style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 0.2s' }}
+                              onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
+                              onMouseLeave={e => (e.currentTarget.style.color = '#A89E92')}
                             >
                               {t('courseManage.delete')}
                             </button>
@@ -191,9 +244,9 @@ export default function CourseManage() {
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -217,7 +270,10 @@ export default function CourseManage() {
             />
           </div>
           <div>
-            <label className="label-caps block mb-1.5">{t('courseManage.description')} <span className="text-warmgray-400 normal-case tracking-normal font-sans">{t('courseManage.optional')}</span></label>
+            <label className="label-caps block mb-1.5">
+              {t('courseManage.description')}{' '}
+              <span className="text-warmgray-400 normal-case tracking-normal font-sans">{t('courseManage.optional')}</span>
+            </label>
             <textarea
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
@@ -289,17 +345,14 @@ function DropZone({ courseId, onUploadComplete }: { courseId: string; onUploadCo
 
   if (uploadState.status === 'uploading') {
     return (
-      <div className="border border-dashed border-warmgray-300 p-5">
-        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider truncate mb-3">
+      <div style={{ border: '1px dashed #D4CCC0', padding: '16px' }}>
+        <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {uploadState.fileName}
         </p>
-        <div className="w-full bg-cream-300 rounded-full overflow-hidden" style={{ height: '4px' }}>
-          <div
-            className="h-full bg-warmgray-400 rounded-full transition-all duration-200"
-            style={{ width: `${uploadState.progress}%` }}
-          />
+        <div style={{ width: '100%', background: '#DDD6C8', height: '3px' }}>
+          <div style={{ height: '100%', background: '#8C8278', transition: 'width 0.2s', width: `${uploadState.progress}%` }} />
         </div>
-        <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider mt-2">
+        <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '8px' }}>
           {t('courseManage.uploading')} {uploadState.progress}%
         </p>
       </div>
@@ -308,8 +361,8 @@ function DropZone({ courseId, onUploadComplete }: { courseId: string; onUploadCo
 
   if (uploadState.status === 'error') {
     return (
-      <div className="border border-dashed border-red-300 p-5 text-center">
-        <p className="text-[0.6rem] text-red-400 uppercase tracking-wider">{uploadState.message}</p>
+      <div style={{ border: '1px dashed #fca5a5', padding: '16px', textAlign: 'center' }}>
+        <p style={{ fontSize: '0.6rem', color: '#f87171', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{uploadState.message}</p>
       </div>
     );
   }
@@ -317,12 +370,17 @@ function DropZone({ courseId, onUploadComplete }: { courseId: string; onUploadCo
   return (
     <div
       {...getRootProps()}
-      className={`border border-dashed p-5 text-center cursor-pointer transition-colors ${
-        isDragActive ? 'border-charcoal-600 bg-cream-300' : 'border-warmgray-300 hover:border-warmgray-400'
-      }`}
+      style={{
+        border: `1px dashed ${isDragActive ? '#3D3D3D' : '#D4CCC0'}`,
+        padding: '20px',
+        textAlign: 'center',
+        cursor: 'pointer',
+        background: isDragActive ? '#DDD6C8' : 'transparent',
+        transition: 'border-color 0.2s, background 0.2s',
+      }}
     >
       <input {...getInputProps()} />
-      <p className="text-warmgray-400 text-xs uppercase tracking-wider">
+      <p style={{ fontSize: '0.7rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
         {isDragActive ? t('courseManage.dropFiles') : t('courseManage.dropUpload')}
       </p>
     </div>

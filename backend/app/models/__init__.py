@@ -7,6 +7,7 @@ from app.models.exam_session import ExamSession
 from app.models.student_answer import StudentAnswer
 from app.models.dialogue import DialogueMessage
 from app.models.grade import TeacherGrade
+from app.models.assignment import Assignment, AssignmentSubmission, AssignmentDialogueMessage, AssignmentReview
 
 __all__ = [
     "User",
@@ -19,4 +20,8 @@ __all__ = [
     "StudentAnswer",
     "DialogueMessage",
     "TeacherGrade",
+    "Assignment",
+    "AssignmentSubmission",
+    "AssignmentDialogueMessage",
+    "AssignmentReview",
 ]

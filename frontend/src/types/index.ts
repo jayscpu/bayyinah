@@ -115,3 +115,49 @@ export interface TeacherGrade {
   action_taken: 'approved' | 'overridden' | 're_dialogue_requested';
   created_at: string;
 }
+
+export interface Assignment {
+  id: string;
+  course_id: string;
+  created_by: string;
+  title: string;
+  description: string | null;
+  status: 'draft' | 'published' | 'closed';
+  published_at: string | null;
+  closes_at: string | null;
+  created_at: string;
+}
+
+export interface AssignmentSubmission {
+  id: string;
+  assignment_id: string;
+  student_id: string;
+  student_name?: string | null;
+  assignment_title?: string | null;
+  status: 'pending' | 'in_progress' | 'scored' | 'validated';
+  original_filename: string | null;
+  dialogue_turns_completed: number;
+  ai_score: number | null;
+  ai_score_reasoning: Record<string, any> | null;
+  submitted_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface AssignmentDialogueMessage {
+  id: string;
+  role: 'agent' | 'student';
+  content: string;
+  turn_number: number;
+  created_at: string;
+}
+
+export interface AssignmentReview {
+  id: string;
+  submission_id: string;
+  reviewed_by: string;
+  final_grade: number | null;
+  feedback: string | null;
+  action_taken: 'approved' | 'overridden';
+  created_at: string;
+}

@@ -4,6 +4,7 @@ export const translations: Record<string, { en: string; ar: string }> = {
   'nav.courses': { en: 'Courses', ar: 'المقررات' },
   'nav.results': { en: 'Results', ar: 'النتائج' },
   'nav.exams': { en: 'Exams', ar: 'الاختبارات' },
+  'nav.assignments': { en: 'Assignments', ar: 'الواجبات' },
   'nav.reviews': { en: 'Reviews', ar: 'المراجعات' },
   'nav.signOut': { en: 'Sign Out', ar: 'تسجيل خروج' },
   'nav.signIn': { en: 'Sign In', ar: 'تسجيل دخول' },

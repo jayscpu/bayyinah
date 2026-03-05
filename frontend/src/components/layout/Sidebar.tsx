@@ -10,12 +10,14 @@ export default function Sidebar() {
     { to: '/student', label: t('nav.home'), end: true },
     { to: '/student/courses', label: t('nav.courses') },
     { to: '/student/exams', label: t('nav.exams') },
+    { to: '/student/assignments', label: t('nav.assignments') },
     { to: '/student/results', label: t('nav.results') },
   ];
 
   const teacherLinks = [
     { to: '/teacher', label: t('nav.home'), end: true },
     { to: '/teacher/courses', label: t('nav.courses') },
+    { to: '/teacher/assignments', label: t('nav.assignments') },
     { to: '/teacher/exams', label: t('nav.exams') },
     { to: '/teacher/reviews', label: t('nav.reviews') },
   ];

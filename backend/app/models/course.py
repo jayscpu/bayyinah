@@ -23,6 +23,7 @@ class Course(Base):
     enrollments = relationship("CourseEnrollment", back_populates="course", cascade="all, delete-orphan")
     materials = relationship("Material", back_populates="course", cascade="all, delete-orphan")
     exams = relationship("Exam", back_populates="course", cascade="all, delete-orphan")
+    assignments = relationship("Assignment", back_populates="course", cascade="all, delete-orphan")
 
 
 class CourseEnrollment(Base):

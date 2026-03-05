@@ -11,6 +11,9 @@ import ExamSession from '../pages/student/ExamSession';
 import DialogueSession from '../pages/student/DialogueSession';
 import StudentCourses from '../pages/student/Courses';
 import StudentExams from '../pages/student/Exams';
+import StudentAssignments from '../pages/student/Assignments';
+import AssignmentSubmit from '../pages/student/AssignmentSubmit';
+import AssignmentDialogue from '../pages/student/AssignmentDialogue';
 import Results from '../pages/student/Results';
 import TeacherDashboard from '../pages/teacher/Dashboard';
 import CourseManage from '../pages/teacher/CourseManage';
@@ -21,6 +24,10 @@ import ExamManage from '../pages/teacher/ExamManage';
 import ExamReview from '../pages/teacher/ExamReview';
 import StudentReview from '../pages/teacher/StudentReview';
 import Reviews from '../pages/teacher/Reviews';
+import AssignmentList from '../pages/teacher/AssignmentList';
+import AssignmentCreate from '../pages/teacher/AssignmentCreate';
+import AssignmentReview from '../pages/teacher/AssignmentReview';
+import AssignmentSubmissionReview from '../pages/teacher/AssignmentSubmissionReview';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Landing /> },
@@ -42,6 +49,9 @@ export const router = createBrowserRouter([
       { path: '/student/exams', element: <StudentExams /> },
       { path: '/student/exam/:examId', element: <ExamSession /> },
       { path: '/student/dialogue/:answerId', element: <DialogueSession /> },
+      { path: '/student/assignments', element: <StudentAssignments /> },
+      { path: '/student/assignments/:assignmentId/submit', element: <AssignmentSubmit /> },
+      { path: '/student/assignment-submissions/:submissionId/dialogue', element: <AssignmentDialogue /> },
       { path: '/student/results', element: <Results /> },
     ],
   },
@@ -63,6 +73,10 @@ export const router = createBrowserRouter([
       { path: '/teacher/reviews', element: <Reviews /> },
       { path: '/teacher/exams/:examId/review', element: <ExamReview /> },
       { path: '/teacher/sessions/:sessionId/review', element: <StudentReview /> },
+      { path: '/teacher/assignments', element: <AssignmentList /> },
+      { path: '/teacher/assignments/create', element: <AssignmentCreate /> },
+      { path: '/teacher/assignments/:assignmentId/review', element: <AssignmentReview /> },
+      { path: '/teacher/assignment-submissions/:submissionId/review', element: <AssignmentSubmissionReview /> },
     ],
   },
 

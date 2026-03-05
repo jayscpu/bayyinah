@@ -32,7 +32,7 @@ export default function Landing() {
       <img
         src="/assets/12.jpeg"
         alt=""
-        className="illustration absolute left-[-2%] bottom-[0.5rem] h-[75vh] w-auto z-0"
+        className="illustration absolute left-[-2%] bottom-[-3rem] h-[75vh] w-auto z-0"
       />
 
       {/* Bird — right side, flipped */}
