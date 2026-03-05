@@ -8,6 +8,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen paper-bg flex flex-col relative overflow-hidden">
+      {/* Logo — top right */}
+      <Link to="/" className="fixed top-6 right-8 z-50 hover:opacity-80 transition-opacity">
+        <span className="brand-text">بيّنة</span>
+      </Link>
+
       {/* Nav bar — thin lines top and bottom */}
       <nav className="landing-nav">
         <div className="flex gap-8">
