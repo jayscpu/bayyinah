@@ -27,10 +27,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen paper-bg flex flex-col">
-      <Link to="/" className="fixed right-8 z-50 hover:opacity-80 transition-opacity" style={{ top: '-1.25rem' }}>
-        <span className="brand-text">بيّنة</span>
-      </Link>
-
       {/* Nav bar — matching landing page */}
       <nav className="landing-nav">
         <div className="flex gap-8">
