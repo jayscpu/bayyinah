@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # OpenRouter AI
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
-    LLM_MODEL: str = "google/gemma-3n-e4b-it"
+    LLM_MODEL: str = "deepseek/deepseek-v3.2"
     LLM_FALLBACK_MODEL: str = "google/gemma-3n-e2b-it"
 
     # File Storage
