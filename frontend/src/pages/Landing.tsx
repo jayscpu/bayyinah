@@ -11,20 +11,20 @@ export default function Landing() {
   return (
     <div className="min-h-screen paper-bg flex flex-col relative overflow-hidden" style={{ backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
       {/* Nav bar — thin lines top and bottom */}
-      <nav className="landing-nav">
+      <nav className="landing-nav" style={{ direction: 'ltr' }}>
         <div className="flex gap-8">
-          <Link to="/vision">{t('nav.philosophy')}</Link>
+          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', color: 'inherit', fontFamily: "'Amiri', serif", fontSize: '0.8rem', letterSpacing: '0.05em' }}>
+            {t('lang.toggle')}
+          </button>
         </div>
         <div className="flex gap-8">
+          <Link to="/vision">{t('nav.philosophy')}</Link>
           <Link to="/faq">{t('nav.faq')}</Link>
           {user ? (
             <Link to={dashboardPath}>{t('nav.dashboard')}</Link>
           ) : (
             <Link to="/login">{t('nav.signIn')}</Link>
           )}
-          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit' }}>
-            {t('lang.toggle')}
-          </button>
         </div>
       </nav>
 

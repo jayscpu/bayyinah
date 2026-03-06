@@ -30,15 +30,15 @@ export default function Login() {
   return (
     <div className="min-h-screen paper-bg flex flex-col">
       {/* Nav bar — matching landing page */}
-      <nav className="landing-nav">
+      <nav className="landing-nav" style={{ direction: 'ltr' }}>
         <div className="flex gap-8">
-          <Link to="/">{t('nav.home')}</Link>
-        </div>
-        <div className="flex gap-8">
-          <Link to="/register">{t('nav.register')}</Link>
-          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', font: 'inherit', color: 'inherit' }}>
+          <button onClick={toggle} className="hover:opacity-70 transition-opacity cursor-pointer" style={{ background: 'none', border: 'none', color: 'inherit', fontFamily: "'Amiri', serif", fontSize: '0.8rem', letterSpacing: '0.05em' }}>
             {t('lang.toggle')}
           </button>
+        </div>
+        <div className="flex gap-8">
+          <Link to="/">{t('nav.home')}</Link>
+          <Link to="/register">{t('nav.register')}</Link>
         </div>
       </nav>
 
@@ -62,7 +62,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder=""
                 required
-                className="w-full px-6 py-5 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+                className="w-full px-8 py-6 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
               />
             </div>
             <div>
@@ -73,13 +73,13 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder=""
                 required
-                className="w-full px-6 py-5 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
+                className="w-full px-8 py-6 paper-warm border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-6 px-10 py-10 border label-caps cursor-pointer transition-colors disabled:opacity-50" style={{ backgroundColor: '#D5CCBE', borderColor: '#C4BCB0', color: '#4A4A4A', fontSize: '0.85rem', letterSpacing: '0' }}
+              className="w-full mt-6 px-14 py-11 border label-caps cursor-pointer transition-colors disabled:opacity-50" style={{ backgroundColor: '#D5CCBE', borderColor: '#C4BCB0', color: '#4A4A4A', fontSize: '0.85rem', letterSpacing: '0' }}
             >
               {loading ? t('login.submitting') : t('login.submit')}
             </button>

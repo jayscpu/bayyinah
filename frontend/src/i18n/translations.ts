@@ -310,5 +310,5 @@ export const translations: Record<string, { en: string; ar: string }> = {
   'reviews.submissions': { en: 'submissions', ar: 'تقديمات' },
 
   // ── Language Toggle ──
-  'lang.toggle': { en: 'عربي', ar: 'EN' },
+  'lang.toggle': { en: 'العربية', ar: 'EN' },
 };
