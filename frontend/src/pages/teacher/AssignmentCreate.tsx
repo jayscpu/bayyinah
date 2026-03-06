@@ -44,13 +44,14 @@ export default function AssignmentCreate() {
       </h1>
       <hr className="dotted-divider" />
 
-      <div className="space-y-5 mt-6">
+      <div style={{ background: '#E8DECE', border: '1px solid #D4CCC0', borderRadius: '8px', padding: '36px', marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
         <div>
           <label className="label-caps block mb-1.5">Course</label>
           <select
             value={courseId}
             onChange={(e) => setCourseId(e.target.value)}
-            className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm focus:outline-none focus:border-charcoal-600 transition-colors"
+            className="w-full px-4 text-charcoal-800 text-sm focus:outline-none transition-colors"
+            style={{ border: '1px solid #D4CCC0', background: '#F5F0E8', padding: '14px 16px' }}
           >
             {courses.map((c) => (
               <option key={c.id} value={c.id}>{c.title}</option>
@@ -65,7 +66,8 @@ export default function AssignmentCreate() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Assignment title"
-            className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors"
+            className="w-full px-4 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none transition-colors"
+            style={{ border: '1px solid #D4CCC0', background: '#F5F0E8', padding: '14px 16px' }}
             autoFocus
             onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
           />
@@ -80,22 +82,25 @@ export default function AssignmentCreate() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Describe what students should submit and what is expected..."
-            className="w-full px-4 py-3 bg-cream-200 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600 transition-colors resize-none"
+            className="w-full px-4 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none transition-colors resize-none"
+            style={{ border: '1px solid #D4CCC0', background: '#F5F0E8', padding: '14px 16px', minHeight: '150px' }}
             rows={5}
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex justify-end gap-3 pt-1">
           <button
             onClick={() => navigate('/teacher/assignments')}
-            className="px-5 py-2.5 text-[0.65rem] uppercase tracking-widest text-warmgray-400 hover:text-charcoal-600 cursor-pointer transition-colors"
+            className="text-[0.65rem] uppercase tracking-widest text-warmgray-400 hover:text-charcoal-600 cursor-pointer transition-colors"
+            style={{ background: 'none', border: 'none', padding: '8px 12px' }}
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting || !title.trim() || !courseId}
-            className="px-5 py-2.5 bg-charcoal-800 text-cream-50 text-[0.65rem] uppercase tracking-widest hover:bg-charcoal-700 cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="text-[0.65rem] uppercase tracking-widest text-charcoal-700 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ borderRadius: '10px', padding: '8px 16px', background: 'rgba(180,168,154,0.18)' }}
           >
             {submitting ? '...' : 'Create Assignment'}
           </button>

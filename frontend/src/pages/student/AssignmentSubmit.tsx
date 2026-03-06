@@ -63,16 +63,27 @@ export default function AssignmentSubmit() {
 
       {/* Drop zone */}
       <div
-        className="border border-dashed border-warmgray-300 p-10 text-center cursor-pointer hover:border-warmgray-400 transition-colors bg-cream-50"
         onClick={() => fileInputRef.current?.click()}
+        style={{
+          border: '1px dashed #D4CCC0',
+          padding: '20px',
+          textAlign: 'center',
+          cursor: 'pointer',
+          background: 'transparent',
+          transition: 'border-color 0.2s, background 0.2s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#A89E92')}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D4CCC0')}
       >
         {file ? (
           <>
-            <p className="text-sm text-charcoal-800 font-serif">{file.name}</p>
-            <p className="text-xs text-warmgray-400 mt-1">{(file.size / 1024).toFixed(0)} KB</p>
+            <p style={{ fontSize: '0.7rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{file.name}</p>
+            <p style={{ fontSize: '0.6rem', color: '#A89E92', marginTop: '4px' }}>{(file.size / 1024).toFixed(0)} KB</p>
           </>
         ) : (
-          <p className="text-warmgray-400 font-display italic">Click to choose a file</p>
+          <p style={{ fontSize: '0.7rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+            Drop PDF / TXT / DOCX or click to upload
+          </p>
         )}
         <input
           ref={fileInputRef}
