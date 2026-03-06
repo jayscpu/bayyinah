@@ -27,6 +27,7 @@ export default function ExamManage() {
     { key: 'C', text: '' },
     { key: 'D', text: '' },
   ]);
+  const [newPoints, setNewPoints] = useState('');
   const [addingQuestion, setAddingQuestion] = useState(false);
 
   useEffect(() => {
@@ -147,11 +148,13 @@ export default function ExamManage() {
         question_type: newType,
         question_text: newText,
         mcq_options: newType === 'mcq' ? newOptions : null,
+        points: newPoints ? parseFloat(newPoints) : null,
         display_order: questions.length + 1,
       });
       toast.success('Question added');
       setNewText('');
       setNewType('essay');
+      setNewPoints('');
       setNewOptions([
         { key: 'A', text: '' },
         { key: 'B', text: '' },
@@ -298,6 +301,20 @@ export default function ExamManage() {
             </div>
           )}
 
+          <div className="mb-4">
+            <p className="label-caps mb-2">Points</p>
+            <input
+              type="number"
+              step="0.5"
+              min="0"
+              value={newPoints}
+              onChange={(e) => setNewPoints(e.target.value)}
+              placeholder="e.g. 10"
+              className="px-6 py-4 border border-warmgray-200 text-charcoal-800 text-sm placeholder-warmgray-400 focus:outline-none focus:border-charcoal-600"
+              style={{ background: '#E8DECE', width: '120px' }}
+            />
+          </div>
+
           <button
             onClick={handleAddQuestion}
             disabled={addingQuestion}
@@ -319,6 +336,11 @@ export default function ExamManage() {
         <>
           <div className="flex items-center justify-between mb-4">
             <p className="label-caps">{t('examManage.questionsLabel')} ({questions.length})</p>
+            {questions.some(q => q.points != null) && (
+              <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                {questions.reduce((sum, q) => sum + (q.points || 0), 0)} pts total
+              </p>
+            )}
           </div>
 
           {questions.length === 0 ? (
@@ -339,6 +361,11 @@ export default function ExamManage() {
                         <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
                           {q.question_type}
                         </span>
+                        {q.points != null && (
+                          <span className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">
+                            · {q.points} pts
+                          </span>
+                        )}
                       </div>
 
                       {editingId === q.id ? (

@@ -190,6 +190,7 @@ async def add_question(
         question_type=data.get("question_type", "essay"),
         question_text=data.get("question_text", ""),
         mcq_options=data.get("mcq_options"),
+        points=data.get("points"),
         display_order=data.get("display_order", 1),
     )
     db.add(question)
@@ -238,6 +239,8 @@ async def update_question(
         question.question_type = data["question_type"]
     if "mcq_options" in data:
         question.mcq_options = data["mcq_options"]
+    if "points" in data:
+        question.points = data["points"]
     await db.flush()
     return {"message": "Question updated"}
 

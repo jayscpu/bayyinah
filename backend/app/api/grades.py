@@ -68,6 +68,8 @@ async def submit_grade(
         feedback=data.feedback,
         internal_notes=data.internal_notes,
         action_taken=data.action_taken,
+        question_grades=data.question_grades,
+        total_points=data.total_points,
     )
     db.add(grade)
     session.status = "validated"
@@ -91,6 +93,8 @@ async def update_grade(
     grade.feedback = data.feedback
     grade.internal_notes = data.internal_notes
     grade.action_taken = data.action_taken
+    grade.question_grades = data.question_grades
+    grade.total_points = data.total_points
     await db.flush()
     return grade
 

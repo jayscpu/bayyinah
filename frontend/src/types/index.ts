@@ -60,6 +60,7 @@ export interface ExamQuestion {
   question_type: 'essay' | 'mcq';
   question_text: string;
   mcq_options: { key: string; text: string }[] | null;
+  points: number | null;
   display_order: number;
 }
 
