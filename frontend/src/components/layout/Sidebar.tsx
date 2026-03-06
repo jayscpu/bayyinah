@@ -29,6 +29,7 @@ export default function Sidebar() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '1.25rem' }}>
         <Link to="/" className="hover:opacity-80 transition-opacity" style={{ textAlign: 'center' }}>
           <span className="brand-text" style={{ fontSize: '4rem' }}>بيّنة</span>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--color-warmgray-500)', marginTop: '0.1rem' }}>Bayyinah</p>
         </Link>
         <nav style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '1.5rem', gap: '0.25rem' }}>
           {links.map((link) => (
