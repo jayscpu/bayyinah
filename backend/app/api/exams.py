@@ -365,6 +365,11 @@ async def get_my_session(
     session = result.scalar_one_or_none()
     if not session:
         raise NotFoundError("No session found")
+
+    # Never expose AI scores to students
+    session.ai_score = None
+    session.ai_criterion_scores = None
+
     return session
 
 

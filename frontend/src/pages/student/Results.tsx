@@ -156,18 +156,6 @@ export default function Results() {
                 )}
 
                 <div style={{ borderTop: '1px dotted #C4BCB0', paddingTop: '24px', display: 'flex', gap: '40px' }}>
-                  {/* AI Score */}
-                  {selected.session.ai_score !== null && (
-                    <div>
-                      <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
-                        {t('results.agentScore')}
-                      </p>
-                      <p style={{ fontFamily: 'var(--font-display)', fontSize: '3rem', color: '#2A2A2A', lineHeight: 1 }}>
-                        {selected.session.ai_score.toFixed(0)}%
-                      </p>
-                    </div>
-                  )}
-
                   {/* Final Grade */}
                   {selected.grade ? (
                     <div>
