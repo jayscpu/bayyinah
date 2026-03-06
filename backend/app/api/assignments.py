@@ -214,8 +214,8 @@ async def submit_assignment(
             "status": existing.status,
             "original_filename": existing.original_filename,
             "dialogue_turns_completed": existing.dialogue_turns_completed,
-            "ai_score": existing.ai_score,
-            "ai_score_reasoning": existing.ai_score_reasoning,
+            "ai_score": None,
+            "ai_score_reasoning": None,
             "submitted_at": existing.submitted_at,
             "completed_at": existing.completed_at,
             "created_at": existing.created_at,
@@ -243,8 +243,8 @@ async def submit_assignment(
         "status": submission.status,
         "original_filename": submission.original_filename,
         "dialogue_turns_completed": submission.dialogue_turns_completed,
-        "ai_score": submission.ai_score,
-        "ai_score_reasoning": submission.ai_score_reasoning,
+        "ai_score": None,
+        "ai_score_reasoning": None,
         "submitted_at": submission.submitted_at,
         "completed_at": submission.completed_at,
         "created_at": submission.created_at,
@@ -270,6 +270,7 @@ async def get_my_submission(
     result2 = await db.execute(select(Assignment).where(Assignment.id == assignment_id))
     assignment = result2.scalar_one_or_none()
 
+    # Never expose AI scores to students
     return {
         "id": submission.id,
         "assignment_id": submission.assignment_id,
@@ -278,8 +279,8 @@ async def get_my_submission(
         "status": submission.status,
         "original_filename": submission.original_filename,
         "dialogue_turns_completed": submission.dialogue_turns_completed,
-        "ai_score": submission.ai_score,
-        "ai_score_reasoning": submission.ai_score_reasoning,
+        "ai_score": None,
+        "ai_score_reasoning": None,
         "submitted_at": submission.submitted_at,
         "completed_at": submission.completed_at,
         "created_at": submission.created_at,
@@ -297,6 +298,9 @@ async def get_submission(
     submission = await _get_submission_for_user(submission_id, current_user, db)
     result = await db.execute(select(Assignment).where(Assignment.id == submission.assignment_id))
     assignment = result.scalar_one_or_none()
+
+    # Never expose AI scores to students
+    show_ai = current_user.role == "teacher"
     return {
         "id": submission.id,
         "assignment_id": submission.assignment_id,
@@ -305,8 +309,8 @@ async def get_submission(
         "status": submission.status,
         "original_filename": submission.original_filename,
         "dialogue_turns_completed": submission.dialogue_turns_completed,
-        "ai_score": submission.ai_score,
-        "ai_score_reasoning": submission.ai_score_reasoning,
+        "ai_score": submission.ai_score if show_ai else None,
+        "ai_score_reasoning": submission.ai_score_reasoning if show_ai else None,
         "submitted_at": submission.submitted_at,
         "completed_at": submission.completed_at,
         "created_at": submission.created_at,
