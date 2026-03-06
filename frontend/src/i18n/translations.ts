@@ -274,7 +274,6 @@ export const translations: Record<string, { en: string; ar: string }> = {
   'examManage.questionPlaceholder': { en: 'Enter your question...', ar: 'أدخل سؤالك...' },
   'examManage.options': { en: 'Options', ar: 'الخيارات' },
   'examManage.adding': { en: 'Adding...', ar: 'جارٍ الإضافة...' },
-  'examManage.questionsLabel': { en: 'Questions', ar: 'الأسئلة' },
   'examManage.noQuestions': { en: 'No questions yet.', ar: 'لا توجد أسئلة بعد.' },
   'examManage.useAI': { en: 'Use "AI Generate Questions" or "Write Question" above.', ar: 'استخدم "توليد أسئلة بالذكاء الاصطناعي" أو "كتابة سؤال" أعلاه.' },
   'examManage.save': { en: 'Save', ar: 'حفظ' },

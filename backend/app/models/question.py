@@ -2,7 +2,7 @@ import uuid
 from typing import Optional
 from datetime import datetime
 
-from sqlalchemy import String, Text, Integer, Float, DateTime, ForeignKey, JSON, func
+from sqlalchemy import String, Text, Integer, DateTime, ForeignKey, JSON, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -22,7 +22,6 @@ class ExamQuestion(Base):
     # RAG context chunks used to generate this question
     source_chunks: Mapped[Optional[dict]] = mapped_column(JSON)
 
-    points: Mapped[Optional[float]] = mapped_column(Float)  # point value for this question
     display_order: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
