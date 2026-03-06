@@ -67,7 +67,7 @@ export default function StudentAssignments() {
 
       {items.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <p className="text-warmgray-400 font-display italic text-xl">No assignments available</p>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('assignments.noAssignments')}</p>
         </div>
       ) : (
         <div style={{ paddingTop: '28px' }}>
