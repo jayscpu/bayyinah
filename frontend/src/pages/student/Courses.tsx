@@ -205,7 +205,7 @@ export default function StudentCourses() {
                           <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '0.875rem', color: '#2A2A2A' }}>
                             {exam.title}
                           </span>
-                          <span style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', color: '#A89E92', letterSpacing: '0.05em' }}>
                             {t('courses.start')}
                           </span>
                         </Link>

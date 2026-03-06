@@ -96,9 +96,20 @@ export const translations: Record<string, { en: string; ar: string }> = {
   'dashboard.stream': { en: 'Stream', ar: 'آخر الأخبار' },
   'dashboard.noNotifications': { en: 'No notifications yet', ar: 'لا توجد إشعارات بعد' },
   'dashboard.newExam': { en: 'New exam titled', ar: 'اختبار جديد بعنوان' },
-  'dashboard.published': { en: 'has been published.', ar: 'تم نشره.' },
+  'dashboard.published': { en: 'has been published', ar: 'تم نشره' },
   'dashboard.question': { en: 'question', ar: 'سؤال' },
   'dashboard.questions': { en: 'questions', ar: 'أسئلة' },
+  'dashboard.newAssignment': { en: 'New assignment:', ar: 'واجب جديد بعنوان' },
+  'dashboard.assignment': { en: 'Assignment', ar: 'واجب' },
+
+  // ── Student Assignments ──
+  'assignments.noAssignments': { en: 'No assignments available', ar: 'لا توجد واجبات متاحة' },
+  'assignments.assignment': { en: 'assignment', ar: 'واجب' },
+  'assignments.assignments': { en: 'assignments', ar: 'واجبات' },
+  'assignments.submit': { en: 'Submit →', ar: '← سلّم' },
+  'assignments.continue': { en: 'Continue →', ar: '← متابعة' },
+  'assignments.complete': { en: 'Complete', ar: 'مكتمل' },
+  'assignments.score': { en: 'Score', ar: 'الدرجة' },
 
   // ── Teacher Dashboard ──
   'teacherDash.welcome': { en: 'Welcome, Dr.', ar: 'أهلاً، د.' },

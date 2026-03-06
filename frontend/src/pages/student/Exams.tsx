@@ -60,15 +60,15 @@ export default function StudentExams() {
 
       {exams.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 0' }}>
-          <p className="text-warmgray-400 font-display italic text-xl">No exams available</p>
+          <p className="text-warmgray-400 font-display italic text-xl">{t('courses.noExams')}</p>
           {courses.length === 0 && (
-            <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>Enroll in a course first</p>
+            <p style={{ fontSize: '0.75rem', color: '#A89E92', marginTop: '8px' }}>{t('courses.clickEnroll')}</p>
           )}
         </div>
       ) : (
         <div style={{ paddingTop: '28px' }}>
           <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
-            {exams.length} {exams.length !== 1 ? 'exams' : 'exam'}
+            {exams.length} {exams.length !== 1 ? t('courses.exams') : t('courses.exam')}
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -94,11 +94,11 @@ export default function StudentExams() {
                     {exam.title}
                   </p>
                   <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                    {courseName} &middot; {exam.question_count} questions
+                    {courseName} &middot; {exam.question_count} {exam.question_count !== 1 ? t('dashboard.questions') : t('dashboard.question')}
                   </p>
                 </div>
-                <span style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                  Start
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', color: '#A89E92', letterSpacing: '0.05em' }}>
+                  {t('courses.start')}
                 </span>
               </Link>
             ))}

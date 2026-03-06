@@ -86,8 +86,8 @@ export default function StudentDashboard() {
   for (const { assignment, courseName } of assignments) {
     streamItems.push({
       id: `assignment-${assignment.id}`,
-      text: `New assignment: ${assignment.title} – ${courseName} published`,
-      subtitle: `${courseName} · Assignment`,
+      text: `${t('dashboard.newAssignment')} ${assignment.title} – ${courseName} ${t('dashboard.published')}`,
+      subtitle: `${courseName} · ${t('dashboard.assignment')}`,
       link: `/student/assignments/${assignment.id}/submit`,
     });
   }
@@ -144,7 +144,7 @@ export default function StudentDashboard() {
                     <p className="font-serif text-sm text-charcoal-800 leading-relaxed">
                       {item.text}
                     </p>
-                    <p className="text-xs text-charcoal-500 mt-1">{item.subtitle}</p>
+                    <p className="font-serif text-xs text-charcoal-500 mt-1">{item.subtitle}</p>
                   </div>
                 </div>
               </Link>

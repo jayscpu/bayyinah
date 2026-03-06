@@ -72,7 +72,7 @@ export default function StudentAssignments() {
       ) : (
         <div style={{ paddingTop: '28px' }}>
           <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#A89E92', marginBottom: '16px' }}>
-            {items.length} {items.length !== 1 ? 'assignments' : 'assignment'}
+            {items.length} {items.length !== 1 ? t('assignments.assignments') : t('assignments.assignment')}
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -86,7 +86,7 @@ export default function StudentAssignments() {
                   ? `/student/assignment-submissions/${submission!.id}/dialogue`
                   : `/student/assignments/${assignment.id}/submit`;
 
-              const actionLabel = isComplete ? 'Complete' : inProgress ? 'Continue' : 'Submit';
+              const actionLabel = isComplete ? t('assignments.complete') : inProgress ? t('assignments.continue') : t('assignments.submit');
 
               return (
                 <Link
@@ -113,15 +113,15 @@ export default function StudentAssignments() {
                     <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                       {courseName}
                       {submission?.ai_score !== null && submission?.ai_score !== undefined && (
-                        <> &middot; Score: {submission.ai_score.toFixed(0)}/100</>
+                        <> &middot; {t('assignments.score')}: {submission.ai_score.toFixed(0)}/100</>
                       )}
                     </p>
                   </div>
                   <span style={{
-                    fontSize: '0.6rem',
-                    color: isComplete ? '#A89E92' : '#A89E92',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '0.95rem',
+                    color: '#A89E92',
+                    letterSpacing: '0.05em',
                     fontStyle: isComplete ? 'italic' : 'normal',
                   }}>
                     {actionLabel}
