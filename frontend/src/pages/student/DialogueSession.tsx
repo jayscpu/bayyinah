@@ -208,7 +208,6 @@ export default function DialogueSession() {
           {/* Message groups */}
           {groups.map((group, gi) => {
             const isAgent = group.role === 'agent';
-            const isNewTurn = gi > 0;
             return (
               <div
                 key={`${group.role}-${group.turn_number}-${gi}`}

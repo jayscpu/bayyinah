@@ -14,8 +14,8 @@ class GradeSubmit(BaseModel):
     @field_validator("final_grade")
     @classmethod
     def validate_grade(cls, v: int) -> int:
-        if v < 1 or v > 5:
-            raise ValueError("Grade must be between 1 and 5")
+        if v < 0 or v > 5:
+            raise ValueError("Grade must be between 0 and 5")
         return v
 
     @field_validator("action_taken")

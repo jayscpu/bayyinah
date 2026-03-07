@@ -44,6 +44,7 @@ export interface Exam {
   description: string | null;
   status: 'draft' | 'published' | 'closed';
   question_count: number;
+  submission_count?: number;
   socratic_turns: number;
   weight_conceptual: number;
   weight_interconnection: number;

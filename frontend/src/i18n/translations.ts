@@ -116,9 +116,6 @@ export const translations: Record<string, { en: string; ar: string }> = {
   'teacherDash.exams': { en: 'Current Exams', ar: 'الاختبارات الحالية' },
   'teacherDash.pendingReviews': { en: 'Pending Reviews', ar: 'بانتظار المراجعة' },
 
-  // ── Student Assignments ──
-  'assignments.noAssignments': { en: 'No assignments available', ar: 'لا توجد واجبات متاحة' },
-
   // ── Student Courses ──
   'courses.title': { en: 'Courses', ar: 'المقررات' },
   'courses.enroll': { en: '+ Enroll', ar: '+ التحاق' },

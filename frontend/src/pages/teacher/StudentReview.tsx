@@ -19,7 +19,7 @@ export default function StudentReview() {
   const [session, setSession] = useState<ExamSession | null>(null);
   const [fullAnswers, setFullAnswers] = useState<FullAnswer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [grade, setGrade] = useState(3);
+  const [grade, setGrade] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [internalNotes, setInternalNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -171,21 +171,21 @@ export default function StudentReview() {
         <div className="bg-cream-200 border border-warmgray-200 p-6">
           <p className="font-serif text-xl text-charcoal-800 mb-5">{t('studentReview.assignGrade')}</p>
 
-          {/* Grade selector */}
-          <div className="flex gap-3 mb-6">
-            {[1, 2, 3, 4, 5].map((g) => (
-              <button
-                key={g}
-                onClick={() => setGrade(g)}
-                className={`flex-1 py-4 border text-center cursor-pointer transition-colors ${
-                  grade === g
-                    ? 'bg-charcoal-800 text-cream-100 border-charcoal-800'
-                    : 'bg-cream-50 border-warmgray-200 text-charcoal-600 hover:bg-cream-300'
-                }`}
-              >
-                <span className="font-display text-3xl">{g}</span>
-              </button>
-            ))}
+          {/* Grade input */}
+          <div className="flex items-center gap-2 mb-6">
+            <input
+              type="number"
+              min={0}
+              max={5}
+              step={1}
+              value={grade}
+              onChange={(e) => {
+                const v = parseInt(e.target.value);
+                if (!isNaN(v) && v >= 0 && v <= 5) setGrade(v);
+              }}
+              className="w-16 px-3 py-2 bg-cream-50 border border-warmgray-200 text-charcoal-800 font-display text-2xl text-center focus:outline-none focus:border-charcoal-600"
+            />
+            <span className="text-warmgray-400 text-lg">/ 5</span>
           </div>
 
           <div className="mb-4">
