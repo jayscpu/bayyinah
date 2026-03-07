@@ -20,7 +20,6 @@ export default function Landing() {
           </button>
         </div>
         <div className="flex gap-8">
-          <Link to="/vision">{t('nav.philosophy')}</Link>
           <Link to="/faq">{t('nav.faq')}</Link>
           {user ? (
             <Link to={dashboardPath}>{t('nav.dashboard')}</Link>

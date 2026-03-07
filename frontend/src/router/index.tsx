@@ -2,7 +2,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import AppShell from '../components/layout/AppShell';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import Landing from '../pages/Landing';
-import Vision from '../pages/Vision';
 import FAQ from '../pages/FAQ';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
@@ -31,7 +30,6 @@ import AssignmentSubmissionReview from '../pages/teacher/AssignmentSubmissionRev
 
 export const router = createBrowserRouter([
   { path: '/', element: <Landing /> },
-  { path: '/vision', element: <Vision /> },
   { path: '/faq', element: <FAQ /> },
   { path: '/login', element: <Login /> },
   { path: '/register', element: <Register /> },

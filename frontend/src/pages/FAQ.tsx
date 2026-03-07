@@ -31,7 +31,6 @@ export default function FAQ() {
         </div>
         <div className="flex gap-8">
           <Link to="/">{t('nav.home')}</Link>
-          <Link to="/vision">{t('nav.philosophy')}</Link>
           {user ? (
             <Link to={dashboardPath}>{t('nav.dashboard')}</Link>
           ) : (
