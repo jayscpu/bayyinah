@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: bayyinah
+    runtime: python
+    buildCommand: bash build.sh
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.6"
+      - key: NODE_VERSION
+        value: "20"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: "sqlite+aiosqlite:///./bayyinah.db"
+      - key: OPENROUTER_API_KEY
+        sync: false
