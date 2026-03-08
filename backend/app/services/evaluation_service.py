@@ -96,5 +96,8 @@ async def evaluate_session(session_id: str, db: AsyncSession):
         }
         session.status = "scored"
         await db.commit()
-    except json.JSONDecodeError:
-        print(f"Failed to parse evaluation response: {response[:200]}")
+        print(f"Evaluation complete for session {session_id}: score={session.ai_score}")
+    except Exception as e:
+        import traceback
+        print(f"Evaluation failed for session {session_id}: {e}")
+        traceback.print_exc()

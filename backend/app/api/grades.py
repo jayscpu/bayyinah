@@ -75,6 +75,29 @@ async def submit_grade(
     return grade
 
 
+@router.post("/re-evaluate")
+async def re_evaluate_session(
+    session_id: str,
+    current_user: User = Depends(require_role("teacher")),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(select(ExamSession).where(ExamSession.id == session_id))
+    session = result.scalar_one_or_none()
+    if not session:
+        raise NotFoundError("Session not found")
+    if session.status not in ("completed", "scored"):
+        raise BadRequestError("Session is not ready for evaluation")
+
+    from app.services.evaluation_service import evaluate_session
+    await evaluate_session(session_id, db)
+
+    # Re-fetch to get updated state
+    await db.refresh(session)
+    if session.ai_criterion_scores is None:
+        raise BadRequestError("Evaluation failed — check server logs")
+    return {"message": "Re-evaluation complete", "ai_score": session.ai_score}
+
+
 @router.put("/grade", response_model=GradeResponse)
 async def update_grade(
     session_id: str,

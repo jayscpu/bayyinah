@@ -23,6 +23,7 @@ export default function StudentReview() {
   const [feedback, setFeedback] = useState('');
   const [internalNotes, setInternalNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [reEvaluating, setReEvaluating] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -31,6 +32,8 @@ export default function StudentReview() {
   const loadData = async () => {
     try {
       const sessionRes = await api.get(`/sessions/${sessionId}/evaluation`);
+      console.log('[StudentReview] session data:', sessionRes.data);
+      console.log('[StudentReview] ai_criterion_scores:', sessionRes.data.ai_criterion_scores);
       setSession(sessionRes.data);
 
       const answersRes = await api.get(`/sessions/${sessionId}/answers`);
@@ -56,6 +59,19 @@ export default function StudentReview() {
       console.error('Failed to load session data', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReEvaluate = async () => {
+    setReEvaluating(true);
+    try {
+      await api.post(`/sessions/${sessionId}/re-evaluate`);
+      toast.success('Re-evaluation complete');
+      await loadData();
+    } catch (err: any) {
+      toast.error(err.response?.data?.detail || 'Re-evaluation failed');
+    } finally {
+      setReEvaluating(false);
     }
   };
 
@@ -100,24 +116,38 @@ export default function StudentReview() {
       <hr className="dotted-divider" />
 
       {/* AI Criterion Scores */}
-      {session.ai_criterion_scores && (
-        <>
-          <p className="label-caps mb-3">{t('studentReview.aiBreakdown')}</p>
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {Object.entries(session.ai_criterion_scores).filter(([k]) => k !== 'summary').map(([key, val]: [string, any]) => (
-              <div key={key} className="bg-cream-200 border border-warmgray-200 p-4">
-                <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{key}</p>
-                <p className="font-display text-3xl text-charcoal-800 mt-1">{val?.score ?? '—'}<span className="text-sm text-warmgray-400">/100</span></p>
-                {val?.reasoning && <p className="text-xs text-warmgray-400 mt-2 leading-relaxed">{val.reasoning}</p>}
-              </div>
-            ))}
+      <>
+        <p className="label-caps mb-3">{t('studentReview.aiBreakdown')}</p>
+        {session.ai_criterion_scores ? (
+          <>
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              {Object.entries(session.ai_criterion_scores).filter(([k]) => k !== 'summary').map(([key, val]: [string, any]) => (
+                <div key={key} style={{ background: '#E8DECE', borderInlineStart: '3px solid #C4BCB0' }} className="p-4">
+                  <p className="text-[0.6rem] text-warmgray-400 uppercase tracking-wider">{key}</p>
+                  <p className="font-display text-3xl text-charcoal-800 mt-1">{val?.score ?? '—'}<span className="text-sm text-warmgray-400">/100</span></p>
+                  {val?.reasoning && <p className="text-xs text-warmgray-400 mt-2 leading-relaxed">{val.reasoning}</p>}
+                </div>
+              ))}
+            </div>
+            {session.ai_criterion_scores.summary && (
+              <p className="text-sm text-charcoal-600 font-display italic mb-6">{session.ai_criterion_scores.summary}</p>
+            )}
+          </>
+        ) : (
+          <div className="flex items-center gap-4 mb-6">
+            <p className="text-xs text-warmgray-400 italic">AI evaluation not yet available for this session.</p>
+            <button
+              onClick={handleReEvaluate}
+              disabled={reEvaluating}
+              className="text-[0.65rem] uppercase tracking-widest text-charcoal-600 hover:text-charcoal-900 cursor-pointer transition-colors disabled:opacity-40"
+              style={{ background: 'rgba(180,168,154,0.18)', border: 'none', borderRadius: '6px', padding: '6px 12px' }}
+            >
+              {reEvaluating ? 'Evaluating...' : 'Re-evaluate'}
+            </button>
           </div>
-          {session.ai_criterion_scores.summary && (
-            <p className="text-sm text-charcoal-600 font-display italic mb-6">{session.ai_criterion_scores.summary}</p>
-          )}
-          <hr className="dotted-divider" />
-        </>
-      )}
+        )}
+        <hr className="dotted-divider" />
+      </>
 
       {/* Full Transcript */}
       <p className="label-caps mb-4">{t('studentReview.transcript')}</p>
