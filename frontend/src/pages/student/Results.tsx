@@ -127,7 +127,7 @@ export default function Results() {
                     <p style={{ fontSize: '0.6rem', color: '#A89E92', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '3px' }}>
                       {item.course.title}
                     </p>
-                    <p style={{ fontFamily: 'var(--font-serif)', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: statusColor }}>
+                    <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: statusColor }}>
                       {item.grade ? `${item.grade.final_grade}/5 · ${gradeLabels[item.grade.final_grade]}` :
                        item.session.status === 'scored' ? t('results.underReview') :
                        item.session.status === 'completed' ? t('results.submitted') : t('results.inProgress')}
@@ -174,7 +174,7 @@ export default function Results() {
                       <p style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#A89E92', marginBottom: '6px' }}>
                         {t('results.status')}
                       </p>
-                      <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#2A2A2A', fontStyle: 'italic' }}>
+                      <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', color: '#2A2A2A', fontStyle: 'italic' }}>
                         {selected.session.status === 'scored' ? t('results.underReview') :
                          selected.session.status === 'completed' ? t('results.submitted') : t('results.inProgress')}
                       </p>

@@ -30,7 +30,7 @@ export default function Landing() {
       </nav>
 
       {/* بيّنة title */}
-      <div className="absolute z-10 animate-fade-in-up" style={{ right: '12%', top: '12%', direction: 'rtl' }}>
+      <div className="absolute z-10 animate-fade-in-up" style={{ right: '12%', top: '10%', direction: 'rtl' }}>
         <h1
           className="text-[14rem] font-bold text-charcoal-800 leading-none"
           style={{ fontFamily: "'Aref Ruqaa', serif" }}
@@ -39,8 +39,8 @@ export default function Landing() {
         </h1>
       </div>
 
-      {/* Philosophy text */}
-      <div className="absolute z-10 animate-fade-in-up" style={{ right: '14%', top: '50%', transform: 'translateY(-50%)', direction: 'rtl', textAlign: 'justify', maxWidth: '420px' }}>
+      {/* Philosophy text — separate container, pushed down */}
+      <div className="absolute z-10 animate-fade-in-up" style={{ right: '14%', top: '48%', direction: 'rtl', textAlign: 'justify', maxWidth: '420px' }}>
         <p className="text-charcoal-800 leading-[2]" style={{ fontFamily: "'Amiri', serif", fontSize: '0.95rem' }}>
           النظام يكافئ الحفظ لا الفهم، ويصوغ من الطلاب أوعية ذاكرة لا عقول فكر،
           من يستظهر النص كما ورد يحصد الدرجة، على عكس المتعمق بلغة لم تطابق نموذج الإجابة.
